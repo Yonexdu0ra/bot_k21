@@ -1,7 +1,6 @@
 import puppeteer from "puppeteer-core";
 import selectSemester from './selectSemester.js'
 async function getChedule(username, password, options) {
-    console.log(username, password)
     const url = 'http://220.231.119.171';
     try {
         const browser = await puppeteer.launch(options)
@@ -70,7 +69,9 @@ async function getChedule(username, password, options) {
                             obj['lichHoc'][tuan]['date'] = {}
                         }
                     } else {
-                        const [thu, tiet] = entry?.trim()?.split('tiết')
+                        let [thu, tiet] = entry?.trim()?.split('tiết')
+                        // thu = thu.split('Thứ')
+                        // thu = thu[1] ? thu[1] : 8 // 8 == chủ nhật
                         obj['lichHoc'][tuan]['date'][thu?.trim()] = tiet?.trim()
                     }
                 }
