@@ -1,3 +1,2 @@
-export default {
-    acccount: {}
-}
+const listUsers = {};
+export default listUsers;
