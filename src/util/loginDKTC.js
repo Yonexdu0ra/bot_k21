@@ -7,7 +7,7 @@ const loginDKTC = async (page, { username, password }) => {
     await page.type("input#txtPassword", password);
     await page.click("input#btnSubmit");
     const isLogin = await page.evaluate(() =>
-      document.querySelector("input#txtPassword") ? false : true
+      document.querySelector("#PageHeader1_lblUserFullName") ? false : true
     );
     if (!isLogin) {
       return {
