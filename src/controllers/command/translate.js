@@ -51,7 +51,7 @@ async function translate(msg, match) {
     );
     const data = await res.json();
     const text = data[0].reduce((curr, nextData) => curr + nextData[0], "");
-    await this.sendMessage(chat_id, `<strong>${text}</strong>`, {
+    await this.sendMessage(chat_id, `<code>${text}</code>`, {
       parse_mode: "HTML",
       reply_to_message_id: message_id,
     });
