@@ -113,9 +113,7 @@ async function getLichThiICTU(msg, match) {
       });
       return;
     } else if (tableData.length < 1) {
-      await sendMessageFB(sender_psid, {
-        text: `Hiện tại không có lịch thi`,
-      });
+      await this.sendMessage(chat_id, `Hiện tại không có lịch thi`, { reply_message_id: message_id});
       return;
     }
     let text = "Lịch thi của bạn là:\n";
@@ -123,11 +121,11 @@ async function getLichThiICTU(msg, match) {
       text += `Môn: <strong>${data.hocPhan}</strong>\nHình thức thi: <strong>${data.hinhThucThi}</strong>\nNgày thi: <strong>${data.ngayThi}</strong>\nCa thi: <strong>${data.caThi}</strong>\nSố báo danh: <strong>${data.soBaoDanh}</strong>\nĐịa điểm: <strong>${data.diaDiem}</strong>\n\n\n`;
     }
     text += "<strong>Chúc bạn may mắn !</strong>";
-    await deleteMessage()
+    await deleteMessage();
     await this.sendMessage(chat_id, text, {
-        parse_mode: "HTML",
-        reply_message_id: message_id
-    })
+      parse_mode: "HTML",
+      reply_message_id: message_id,
+    });
   } catch (error) {
     console.error(error);
   }

@@ -1,5 +1,5 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
-import listUser from "../../config/listUser.js";
+import Account from "../../model/Account.js";
 async function setUsername(msg, match) {
   try {
     const chat_id = msg.chat.id;
@@ -11,7 +11,7 @@ async function setUsername(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
-    const { value, command } = isRedundantCommand
+    const { value, command } = isRedundantCommand;
     if (!value.trim()) {
       await this.sendMessage(
         chat_id,
@@ -23,14 +23,32 @@ async function setUsername(msg, match) {
       );
       return;
     }
-    const isHasAccount = chat_id in listUser;
-    if (!isHasAccount) {
-      listUser[chat_id] = {}
+    let acccount = await Account.findOne({ chat_id });
+    if (!acccount) {
+      acccount = await Account({ chat_id });
+      acccount = await acccount.save();
     }
-    listUser[chat_id]["username"] = value.trim()
+    const isHasAccount = chat_id in acccount;
+    if (!isHasAccount) {
+      await Account.updateOne(
+        { chat_id },
+        {
+          username: value.trim(),
+        }
+      );
+      await this.sendMessage(
+        chat_id,
+        `set <strong>Username</strong> thành công`,
+        {
+          parse_mode: "HTML",
+          reply_to_message_id: message_id,
+        }
+      );
+      return;
+    }
     await this.sendMessage(
       chat_id,
-      `set <strong>Username</strong> thành công`,
+      `set <strong>Username</strong> không thành công`,
       {
         parse_mode: "HTML",
         reply_to_message_id: message_id,

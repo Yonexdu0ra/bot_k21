@@ -7,17 +7,21 @@ const loginDKTC = async (page, { username, password }) => {
     await page.type("input#txtPassword", password);
     await page.click("input#btnSubmit");
     const isLogin = await page.evaluate(() =>
-      document.querySelector("#PageHeader1_lblUserFullName") ? false : true
+      !document.querySelector("#tdParameter") ||
+      !window.location.href.includes("Reports/Form/Login.aspx")
+        ? false
+        : true
     );
     if (!isLogin) {
       return {
         status: false,
         message: "Username hoặc Password không chính xác !",
       };
+    } else {
+      return {
+        status: true,
+      };
     }
-    return {
-      status: true,
-    };
   } catch (error) {
     console.log(error);
   }

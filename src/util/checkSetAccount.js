@@ -1,7 +1,8 @@
-import listUser from "../config/listUser.js";
+import Account from '../model/Account.js';
+// import listUser from "../config/listUser.js";
 const checkSetAccount = async (chat_id) => {
   try {
-    const acccount = listUser[chat_id];
+    const acccount = await Account.findOne({ chat_id });
     if(!acccount) {
       return {
         status: false,
