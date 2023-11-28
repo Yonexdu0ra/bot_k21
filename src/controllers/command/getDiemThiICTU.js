@@ -161,12 +161,13 @@ async function getDiemThiICTU(msg, match) {
     });
     await browser.close();
     if (tableData.length < 1) {
+      await deleteMessage();
       await this.sendMessage(chat_id, "Không lấy được thông tin T_T", {
         reply_message_id: message_id,
       });
       return;
     }
-
+    await deleteMessage()
     let text = "Thông tin điểm thi của bạn: ";
     for await (const data of tableData) {
       text += `Môn: <strong>${data.tenHocPhan}</strong>\nCC: <strong>${data.diemCC}</strong>\nĐiểm Thi: <strong>${data.diemThi}</strong>\nĐiểm tổng kết: <strong>${data.diemTongKet}</strong>\nTích: <strong>${data.tich}</strong>\nĐánh giá: <strong>${data.danhGia}</strong>\nLần thi: <strong>${data.lanThi}</strong>\nĐiểm thứ: <strong>${data.diemThu}</strong>\nLà điểm tổng kết môn: <strong>${data.laDiemTongKetMon}</strong>\nLần học: <strong>${data.lanHoc}</strong>\n\n`;
