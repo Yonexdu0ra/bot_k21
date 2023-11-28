@@ -6,11 +6,9 @@ const loginDKTC = async (page, { username, password }) => {
     await page.type("input#txtUserName", username);
     await page.type("input#txtPassword", password);
     await page.click("input#btnSubmit");
+    // await page.waitFor("box_user")
     const isLogin = await page.evaluate(() =>
-      !document.querySelector("#tdParameter") ||
-      !window.location.href.includes("Reports/Form/Login.aspx")
-        ? false
-        : true
+      window.location.href.includes("StudyRegister.aspx")
     );
     if (!isLogin) {
       return {
