@@ -4,6 +4,8 @@ import loginDKTC from "../../util/loginDKTC.js";
 import checkSetAccount from "../../util/checkSetAccount.js";
 import selectSemester from "../../util/selectSemester.js";
 import typingMessage from "../../util/tyingMessage.js";
+import browerConfig from "../../config/browser.js";
+
 async function getLichHocICTU(msg, match) {
   try {
     const chat_id = msg.chat.id;
@@ -23,9 +25,7 @@ async function getLichHocICTU(msg, match) {
       return;
     }
     const { deleteMessage } = await typingMessage(this, { chat_id });
-    const browser = await puppeteer.launch({
-      args: ["--no-sandbox"],
-    });
+    const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
     page.on("dialog", async (dialog) => {
       await dialog.dismiss(); // Đóng thông báo

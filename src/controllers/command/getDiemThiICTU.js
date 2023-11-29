@@ -3,6 +3,8 @@ import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import loginDKTC from "../../util/loginDKTC.js";
 import checkSetAccount from "../../util/checkSetAccount.js";
 import typingMessage from "../../util/tyingMessage.js";
+import browerConfig from "../../config/browser.js";
+
 async function getDiemThiICTU(msg, match) {
   try {
     const chat_id = msg.chat.id;
@@ -22,9 +24,7 @@ async function getDiemThiICTU(msg, match) {
       return;
     }
     const { deleteMessage } = await typingMessage(this, { chat_id });
-    const browser = await puppeteer.launch({
-      args: ["--no-sandbox"],
-    });
+    const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
     page.on("dialog", async (dialog) => {
       await dialog.dismiss(); // Đóng thông báo
@@ -167,13 +167,28 @@ async function getDiemThiICTU(msg, match) {
       });
       return;
     }
-    await deleteMessage()
+    await deleteMessage();
     let text = "Thông tin điểm thi của bạn: \n";
     for await (const data of tableData) {
-      text += `Môn: <strong>${data.tenHocPhan}</strong>\nCC: <strong>${data.diemCC}</strong>\nĐiểm Thi: <strong>${data.diemThi}</strong>\nĐiểm tổng kết: <strong>${data.diemTongKet}</strong>\nTích: <strong>${data.tich}</strong>\nĐánh giá: <strong>${data.danhGia}</strong>\nLần thi: <strong>${data.lanThi}</strong>\nĐiểm thứ: <strong>${data.diemThu}</strong>\nLà điểm tổng kết môn: <strong>${data.laDiemTongKetMon}</strong>\nLần học: <strong>${data.lanHoc}</strong>\n${"-".repeat(data.tenHocPhan.length * 2)}\n`;
+      text += `Môn: <strong>${data.tenHocPhan}</strong>\nCC: <strong>${
+        data.diemCC
+      }</strong>\nĐiểm Thi: <strong>${
+        data.diemThi
+      }</strong>\nĐiểm tổng kết: <strong>${
+        data.diemTongKet
+      }</strong>\nTích: <strong>${data.tich}</strong>\nĐánh giá: <strong>${
+        data.danhGia
+      }</strong>\nLần thi: <strong>${data.lanThi}</strong>\nĐiểm thứ: <strong>${
+        data.diemThu
+      }</strong>\nLà điểm tổng kết môn: <strong>${
+        data.laDiemTongKetMon
+      }</strong>\nLần học: <strong>${data.lanHoc}</strong>\n${"-".repeat(
+        data.tenHocPhan.length * 2
+      )}\n`;
       if (text.length > 1300) {
         this.sendMessage(chat_id, text, {
           parse_mode: "HTML",
+          reply_message_id: message_id,
         });
         text = "";
       }
@@ -181,6 +196,7 @@ async function getDiemThiICTU(msg, match) {
     if (text.length > 1) {
       await this.sendMessage(chat_id, text, {
         parse_mode: "HTML",
+        reply_message_id: message_id,
       });
     }
   } catch (error) {

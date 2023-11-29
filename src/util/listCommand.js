@@ -1,4 +1,3 @@
-
 export default [
   { command: "/ask", description: "chat với ChatGPT" },
   {
@@ -19,4 +18,5 @@ export default [
   { command: "/diem_thi", description: "Xem điểm thi của bạn (ICTU)" },
   { command: "/set_user", description: "Thiết lập Username" },
   { command: "/set_pass", description: "Thiết lập Password" },
+  { command: "/help", description: "Thông tin các commnand có thể dùng" },
 ];

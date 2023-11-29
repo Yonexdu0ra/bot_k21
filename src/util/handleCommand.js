@@ -55,6 +55,10 @@ const handleCommand = [
     regex: /\/help/,
     handler: help,
   },
+  {
+    regex: /\/start/,
+    handler: help,
+  },
 ];
 
 export default handleCommand;

@@ -3,6 +3,7 @@ import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import loginDKTC from "../../util/loginDKTC.js";
 import checkSetAccount from "../../util/checkSetAccount.js";
 import typingMessage from "../../util/tyingMessage.js";
+import browerConfig from "../../config/browser.js";
 async function getLichThiICTU(msg, match) {
   try {
     const chat_id = msg.chat.id;
@@ -22,9 +23,7 @@ async function getLichThiICTU(msg, match) {
       return;
     }
     const { deleteMessage } = await typingMessage(this, { chat_id });
-    const browser = await puppeteer.launch({
-      args: ["--no-sandbox"],
-    });
+    const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
     page.on("dialog", async (dialog) => {
       await dialog.dismiss(); // Đóng thông báo
@@ -113,7 +112,9 @@ async function getLichThiICTU(msg, match) {
       });
       return;
     } else if (tableData.length < 1) {
-      await this.sendMessage(chat_id, `Hiện tại không có lịch thi`, { reply_message_id: message_id});
+      await this.sendMessage(chat_id, `Hiện tại không có lịch thi`, {
+        reply_message_id: message_id,
+      });
       return;
     }
     let text = "Lịch thi của bạn là:\n";

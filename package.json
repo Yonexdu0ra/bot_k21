@@ -4,8 +4,7 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "start": "node --env-file .env src/index.js",
-        "dev": "nodemon --env-file .env src/index.js"
+        "start": "node  src/index.js"
     },
     "repository": "https://github.com/Yonexdu0ra/bot_k21",
     "author": "Yonexdu0ra <nguoidungemail1@gmail.com>",
@@ -15,7 +14,7 @@
         "mongoose": "^8.0.1",
         "node-fetch": "^2.7.0",
         "node-telegram-bot-api": "^0.64.0",
-        "puppeteer": "^1.14.0"
+        "puppeteer": "^21.5.2"
     },
     "devDependencies": {
         "dotenv": "^16.3.1"
