@@ -1,10 +1,12 @@
 const loginDKTC = async (page, { username, password }) => {
   try {
+    
     await page.goto("http://220.231.119.171/");
     await page.waitForNavigation();
     await page.type("input#txtUserName", username);
     await page.type("input#txtPassword", password);
     await page.click("input#btnSubmit");
+    await page.waitForNavigation();
     const isLogin = await page.evaluate(() =>
       window.location.href.includes("StudyRegister.aspx")
     );
