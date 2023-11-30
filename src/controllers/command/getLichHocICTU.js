@@ -5,7 +5,7 @@ import checkSetAccount from "../../util/checkSetAccount.js";
 import selectSemester from "../../util/selectSemester.js";
 import typingMessage from "../../util/tyingMessage.js";
 import browerConfig from "../../config/browser.js";
-
+import convertDateUTC from "../../util/convertDateUTC.js";
 async function getLichHocICTU(msg, match) {
   try {
     const chat_id = msg.chat.id;
@@ -24,7 +24,10 @@ async function getLichHocICTU(msg, match) {
       });
       return;
     }
-    const { deleteMessage } = await typingMessage(this, { chat_id });
+    const { deleteMessage } = await typingMessage(this, {
+      chat_id,
+      message: `Đợi chút nhé...\n\n(sau 18h chủ nhật hàng tuần lịch sẽ là của tuần kế tiếp nhé ^^) `,
+    });
     const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
     page.on("dialog", async (dialog) => {
@@ -153,7 +156,7 @@ async function getLichHocICTU(msg, match) {
     });
     await browser.close();
     const array = [];
-    let today = new Date();
+    let today = convertDateUTC();
     const convertDate = (dateString) => {
       const parts = dateString.split("/");
       const formattedDate = `${parts[1]}/${parts[0]}/${parts[2]}`;

@@ -1,5 +1,5 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
-
+import convertDateUTC from "../../util/convertDateUTC.js";
 async function timeNow(msg, match) {
   try {
     const chat_id = msg.chat.id;
@@ -46,9 +46,9 @@ async function timeNow(msg, match) {
     for (let key in objTime) {
       const [hourStart, minutesStart] = objTime[key].start.split(":");
       const [hourEnd, minutesEnd] = objTime[key].end.split(":");
-      const dateStart = new Date();
-      const dateEnd = new Date();
-      const currentTime = new Date();
+      const dateStart = convertDateUTC();
+      const dateEnd = convertDateUTC();
+      const currentTime = convertDateUTC();
       // chỉnh thời gian về mũi giờ +7 UTC
       // currentTime.setHours(currentTime.getHours() + 7);
       dateStart.setHours(+hourStart);
