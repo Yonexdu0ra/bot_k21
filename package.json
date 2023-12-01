@@ -14,9 +14,7 @@
         "mongoose": "^8.0.1",
         "node-fetch": "^2.7.0",
         "node-telegram-bot-api": "^0.64.0",
-        "puppeteer": "^21.5.2"
-    },
-    "devDependencies": {
+        "puppeteer": "^21.5.2",
         "dotenv": "^16.3.1"
     }
 }
