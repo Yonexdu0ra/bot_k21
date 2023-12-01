@@ -29,7 +29,9 @@ connectDB(
   bot.on("error", () => {
     console.log("Bot error ");
   });
+  bot.se
 });
+
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("server running");
