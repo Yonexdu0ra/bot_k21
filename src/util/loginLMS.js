@@ -1,7 +1,6 @@
 const loginLMS = async (page, { username, password }) => {
   try {
     await page.goto("https://lms.ictu.edu.vn/login");
-    //   await page.waitForNavigation();
     await page.waitForSelector("input#user");
     await page.type("input#user", username);
     await page.type("input#password", password);

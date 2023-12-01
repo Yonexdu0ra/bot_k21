@@ -9,6 +9,7 @@ import getLichThiICTU from "../controllers/command/getLichThiICTU.js";
 import askGPT from "../controllers/command/askGPT.js";
 import help from "../controllers/command/help.js";
 import getDiemThiICTU from "../controllers/command/getDiemThiICTU.js";
+import skipVideoLMS from "../controllers/command/skipVideoLMS.js";
 const handleCommand = [
   {
     regex: /\/ask/,
@@ -58,6 +59,10 @@ const handleCommand = [
   {
     regex: /\/start/,
     handler: help,
+  },
+  {
+    regex: /\/skip_video_lms/,
+    handler: skipVideoLMS,
   },
 ];
 

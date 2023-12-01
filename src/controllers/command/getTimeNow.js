@@ -1,10 +1,14 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import convertDateUTC from "../../util/convertDateUTC.js";
+dotenv.config();
 async function timeNow(msg, match) {
   try {
     const chat_id = msg.chat.id;
     const message_id = msg.message_id;
-    const isRedundantCommand = await checkRedundantCommand(this, match, { chat_id, message_id });
+    const isRedundantCommand = await checkRedundantCommand(this, match, {
+      chat_id,
+      message_id,
+    });
     if (!isRedundantCommand) {
       return;
     }
@@ -49,8 +53,7 @@ async function timeNow(msg, match) {
       const dateStart = convertDateUTC();
       const dateEnd = convertDateUTC();
       const currentTime = convertDateUTC();
-      // chỉnh thời gian về mũi giờ +7 UTC
-      // currentTime.setHours(currentTime.getHours() + 7);
+      
       dateStart.setHours(+hourStart);
       dateStart.setMinutes(+minutesStart);
       dateEnd.setHours(+hourEnd);

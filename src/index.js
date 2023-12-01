@@ -4,6 +4,7 @@ import handleCommand from "./util/handleCommand.js";
 import listCommand from "./util/listCommand.js";
 import connectDB from "./model/index.js";
 import { config } from "dotenv";
+// import close from "./controllers/callback_query/close.js";
 config();
 const app = express();
 
@@ -29,9 +30,8 @@ connectDB(
   bot.on("error", () => {
     console.log("Bot error ");
   });
-  bot.se
+  
 });
-
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("server running");
