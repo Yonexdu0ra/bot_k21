@@ -1,6 +1,6 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import convertDateUTC from "../../util/convertDateUTC.js";
-dotenv.config();
+
 async function timeNow(msg, match) {
   try {
     const chat_id = msg.chat.id;
