@@ -1,6 +1,6 @@
 const getTableLearing = async (page) => {
   try {
-    await page.waitForSelector("table");
+    await page.waitForSelector(".--row-is-loading");
     const tableData = await page.evaluate(() => {
       return new Promise((res) => {
         let time = 0;
@@ -8,7 +8,7 @@ const getTableLearing = async (page) => {
           if (!document.querySelector(".--row-is-loading")) {
             clearInterval(interval);
             res(true);
-          } else if (time >= 7000) {
+          } else if (time >= 10000) {
             clearInterval(interval);
             res(false);
           }

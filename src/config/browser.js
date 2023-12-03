@@ -1,5 +1,5 @@
 const config = {
-  headless: "new",
+  headless: 'new',
   args: ["--no-sandbox"],
 };
 export default config;

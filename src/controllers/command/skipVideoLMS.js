@@ -23,8 +23,7 @@ async function skipVideoLMS(msg, match) {
             });
             return;
         }
-        await this.sendMessage(chat_id, `Đang update`, { reply_message_id: message_id });
-        return
+        
         const { deleteMessage } = await typingMessage(this, { chat_id });
         const browser = await puppeteer.launch(browerConfig);
         const page = await browser.newPage();
