@@ -28,7 +28,7 @@ async function getLichHocICTU(msg, match) {
       chat_id,
       message: `Đợi chút nhé...\n\n(sau 18h chủ nhật hàng tuần lịch sẽ là của tuần kế tiếp nhé ^^) `,
     });
-    await this.sendChatAction(chat_id, 'typing')
+    await this.sendChatAction(chat_id, "typing");
     const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
     page.on("dialog", async (dialog) => {
@@ -120,9 +120,9 @@ async function getLichHocICTU(msg, match) {
             var _entry$trim;
             let [thu, tiet] =
               entry === null ||
-                entry === void 0 ||
-                (_entry$trim = entry.trim()) === null ||
-                _entry$trim === void 0
+              entry === void 0 ||
+              (_entry$trim = entry.trim()) === null ||
+              _entry$trim === void 0
                 ? void 0
                 : _entry$trim.split("tiết");
             obj["lichHoc"][tuan]["date"][
@@ -163,13 +163,11 @@ async function getLichHocICTU(msg, match) {
       const formattedDate = `${parts[1]}/${parts[0]}/${parts[2]}`;
       return formattedDate;
     };
-
+    let text = "";
     // kiểm tra nếu đây là chủ nhật và sau khi hét giờ học thì sẽ lấy ra lịch của tuần sau
     if (today.getDay() == 0 && today.getHours() >= 18) {
       await deleteMessage();
-      await this.sendMessage(sender_psid, "Đây là lịch tuần sau:", {
-        reply_to_message_id: message_id,
-      });
+      text += "Đây là lịch học tuần sau: \n\n";
       today.setDate(today.getDate() + 1);
     }
     data.forEach((obj) => {
@@ -211,16 +209,19 @@ async function getLichHocICTU(msg, match) {
       return;
     }
     for (let obj of array) {
-      let text = `Môn Học: <strong>${obj.lopHocPhan
-        }</strong>\n\nLịch Học: <strong>${JSON.stringify(obj.lichHoc).replace(/[{}]/g, "").replace(/"/g, " ") ||
+      text += `Môn Học: <strong>${
+        obj.lopHocPhan
+      }</strong>\nLịch Học: <strong>${
+        JSON.stringify(obj.lichHoc).replace(/[{}]/g, "").replace(/"/g, " ") ||
         "không xác định"
-        }</strong>\n\nĐịa Điểm: <strong>${obj.diaDiem || "không xác định"
-        }</strong>\n\n`;
-      await this.sendMessage(chat_id, text, {
-        parse_mode: "HTML",
-        reply_to_message_id: message_id,
-      });
+      }</strong>\nĐịa Điểm: <strong>${
+        obj.diaDiem || "không xác định"
+      }</strong>\n\n`;
     }
+    await this.sendMessage(chat_id, text, {
+      parse_mode: "HTML",
+      reply_to_message_id: message_id,
+    });
   } catch (error) {
     console.error(error);
     await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {
