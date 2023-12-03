@@ -23,6 +23,7 @@ async function getLichThiICTU(msg, match) {
       return;
     }
     const { deleteMessage } = await typingMessage(this, { chat_id });
+    await this.sendChatAction(chat_id, "typing");
     const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
     page.on("dialog", async (dialog) => {

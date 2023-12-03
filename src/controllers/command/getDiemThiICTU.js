@@ -24,6 +24,7 @@ async function getDiemThiICTU(msg, match) {
       return;
     }
     const { deleteMessage } = await typingMessage(this, { chat_id });
+    await this.sendChatAction(chat_id, "typing");
     const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
     page.on("dialog", async (dialog) => {
@@ -99,59 +100,59 @@ async function getDiemThiICTU(msg, match) {
               : laDiemTongKetMon.innerText;
           obj["danhGia"] =
             (danhGia === null ||
-            danhGia === void 0 ||
-            (_danhGia$innerText = danhGia.innerText) === null ||
-            _danhGia$innerText === void 0
+              danhGia === void 0 ||
+              (_danhGia$innerText = danhGia.innerText) === null ||
+              _danhGia$innerText === void 0
               ? void 0
               : _danhGia$innerText.trim()) == ""
               ? "chưa có"
               : danhGia === null || danhGia === void 0
-              ? void 0
-              : danhGia.innerText.trim();
+                ? void 0
+                : danhGia.innerText.trim();
           obj["diemCC"] =
             (diemCC === null ||
-            diemCC === void 0 ||
-            (_diemCC$innerText = diemCC.innerText) === null ||
-            _diemCC$innerText === void 0
+              diemCC === void 0 ||
+              (_diemCC$innerText = diemCC.innerText) === null ||
+              _diemCC$innerText === void 0
               ? void 0
               : _diemCC$innerText.trim()) == ""
               ? "chưa có"
               : diemCC === null || diemCC === void 0
-              ? void 0
-              : diemCC.innerText.trim();
+                ? void 0
+                : diemCC.innerText.trim();
           obj["diemThi"] =
             (diemThi === null ||
-            diemThi === void 0 ||
-            (_diemThi$innerText = diemThi.innerText) === null ||
-            _diemThi$innerText === void 0
+              diemThi === void 0 ||
+              (_diemThi$innerText = diemThi.innerText) === null ||
+              _diemThi$innerText === void 0
               ? void 0
               : _diemThi$innerText.trim()) == ""
               ? "chưa có"
               : diemThi === null || diemThi === void 0
-              ? void 0
-              : diemThi.innerText.trim();
+                ? void 0
+                : diemThi.innerText.trim();
           obj["diemTongKet"] =
             (diemTongKet === null ||
-            diemTongKet === void 0 ||
-            (_diemTongKet$innerTex = diemTongKet.innerText) === null ||
-            _diemTongKet$innerTex === void 0
+              diemTongKet === void 0 ||
+              (_diemTongKet$innerTex = diemTongKet.innerText) === null ||
+              _diemTongKet$innerTex === void 0
               ? void 0
               : _diemTongKet$innerTex.trim()) == ""
               ? "chưa có"
               : diemTongKet === null || diemTongKet === void 0
-              ? void 0
-              : diemTongKet.innerText.trim();
+                ? void 0
+                : diemTongKet.innerText.trim();
           obj["tich"] =
             (tich === null ||
-            tich === void 0 ||
-            (_tich$innerText = tich.innerText) === null ||
-            _tich$innerText === void 0
+              tich === void 0 ||
+              (_tich$innerText = tich.innerText) === null ||
+              _tich$innerText === void 0
               ? void 0
               : _tich$innerText.trim()) == ""
               ? "chưa có"
               : tich === null || tich === void 0
-              ? void 0
-              : tich.innerText.trim();
+                ? void 0
+                : tich.innerText.trim();
           listData.push(obj);
         });
         return listData;
@@ -170,21 +171,15 @@ async function getDiemThiICTU(msg, match) {
     await deleteMessage();
     let text = "Thông tin điểm thi của bạn: \n";
     for await (const data of tableData) {
-      text += `Môn: <strong>${data.tenHocPhan}</strong>\nCC: <strong>${
-        data.diemCC
-      }</strong>\nĐiểm Thi: <strong>${
-        data.diemThi
-      }</strong>\nĐiểm tổng kết: <strong>${
-        data.diemTongKet
-      }</strong>\nTích: <strong>${data.tich}</strong>\nĐánh giá: <strong>${
-        data.danhGia
-      }</strong>\nLần thi: <strong>${data.lanThi}</strong>\nĐiểm thứ: <strong>${
-        data.diemThu
-      }</strong>\nLà điểm tổng kết môn: <strong>${
-        data.laDiemTongKetMon
-      }</strong>\nLần học: <strong>${data.lanHoc}</strong>\n${"-".repeat(
-        data.tenHocPhan.length * 2
-      )}\n`;
+      text += `Môn: <strong>${data.tenHocPhan}</strong>\nCC: <strong>${data.diemCC
+        }</strong>\nĐiểm Thi: <strong>${data.diemThi
+        }</strong>\nĐiểm tổng kết: <strong>${data.diemTongKet
+        }</strong>\nTích: <strong>${data.tich}</strong>\nĐánh giá: <strong>${data.danhGia
+        }</strong>\nLần thi: <strong>${data.lanThi}</strong>\nĐiểm thứ: <strong>${data.diemThu
+        }</strong>\nLà điểm tổng kết môn: <strong>${data.laDiemTongKetMon
+        }</strong>\nLần học: <strong>${data.lanHoc}</strong>\n${"-".repeat(
+          data.tenHocPhan.length * 2
+        )}\n`;
       if (text.length > 1300) {
         this.sendMessage(chat_id, text, {
           parse_mode: "HTML",

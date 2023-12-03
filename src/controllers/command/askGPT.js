@@ -4,9 +4,9 @@ import typingMessage from "../../util/tyingMessage.js";
 import { config } from "dotenv";
 config()
 async function askGPT(msg, match) {
+  const chat_id = msg.chat.id;
+  const message_id = msg.message_id;
   try {
-    const chat_id = msg.chat.id;
-    const message_id = msg.message_id;
     const isRedundantCommand = await checkRedundantCommand(this, match, {
       chat_id,
       message_id,
@@ -27,13 +27,13 @@ async function askGPT(msg, match) {
       return;
     }
     const { deleteMessage } = await typingMessage(this, { chat_id });
+    await this.sendChatAction(chat_id, 'typing')
     const res = await nodeFetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${
-          process.env.API_TOKEN_OPENAI
-        }`,
+        Authorization: `Bearer ${process.env.API_TOKEN_OPENAI
+          }`,
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo-0613",
@@ -42,7 +42,7 @@ async function askGPT(msg, match) {
     });
     const data = await res.json();
     await deleteMessage();
-    if(data.error) {
+    if (data.error) {
       await this.sendMessage(chat_id, data.error.message, {
         reply_to_message_id: message_id
       })
@@ -52,10 +52,14 @@ async function askGPT(msg, match) {
     if (text) {
       await this.sendMessage(chat_id, text, {
         reply_to_message_id: message_id,
+        parse_mode: "Markdown"
       });
     }
   } catch (error) {
     console.log(error);
+    await this.sendMessage(chat_id, `${JSON.stringify}`, {
+      reply_to_message_id: message_id,
+    })
   }
 }
 
