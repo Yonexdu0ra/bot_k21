@@ -113,6 +113,7 @@ async function getLichThiICTU(msg, match) {
       });
       return;
     } else if (tableData.length < 1) {
+      await deleteMessage();
       await this.sendMessage(chat_id, `Hiện tại không có lịch thi`, {
         reply_to_message_id: message_id,
       });

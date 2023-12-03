@@ -164,9 +164,6 @@ async function getLichHocICTU(msg, match) {
       return formattedDate;
     };
 
-    // chỉnh thời gian về múi giờ +7
-    today.setHours(today.getHours + 7);
-
     // kiểm tra nếu đây là chủ nhật và sau khi hét giờ học thì sẽ lấy ra lịch của tuần sau
     if (today.getDay() == 0 && today.getHours() >= 18) {
       await deleteMessage();
