@@ -20,7 +20,7 @@ async function getLichHocICTU(msg, match) {
     const isSetAccount = await checkSetAccount(chat_id);
     if (!isSetAccount.status) {
       await this.sendMessage(chat_id, isSetAccount.message, {
-        reply_message_id: message_id,
+        reply_to_message_id: message_id,
       });
       return;
     }
@@ -39,7 +39,7 @@ async function getLichHocICTU(msg, match) {
     });
     if (!isLoginDKTC.status) {
       await this.sendMessage(chat_id, isLoginDKTC.message, {
-        reply_message_id: message_id,
+        reply_to_message_id: message_id,
       });
       await browser.close();
       await deleteMessage();
@@ -170,7 +170,7 @@ async function getLichHocICTU(msg, match) {
     if (today.getDay() == 0 && today.getHours() >= 18) {
       await deleteMessage();
       await this.sendMessage(sender_psid, "Đây là lịch tuần sau:", {
-        reply_message_id: message_id,
+        reply_to_message_id: message_id,
       });
       today.setDate(today.getDate() + 1);
     }
@@ -208,7 +208,7 @@ async function getLichHocICTU(msg, match) {
     if (array.length < 1) {
       await deleteMessage();
       await this.sendMessage(chat_id, "Tuần này bạn không có lịch học 🥰", {
-        reply_message_id: message_id,
+        reply_to_message_id: message_id,
       });
       return;
     }
@@ -223,13 +223,13 @@ async function getLichHocICTU(msg, match) {
       }</strong>\n\n`;
       await this.sendMessage(chat_id, text, {
         parse_mode: "HTML",
-        reply_message_id: message_id,
+        reply_to_message_id: message_id,
       });
     }
   } catch (error) {
     console.error(error);
     await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {
-      reply_message_id: message_id,
+      reply_to_message_id: message_id,
     });
   }
 }

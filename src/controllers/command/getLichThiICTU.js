@@ -18,7 +18,7 @@ async function getLichThiICTU(msg, match) {
     const isSetAccount = await checkSetAccount(chat_id);
     if (!isSetAccount.status) {
       await this.sendMessage(chat_id, isSetAccount.message, {
-        reply_message_id: message_id,
+        reply_to_message_id: message_id,
       });
       return;
     }
@@ -34,7 +34,7 @@ async function getLichThiICTU(msg, match) {
     });
     if (!isLoginDKTC.status) {
       await this.sendMessage(chat_id, isLoginDKTC.message, {
-        reply_message_id: message_id,
+        reply_to_message_id: message_id,
       });
       await browser.close();
       await deleteMessage();
@@ -113,7 +113,7 @@ async function getLichThiICTU(msg, match) {
       return;
     } else if (tableData.length < 1) {
       await this.sendMessage(chat_id, `Hiện tại không có lịch thi`, {
-        reply_message_id: message_id,
+        reply_to_message_id: message_id,
       });
       return;
     }
@@ -125,12 +125,12 @@ async function getLichThiICTU(msg, match) {
     await deleteMessage();
     await this.sendMessage(chat_id, text, {
       parse_mode: "HTML",
-      reply_message_id: message_id,
+      reply_to_message_id: message_id,
     });
   } catch (error) {
     console.error(error);
     await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {
-      reply_message_id: message_id,
+      reply_to_message_id: message_id,
     });
   }
 }
