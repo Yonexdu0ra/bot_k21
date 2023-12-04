@@ -211,6 +211,8 @@ async function getLichHocICTU(msg, match) {
     for (let obj of array) {
       text += `Môn Học: <strong>${
         obj.lopHocPhan
+      }</strong>\nGiảng viên: <strong>${
+        obj.giangVien
       }</strong>\nLịch Học: <strong>${
         JSON.stringify(obj.lichHoc).replace(/[{}]/g, "").replace(/"/g, " ") ||
         "không xác định"
@@ -218,8 +220,10 @@ async function getLichHocICTU(msg, match) {
         obj.diaDiem || "không xác định"
       }</strong>\n\n`;
     }
+    await deleteMessage();
     await this.sendMessage(chat_id, text, {
       parse_mode: "HTML",
+      disable_web_page_preview: true,
       reply_to_message_id: message_id,
     });
   } catch (error) {

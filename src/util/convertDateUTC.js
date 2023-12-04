@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 config();
-export default function (data) {
+export default function () {
   if (process.env.IS_PRODUCTION === "production") {
     const utc_plus_7 = 7;
     
