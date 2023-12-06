@@ -8,6 +8,7 @@ export default [
     command: "/time_table",
     description: "Xem thời gian ra vào các tiết học (ICTU)",
   },
+  { command: "/qr", description: "Tạo Qr code" },
   { command: "/weather", description: "Xem dự báo thời tiết hiện tại" },
   { command: "/dich", description: "Dịch văn bản sang ngôn ngữ khác" },
   {

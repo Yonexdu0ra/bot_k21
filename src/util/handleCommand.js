@@ -10,6 +10,7 @@ import askGPT from "../controllers/command/askGPT.js";
 import help from "../controllers/command/help.js";
 import getDiemThiICTU from "../controllers/command/getDiemThiICTU.js";
 import skipVideoLMS from "../controllers/command/skipVideoLMS.js";
+import createQR from "../controllers/command/createQR.js";
 const handleCommand = [
   {
     regex: /\/ask/,
@@ -22,6 +23,10 @@ const handleCommand = [
   {
     regex: /\/time_now/,
     handler: getTimeNow,
+  },
+  {
+    regex: /\/qr/,
+    handler: createQR,
   },
   {
     regex: /\/dich/,
