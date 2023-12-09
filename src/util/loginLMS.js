@@ -12,7 +12,7 @@ const loginLMS = async (page, { username, password }) => {
         new Promise((res) => {
           let time = 0;
           const interval = setInterval(() => {
-            if (time >= 5000) {
+            if (time >= 30000) {
               clearInterval(interval);
               res(false);
             }

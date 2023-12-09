@@ -5,6 +5,7 @@ import typingMessage from "../../util/tyingMessage.js";
 import browerConfig from "../../config/browser.js";
 import selectTabVideo from "../../util/selectTabVideo.js";
 async function skipVideoLMS({ data, message }) {
+  const time = new Date();
   const chat_id = message.chat.id;
   const message_id = message.message_id;
   try {
@@ -69,40 +70,6 @@ async function skipVideoLMS({ data, message }) {
       }
       const isDone = await page.evaluate(async () => {
         try {
-          function hiddenScreenVideo(tab) {
-            const menuVideo = document.querySelector("learning-board-video");
-            if (menuVideo) {
-              menuVideo.style.position = "relative";
-              const div = document.createElement("div");
-              div.style.position = "absolute";
-              div.style.top = "0px";
-              div.style.left = "0px";
-              div.style.backgroundColor = "black";
-              div.style.width = "100%";
-              div.style.height = "100%";
-              menuVideo.appendChild(div);
-              const divChildren = document.createElement("div");
-              const p = document.createElement("p");
-              let x = tab.querySelector(
-                "svg>circle.lesson-board__lesson__progress__donut-segment"
-              );
-              if (x) {
-                p.textContent = `Đã tua được ${
-                  x?.getAttribute("stroke-dasharray")?.split(" ")[0]
-                }%`;
-              } else {
-                p.textContent = "Loading...";
-              }
-              p.style.color = "white";
-              p.style.display = "flex";
-              p.style.justifyContent = "center";
-              p.style.alignItems = "center";
-              p.style.height = "100%";
-              div.appendChild(divChildren);
-              div.appendChild(p);
-            }
-          }
-
           async function thanChu() {
             try {
               const srcVideo = [
@@ -122,13 +89,13 @@ async function skipVideoLMS({ data, message }) {
                   continue;
                 }
                 if (countCheck >= 5) {
-                  console.log("bug");
+                  // console.log("bug");
                   break;
                 }
                 const { status: stausSeeked, message: messageSeeked } =
                   await seekedVideo(tab, srcVideo[indexVideo ? 1 : 0]);
                 indexVideo = !indexVideo;
-                console.log(messageSeeked);
+                // console.log(messageSeeked);
                 if (messageSeeked === "Tab này không có video") {
                   const { nextTab } = checkNextTab(tab);
                   if (!nextTab) {
@@ -139,7 +106,7 @@ async function skipVideoLMS({ data, message }) {
                 if (stausSeeked) {
                   const { status: statusNextTab, message: messageNextTab } =
                     await nextTab(tab);
-                  console.log(messageNextTab);
+                  // console.log(messageNextTab);
                   if (!statusNextTab) {
                     // await delay(3000)
                     break;
@@ -282,7 +249,6 @@ async function skipVideoLMS({ data, message }) {
                   });
                 }
                 if (video && !(await checkProgess(tab))) {
-                  hiddenScreenVideo(tab);
                   video.src = url_video;
                   video.play();
                   video.muted = true;
@@ -334,9 +300,16 @@ async function skipVideoLMS({ data, message }) {
       await deleteMessage();
       if (isDone) {
         await browser.close();
-        await this.sendMessage(chat_id, `Đã tua xong ${data.split("-")[1]}`, {
-          reply_message_id: message_id,
-        });
+        await this.sendMessage(
+          chat_id,
+          `Đã tua xong <strong>${data.split("-")[1]}</strong> - <strong>${
+            Math.floor(new Date() - time) / 1000
+          }s</strong>`,
+          {
+            parse_mode: "HTML",
+            reply_message_id: message_id,
+          }
+        );
       } else {
         await browser.close();
         await this.sendMessage(chat_id, `Có lỗi xay ra không thể tua`, {
