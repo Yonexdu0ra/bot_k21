@@ -5,7 +5,7 @@ import typingMessage from "../../util/tyingMessage.js";
 import browerConfig from "../../config/browser.js";
 import selectTabVideo from "../../util/selectTabVideo.js";
 async function skipVideoLMS({ data, message }) {
-  const time = new Date();
+  const timeStartSkip = new Date();
   const chat_id = message.chat.id;
   const message_id = message.message_id;
   try {
@@ -303,7 +303,7 @@ async function skipVideoLMS({ data, message }) {
         await this.sendMessage(
           chat_id,
           `Đã tua xong <strong>${data.split("-")[1]}</strong> - <strong>${
-            Math.floor(new Date() - time) / 1000
+            Math.floor(new Date() - timeStartSkip) / 1000
           }s</strong>`,
           {
             parse_mode: "HTML",
