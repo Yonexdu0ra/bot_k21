@@ -69,6 +69,7 @@ async function skipVideoLMS(msg, match) {
       },
     ]);
     await this.sendMessage(chat_id, "Danh sách các học phần của kì này: ", {
+      reply_to_message_id: message_id,
       reply_markup: {
         inline_keyboard,
       },

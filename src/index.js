@@ -5,7 +5,6 @@ import listCommand from "./util/listCommand.js";
 import connectDB from "./model/index.js";
 import { config } from "dotenv";
 import callback_query from './controllers/callback_query/index.js'
-// import close from "./controllers/callback_query/close.js";
 config();
 const app = express();
 

@@ -9,16 +9,17 @@ async function skipVideoLMS({ data, message }) {
   const chat_id = message.chat.id;
   const message_id = message.message_id;
   try {
-    await this.sendChatAction(chat_id, "typing");
-    await this.deleteMessage(chat_id, message_id);
     const isSetAccount = await checkSetAccount(chat_id);
     if (!isSetAccount.status) {
       await this.sendMessage(chat_id, isSetAccount.message, {
-        reply_message_id: message_id,
+        reply_to_message_id: message_id,
       });
       return;
     }
-    const { deleteMessage } = await typingMessage(this, { chat_id });
+    const { deleteMessage } = await typingMessage(this, {
+      chat_id,
+      message: "Đợi chút nhé quá trình sẽ mất ~ 5 phút - Vui lòng không spam để tránh bị lỗi không mong muốn",
+    });
     await this.sendChatAction(chat_id, "typing");
 
     const browser = await puppeteer.launch(browerConfig);
@@ -32,7 +33,7 @@ async function skipVideoLMS({ data, message }) {
     });
     if (!isLoginLMS.status) {
       await this.sendMessage(chat_id, isLoginLMS.message, {
-        reply_message_id: message_id,
+        reply_to_message_id: message_id,
       });
       await browser.close();
       await deleteMessage();
@@ -57,14 +58,14 @@ async function skipVideoLMS({ data, message }) {
                   clearInterval(interval);
                   resolve(false);
                 }
-              }, 500);
+              }, 1000);
             }
           })
       );
       if (!isOK) {
         await browser.close();
         await this.sendMessage(chat_id, `Thử lại sau nhé...`, {
-          reply_message_id: message_id,
+          reply_to_message_id: message_id,
         });
         return;
       }
@@ -298,8 +299,8 @@ async function skipVideoLMS({ data, message }) {
         }
       });
       await deleteMessage();
+      await browser.close();
       if (isDone) {
-        await browser.close();
         await this.sendMessage(
           chat_id,
           `Đã tua xong <strong>${data.split("-")[1]}</strong> - <strong>${
@@ -307,13 +308,12 @@ async function skipVideoLMS({ data, message }) {
           }s</strong>`,
           {
             parse_mode: "HTML",
-            reply_message_id: message_id,
+            reply_to_message_id: message_id,
           }
         );
       } else {
-        await browser.close();
-        await this.sendMessage(chat_id, `Có lỗi xay ra không thể tua`, {
-          reply_message_id: message_id,
+        await this.sendMessage(chat_id, `Có lỗi xảy ra không thể tua`, {
+          reply_to_message_id: message_id,
         });
       }
     }
@@ -321,8 +321,9 @@ async function skipVideoLMS({ data, message }) {
   } catch (error) {
     console.error(error);
     await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {
-      reply_message_id: message_id,
+      reply_to_message_id: message_id,
     });
+    return
   }
 }
 export default skipVideoLMS;
