@@ -18,7 +18,7 @@ async function askGPT(msg, match) {
     if (!value.trim()) {
       await this.sendMessage(
         chat_id,
-        `Vui lòng điền nội dung theo cú pháp ${command} <strong>Câu hỏi</strong> trong đó <strong>Câu hoi</strong> bạn điền bất kì câu nào bạn muốn hỏi\n\nVí dụ: ${command} <strong>Hãy gọi tôi là ${msg.chat.first_name} ${msg.chat.last_name}  bê đê</strong>`,
+        `Vui lòng điền nội dung theo cú pháp ${command} <strong>Câu hỏi</strong> trong đó <strong>Câu hoi</strong> bạn điền bất kì câu nào bạn muốn hỏi\n\nVí dụ: ${command} <strong>Hãy gọi tôi là ${msg.chat.first_name || msg.from.first_name || 'thằng'}  ${msg.chat.last_name || msg.from.last_name || ''}   bê đê</strong>`,
         {
           parse_mode: "HTML",
           reply_to_message_id: message_id,
