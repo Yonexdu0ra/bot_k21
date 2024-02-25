@@ -13,6 +13,9 @@ async function skipVideoLMS(msg, match) {
       chat_id,
       message_id,
     });
+    await this.sendMessage(chat_id, "Đang tạm dừng x.O", {
+      reply_to_message_id: message_id
+    });
     if (!isRedundantCommand) {
       return;
     }

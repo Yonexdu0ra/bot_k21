@@ -53,9 +53,9 @@ async function getLichHocICTU(msg, match) {
       return [...document.querySelectorAll(".cssListItem")][0] ? true : false;
     });
     if (!isLich) {
-      await selectSemester(page, 1);
-      await page.waitForNavigation();
       await selectSemester(page, 2);
+      await page.waitForNavigation();
+      await selectSemester(page, 1);
       await page.waitForNavigation();
     }
     const data = await page.evaluate(() => {
@@ -201,7 +201,7 @@ async function getLichHocICTU(msg, match) {
       let thuB = Object.keys(b.lichHoc)[0];
       return thuTrongTuan[thuA] - thuTrongTuan[thuB];
     });
-    if (array.length < 1) {
+    if (data.length < 1) {
       await deleteMessage();
       await this.sendMessage(chat_id, "Tuần này bạn không có lịch học 🥰", {
         reply_to_message_id: message_id,
