@@ -1,3 +1,4 @@
+
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import loginLMS from "../../util/loginLMS.js";
 import checkSetAccount from "../../util/checkSetAccount.js";
@@ -7,6 +8,7 @@ import Account from "../../model/Account.js";
 async function skipVideoLMS(msg, match) {
   const chat_id = msg.chat.id;
   const message_id = msg.message_id;
+  
   try {
     const isRedundantCommand = await checkRedundantCommand(this, match, {
       chat_id,
@@ -52,7 +54,6 @@ async function skipVideoLMS(msg, match) {
       });
       return;
     }
-    await deleteMessage()
     const token = data.access_token;
     const profile = await getDataByQueryLMS(process.env.URL_PROFILE_LMS, {
       token,
@@ -115,46 +116,7 @@ async function skipVideoLMS(msg, match) {
             },
           }
         );
-        // console.log(classData);
-        const completedData = await await getDataByQueryLMS(
-          `${process.env.URL_CLASS_STUDENT_STRACKING_LMS}`,
-          {
-            token,
-            query: {
-              order: "ASC",
-              orderby: "id",
-              limit: 1000,
-              paged: 1,
-              select: "completed,lesson_id,updated_at,test_results",
-              "condition[0][key]": "class_student_id",
-              "condition[0][value]": course.id,
-              "condition[0][compare]": "=",
-              "condition[1][key]": "class_id",
-              "condition[1][value]": course.class_id,
-              "condition[1][compare]": "=",
-              "condition[1][type]": "and",
-            },
-          }
-        );
-        let totalLessonCompleted = 0;
-        for (const { completed } of completedData.data) {
-          if (completed) {
-            totalLessonCompleted++;
-          }
-        }
-        let x =
-          "```json\n" +
-          JSON.stringify(
-            {
-              ...classData.data,
-              complete: `${Math.floor(
-                (totalLessonCompleted / completedData.data.length) * 100
-              )}%`,
-            },
-            null,
-            2
-          ) +
-          "```";
+        let x = "```json\n" + JSON.stringify(classData.data, null, 2) + "```";
         await this.sendMessage(chat_id, x, {
           parse_mode: "Markdown",
           reply_markup: {
@@ -163,14 +125,9 @@ async function skipVideoLMS(msg, match) {
                 {
                   text: `Tua ${classData.data.name}`,
                   callback_data: `SKIP-${JSON.stringify({
-                    class_id: course.class_id,
+                    id: classData.data.id,
                     course_id: classData.data.course_id,
-                    class_studentId: course.id,
                   })}`,
-                },
-                {
-                  text: `Close`,
-                  callback_data: `CLOSE`,
                 },
               ],
             ],

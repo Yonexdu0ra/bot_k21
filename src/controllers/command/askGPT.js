@@ -2,6 +2,7 @@ import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import nodeFetch from "node-fetch";
 import typingMessage from "../../util/tyingMessage.js";
 import { config } from "dotenv";
+import { Readable } from "stream";
 config();
 async function askGPT(msg, match) {
   const chat_id = msg.chat.id;
@@ -11,6 +12,7 @@ async function askGPT(msg, match) {
       chat_id,
       message_id,
     });
+    // console.log(msg);
     if (!isRedundantCommand) {
       return;
     }
@@ -28,10 +30,11 @@ async function askGPT(msg, match) {
       );
       return;
     }
-    const { deleteMessage } = await typingMessage(this, { chat_id });
+    const { deleteMessage, editMessage } = await typingMessage(this, { chat_id });
     await this.sendChatAction(chat_id, "typing");
-    const res = await nodeFetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.API_TOKEN_GEMINIAI}`,
+    let text = "";
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:streamGenerateContent?key=${process.env.API_TOKEN_GEMINIAI}`,
       {
         method: "POST",
         headers: {
@@ -51,6 +54,15 @@ async function askGPT(msg, match) {
       }
     );
     const data = await res.json();
+    for (const { candidates } of data) {
+      text += candidates[0].content.parts[0].text;
+    }
+    await editMessage('hehe')
+    // await deleteMessage();
+    await this.sendMessage(chat_id, text, {
+      reply_to_message_id: message_id,
+      parse_mode: "Markdown",
+    });
     // const res = await nodeFetch("https://api.openai.com/v1/chat/completions", {
     //   method: "POST",
     //   headers: {
@@ -64,24 +76,23 @@ async function askGPT(msg, match) {
     //   }),
     // });
     // const data = await res.json();
-    await deleteMessage();
-    if (data.error) {
-      await this.sendMessage(chat_id, data.error.message, {
-        reply_to_message_id: message_id,
-      });
-      return;
-    }
-    // let text = data.choices[0].message.content;
-    let text = data.candidates[0].content.parts[0].text;
-    if (text) {
-      await this.sendMessage(chat_id, text, {
-        reply_to_message_id: message_id,
-        parse_mode: "Markdown",
-      });
-    }
+    // if (data.error) {
+    //   await this.sendMessage(chat_id, data.error.message, {
+    //     reply_to_message_id: message_id,
+    //   });
+    //   return;
+    // }
+    // // let text = data.choices[0].message.content;
+    // let text = data.candidates[0].content.parts[0].text;
+    // if (text) {
+    //   await this.sendMessage(chat_id, text, {
+    //     reply_to_message_id: message_id,
+    //     parse_mode: "Markdown",
+    //   });
+    // }
   } catch (error) {
     console.log(error);
-    await this.sendMessage(chat_id, `${JSON.stringify}`, {
+    await this.sendMessage(chat_id, `${JSON.stringify(error)}`, {
       reply_to_message_id: message_id,
     });
   }

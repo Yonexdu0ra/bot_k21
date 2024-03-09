@@ -1,14 +1,20 @@
-import puppeteer from "puppeteer";
 import loginLMS from "../../util/loginLMS.js";
 import checkSetAccount from "../../util/checkSetAccount.js";
+import getDataByQueryLMS from "../../util/getDataByQueryLMS.js";
+import updateDataLMS from "../../util/updateDataLMS.js";
+import getFileLMS from "../../util/getFileLMS.js";
+import getDurationVideo from "../../util/getDurationVideo.js";
 import typingMessage from "../../util/tyingMessage.js";
-import browerConfig from "../../config/browser.js";
-import selectTabVideo from "../../util/selectTabVideo.js";
+import Account from "../../model/Account.js";
+import puppeteer from "puppeteer";
+import configBrowser from "../../config/browser.js";
 async function skipVideoLMS({ data, message }) {
-  const timeStartSkip = new Date();
+  // const timeStartSkip = new Date();
+  const json = JSON.parse(data);
   const chat_id = message.chat.id;
   const message_id = message.message_id;
   try {
+    console.log(json);
     const isSetAccount = await checkSetAccount(chat_id);
     if (!isSetAccount.status) {
       await this.sendMessage(chat_id, isSetAccount.message, {
@@ -16,314 +22,228 @@ async function skipVideoLMS({ data, message }) {
       });
       return;
     }
-    const { deleteMessage } = await typingMessage(this, {
+    const { deleteMessage, editMessage } = await typingMessage(this, {
       chat_id,
-      message: "Đợi chút nhé quá trình sẽ mất ~ 5 phút - Vui lòng không spam để tránh bị lỗi không mong muốn",
+      message:
+        "Đợi chút nhé quá trình sẽ mất ~ 5 phút - Vui lòng không spam để tránh bị lỗi không mong muốn",
     });
     await this.sendChatAction(chat_id, "typing");
 
-    const browser = await puppeteer.launch(browerConfig);
-    const page = await browser.newPage();
-    page.on("dialog", async (dialog) => {
-      await dialog.dismiss(); // Đóng thông báo
+    const accountData = await Account.findOne({
+      chat_id,
     });
-    const isLoginLMS = await loginLMS(page, {
-      username: isSetAccount.username,
-      password: isSetAccount.password,
+    const data = await loginLMS({
+      username: accountData.username,
+      password: accountData.password,
     });
-    if (!isLoginLMS.status) {
-      await this.sendMessage(chat_id, isLoginLMS.message, {
+    // console.log(data);
+    // await deleteMessage();
+    if (data.code != "success") {
+      let x = "```json\n" + JSON.stringify(data, null, 2) + "```";
+      await this.sendMessage(chat_id, x, {
         reply_to_message_id: message_id,
+        parse_mode: "Markdown",
       });
-      await browser.close();
-      await deleteMessage();
       return;
     }
-    // const data = await getTableLearing(page);
-    // await deleteMessage();
-
-    const isClicked = await selectTabVideo(page, data.split("-")[1].trim());
-    if (isClicked) {
-      await page.waitForSelector(".ictu-is-loading--circle-black");
-      const isOK = await page.evaluate(
-        () =>
-          new Promise((resolve) => {
-            {
-              let time = 0;
-              const interval = setInterval(() => {
-                if (!document.querySelector(".ictu-is-loading--circle-black")) {
-                  clearInterval(interval);
-                  resolve(true);
-                } else if (time >= 10000) {
-                  clearInterval(interval);
-                  resolve(false);
-                }
-              }, 1000);
-            }
-          })
-      );
-      if (!isOK) {
-        await browser.close();
-        await this.sendMessage(chat_id, `Thử lại sau nhé...`, {
-          reply_to_message_id: message_id,
-        });
-        return;
+    const browser = await puppeteer.launch(configBrowser);
+    const page = await browser.newPage();
+    const token = data.access_token;
+    const profile = await getDataByQueryLMS(process.env.URL_PROFILE_LMS, {
+      token,
+    });
+    const userProfile = await getDataByQueryLMS(
+      process.env.URL_USER_PROFILE_LMS,
+      {
+        query: {
+          "condition[0][key]": "user_id",
+          "condition[0][value]": profile.data.id,
+          "condition[0][compare]": "=",
+        },
+        token,
       }
-      const isDone = await page.evaluate(async () => {
-        try {
-          async function thanChu() {
-            try {
-              const srcVideo = [
-                "https://www.w3schools.com/tags/horse.mp3",
-                "https://www.w3schools.com/tags/movie.mp4",
-              ];
-              let indexVideo = true;
-              let countCheck = 0;
-              while (true) {
-                const tab = document.querySelector(
-                  ".lesson-board__lesson.lesson--active.ng-star-inserted"
-                );
-                if (!tab) {
-                  // clicked vào tab đầu tiên
-                  document.querySelectorAll("button")[1]?.click();
-                  countCheck++;
-                  continue;
-                }
-                if (countCheck >= 5) {
-                  // console.log("bug");
-                  break;
-                }
-                const { status: stausSeeked, message: messageSeeked } =
-                  await seekedVideo(tab, srcVideo[indexVideo ? 1 : 0]);
-                indexVideo = !indexVideo;
-                // console.log(messageSeeked);
-                if (messageSeeked === "Tab này không có video") {
-                  const { nextTab } = checkNextTab(tab);
-                  if (!nextTab) {
-                    break;
-                  }
-                }
-                await delay(1000);
-                if (stausSeeked) {
-                  const { status: statusNextTab, message: messageNextTab } =
-                    await nextTab(tab);
-                  // console.log(messageNextTab);
-                  if (!statusNextTab) {
-                    // await delay(3000)
-                    break;
-                  } else {
-                    await delay(2000);
-                  }
-                }
-              }
-              return true;
-            } catch (error) {
-              console.log(error);
-            }
-          }
+    );
+    await editMessage(`Hello ${userProfile.data[0].full_name}`);
 
-          function delay(time) {
-            return new Promise((res) => setTimeout(res, time));
-          }
+    const listTrackingLMS = await getDataByQueryLMS(
+      process.env.URL_CLASS_STUDENT_STRACKING_LMS,
+      {
+        query: {
+          order: "ASC",
+          orderby: "id",
+          limit: 1000,
+          paged: 1,
+          "condition[0][key]": "class_student_id",
+          "condition[0][value]": json.class_studentId,
+          "condition[0][compare]": "=",
+          "condition[1][key]": "class_id",
+          "condition[1][value]": json.class_id,
+          "condition[1][compare]": "=",
+          "condition[1][type]": "and",
+        },
+        token,
+      }
+    );
+    await editMessage(`Đang lấy danh sách video`);
+    // console.log(listTrackingLMS);
+    // if(listTrackingLMS.data.length > 0) {
+    //   for (const iterator of object) {
 
-          async function nextTab(thisTab) {
-            try {
-              const { nextTab, message } = checkNextTab(thisTab);
-              if (nextTab) {
-                nextTab.click();
-                return {
-                  status: true,
-                  message: `Chuyển qua ${message}`,
-                };
-              } else {
-                return {
-                  status: false,
-                  message,
-                };
-              }
-            } catch (error) {
-              console.log(error);
-            }
-          }
-          function checkNextTab(tab) {
-            if (tab?.parentElement?.nextElementSibling) {
-              // kiểm tra xem có tab tiếp theo không
-              if (
-                tab?.parentElement?.nextElementSibling.querySelector("button")
-              ) {
-                return {
-                  nextTab:
-                    tab?.parentElement?.nextElementSibling.querySelector(
-                      "button"
-                    ),
-                  message: "tab tiếp theo",
-                };
-              }
-              return {
-                nextTab: false,
-                message: "Không tìm được liên kết mục hoặc tab tiếp theo",
-              };
-            } else if (
-              tab?.parentElement?.parentElement?.parentElement
-                ?.nextElementSibling
-            ) {
-              // kiểm tra xem có mục tiếp theo không
-              if (
-                tab.parentElement.parentElement.parentElement.nextElementSibling.querySelector(
-                  "button"
-                )
-              ) {
-                return {
-                  nextTab:
-                    tab?.parentElement?.parentElement?.parentElement?.nextElementSibling.querySelector(
-                      "button"
-                    ),
-                  message: "Chuyển chương tiếp theo",
-                };
-              } else if (
-                !tab.parentElement.parentElement.parentElement.nextElementSibling.querySelector(
-                  "button"
-                ) &&
-                tab.parentElement.parentElement.parentElement.nextElementSibling
-                  .nextElementSibling
-              ) {
-                //bỏ qua các trương không có gì
-                if (
-                  tab.parentElement.parentElement.parentElement
-                    .nextElementSibling.nextElementSibling &&
-                  !tab.parentElement.parentElement.parentElement.nextElementSibling.querySelector(
-                    "button"
-                  )
-                ) {
-                  tab =
-                    tab.parentElement.parentElement.parentElement
-                      .nextElementSibling.nextElementSibling;
-                  while (
-                    tab.nextElementSibling.nextElementSibling.tagName ===
-                      "LI" &&
-                    !tab.querySelector("button")
-                  ) {
-                    tab = tab.nextElementSibling;
-                  }
-                  if (tab.querySelector("button")) {
-                    return {
-                      nextTab: tab.querySelector("button"),
-                      message: "Chuyển chương tiếp theo",
-                    };
-                  } else {
-                    return {
-                      nextTab: null,
-                      message: "đã hết",
-                    };
-                  }
-                }
-              }
-              return {
-                nextTab: false,
-                message: "Không tìm được liên kết mục hoặc tab tiếp theo",
-              };
-            }
-            return {
-              nextTab: null,
-              message: "đã hết",
-            };
-          }
-          function checkProgess(tab) {
-            return new Promise((res) => {
-              res(
-                tab.querySelector(
-                  "svg.lesson-board__lesson__progress__svg--tick"
-                )
-                  ? true
-                  : false
-              );
-            });
-          }
-          function seekedVideo(tab, url_video) {
-            return new Promise(async (res) => {
-              try {
-                const video = document.querySelector("video");
-                if (video && (await checkProgess(tab))) {
-                  res({
-                    status: true,
-                    message: "Video bạn đã xem rồi",
-                  });
-                }
-                if (video && !(await checkProgess(tab))) {
-                  video.src = url_video;
-                  video.play();
-                  video.muted = true;
-                  video.addEventListener(
-                    "ended",
-                    handlerEndedVideo.bind({
-                      tab,
-                      srcVideo: url_video,
-                      response: res,
-                    })
-                  );
-                } else {
-                  res({
-                    status: true,
-                    message: "Tab này không có video",
-                  });
-                }
-              } catch (error) {
-                res({
-                  status: false,
-                  message: error,
-                });
-              }
-            });
-          }
-          async function handlerEndedVideo() {
-            try {
-              await delay(2000);
-              if (await checkProgess(this.tab)) {
-                this.response({
-                  status: true,
-                  message: "Video đã tua xong",
-                });
-              } else {
-                this.response({
-                  status: false,
-                  message: "Video chưa tua xong",
-                });
-              }
-            } catch (error) {
-              console.log(error);
-            }
-          }
-          return await thanChu();
-        } catch (error) {
-          console.log(error);
-        }
-      });
-      await deleteMessage();
-      await browser.close();
-      if (isDone) {
-        await this.sendMessage(
-          chat_id,
-          `Đã tua xong <strong>${data.split("-")[1]}</strong> - <strong>${
-            Math.floor(new Date() - timeStartSkip) / 1000
-          }s</strong>`,
-          {
-            parse_mode: "HTML",
-            reply_to_message_id: message_id,
-          }
+    //   }
+    // }
+    const listVideoAndLessonData = await getDataByQueryLMS(
+      process.env.URL_LESSON_LMS,
+      {
+        query: {
+          paged: 1,
+          limit: 1000,
+          orderby: "ordering",
+          order: "ASC",
+          "condition[0][key]": "course_id",
+          "condition[0][value]": json.course_id,
+          "condition[0][compare]": "=",
+          "condition[1][key]": "status",
+          "condition[1][value]": "1",
+          "condition[1][compare]": "=",
+          "condition[1][type]": "and",
+        },
+        token,
+      }
+    );
+
+    for (const lessonOrTest of listVideoAndLessonData.data) {
+      if (lessonOrTest.type === "LESSON") {
+        // tìm kiếm video ở danh sách các bài đã làm và video đã xem
+        const listSeekVideo = listTrackingLMS.data.find(
+          (trackingData) => trackingData.lesson_id == lessonOrTest.id
         );
-      } else {
-        await this.sendMessage(chat_id, `Có lỗi xảy ra không thể tua`, {
-          reply_to_message_id: message_id,
-        });
+        // video đã hàng thành rồi thì bỏ qua
+        // if (listSeekVideo && listSeekVideo.completed) {
+        //   continue;
+        // }
+        // case chưa xem video nào
+        if (!listSeekVideo) {
+          // tạo mới video hoặc xác nhận hoàn thành
+          const newDataTrackingVideo = await updateDataLMS(
+            process.env.URL_CLASS_STUDENT_STRACKING_LMS,
+            {
+              method: "POST",
+              body: {
+                class_id: json.class_id,
+                class_student_id: json.class_studentId,
+                lesson_id: lessonOrTest.id,
+                completed: 0,
+                lesson_name: lessonOrTest.title,
+              },
+              token,
+            }
+          );
+
+          
+          // case lesson video
+          if (newDataTrackingVideo.data && lessonOrTest.video !== null) {
+            const videoData = await getFileLMS(
+              `${process.env.URL_AWS_FILE_LMS}/${lessonOrTest.video.id}`,
+              token
+            );
+            await editMessage(`bắt đầu xem video ${lessonOrTest.title}`);
+            if (videoData.data) {
+              const durationVideo = await getDurationVideo(
+                page,
+                videoData.data
+              );
+              if (!isNaN(durationVideo)) {
+                await editMessage(
+                  `video: ${lessonOrTest.title} có thời lượng là: ${durationVideo / 60} phút`
+                );
+                const isCompleteLessonVideo = await updateDataLMS(
+                  `${process.env.URL_CLASS_STUDENT_STRACKING_LMS}/${newDataTrackingVideo.data}`,
+                  {
+                    body: {
+                      video_duration: durationVideo,
+                      max_stopped_time: durationVideo,
+                      last_stopped: durationVideo,
+                      time_play_video: 30,
+                      completed: 1,
+                    },
+                    token,
+                    method: "PUT",
+                  }
+                );
+                await editMessage(
+                  `${lessonOrTest.title} => ${isCompleteLessonVideo.message}`
+                );
+                continue
+              }
+              await editMessage(
+                `Không lấy được thời lượng video ${lessonOrTest.title}`
+              );
+            }
+          } else if (newDataTrackingVideo.data && lessonOrTest.video === null) {
+            // case xác nhận hoàn thành
+            await updateDataLMS(
+              `${process.env.URL_CLASS_STUDENT_STRACKING_LMS}/${newDataTrackingVideo.data}`,
+              {
+                method: "PUT",
+                body: {
+                  video_duration: 0,
+                  time_play_video: 0,
+                  completed: 1,
+                  max_stopped_time: 0,
+                  last_stopped: 0,
+                },
+                token,
+              }
+            );
+          }
+          await editMessage(`Xác nhận hoàn thành ${lessonOrTest.title}`);
+          continue;
+        }
+        //case video đã xem và chưa xem xong
+        if (lessonOrTest.video) {
+          await editMessage(`Lấy thông tin video ${lessonOrTest.title}`);
+
+          const videoData = await getFileLMS(
+            `${process.env.URL_AWS_FILE_LMS}/${lessonOrTest.video.id}`,
+            token
+          );
+          if (videoData.data) {
+            const durationVideo = await getDurationVideo(page, videoData.data);
+          await editMessage(`Đang bắt đầu tua ${lessonOrTest.title}...`);
+
+            if (!isNaN(durationVideo)) {
+              const isCompleteLessonVideo = await updateDataLMS(
+                `${process.env.URL_CLASS_STUDENT_STRACKING_LMS}/${listSeekVideo.id}`,
+                {
+                  body: {
+                    video_duration: durationVideo,
+                    max_stopped_time: durationVideo,
+                    last_stopped: durationVideo,
+                    time_play_video: 30,
+                    completed: 1,
+                  },
+                  token,
+                  method: "PUT",
+                }
+              );
+              console.log(isCompleteLessonVideo);
+            }
+          }
+          await editMessage(`Đã hoàn thành ${lessonOrTest.title}`);
+
+          continue;
+        }
       }
     }
-    // await browser.close();
+    await deleteMessage();
+    await browser.close();
+    await this.sendMessage(chat_id, `Đã xem xong rùi nhé`);
   } catch (error) {
     console.error(error);
     await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {
       reply_to_message_id: message_id,
     });
-    return
+    return;
   }
 }
 export default skipVideoLMS;
