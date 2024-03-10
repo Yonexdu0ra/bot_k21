@@ -21,4 +21,5 @@ export default [
   { command: "/set_pass", description: "Thiết lập Password" },
   { command: "/help", description: "Thông tin các commnand có thể dùng" },
   { command: "/skip_video_lms", description: "Tua danh sách các video trên LMS" },
+  { command: "/auto_complete_test_lms", description: "Tự động làm bài tập trên LMS" },
 ];

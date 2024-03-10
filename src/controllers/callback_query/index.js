@@ -1,4 +1,5 @@
 import skipVideoLMS from "./skipVideoLMS.js";
+import autoCompleteTest from "./autoCompleteTest.js";
 import close from "./close.js";
 async function callback_query(query) {
   try {
@@ -6,6 +7,13 @@ async function callback_query(query) {
     switch (payload[0]) {
       case "SKIP": {
         await skipVideoLMS.call(this, {
+          data: payload[1],
+          message: query.message,
+        });
+        break;
+      }
+      case "LESSON": {
+        await autoCompleteTest.call(this, {
           data: payload[1],
           message: query.message,
         });

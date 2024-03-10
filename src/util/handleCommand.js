@@ -10,6 +10,7 @@ import askGPT from "../controllers/command/askGPT.js";
 import help from "../controllers/command/help.js";
 import getDiemThiICTU from "../controllers/command/getDiemThiICTU.js";
 import skipVideoLMS from "../controllers/command/skipVideoLMS.js";
+import autoCompleteTestLMS from "../controllers/command/autoCompleteTest.js";
 import createQR from "../controllers/command/createQR.js";
 const handleCommand = [
   {
@@ -68,6 +69,10 @@ const handleCommand = [
   {
     regex: /\/skip_video_lms/,
     handler: skipVideoLMS,
+  },
+  {
+    regex: /\/auto_complete_test_lms/,
+    handler: autoCompleteTestLMS,
   },
 ];
 

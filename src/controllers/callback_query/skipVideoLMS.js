@@ -14,7 +14,6 @@ async function skipVideoLMS({ data, message }) {
   const chat_id = message.chat.id;
   const message_id = message.message_id;
   try {
-    
     const isSetAccount = await checkSetAccount(chat_id);
     if (!isSetAccount.status) {
       await this.sendMessage(chat_id, isSetAccount.message, {
@@ -83,12 +82,7 @@ async function skipVideoLMS({ data, message }) {
       }
     );
     await editMessage(`Đang lấy danh sách video`);
-    // console.log(listTrackingLMS);
-    // if(listTrackingLMS.data.length > 0) {
-    //   for (const iterator of object) {
 
-    //   }
-    // }
     const listVideoAndLessonData = await getDataByQueryLMS(
       process.env.URL_LESSON_LMS,
       {
@@ -150,7 +144,9 @@ async function skipVideoLMS({ data, message }) {
               );
               if (!isNaN(durationVideo)) {
                 await editMessage(
-                  `video: ${lessonOrTest.title} có thời lượng là: ${durationVideo / 60} phút`
+                  `video: ${lessonOrTest.title} có thời lượng là: ${
+                    durationVideo / 60
+                  } phút`
                 );
                 const isCompleteLessonVideo = await updateDataLMS(
                   `${process.env.URL_CLASS_STUDENT_STRACKING_LMS}/${newDataTrackingVideo.data}`,
@@ -169,7 +165,7 @@ async function skipVideoLMS({ data, message }) {
                 await editMessage(
                   `${lessonOrTest.title} => ${isCompleteLessonVideo.message}`
                 );
-                continue
+                continue;
               }
               await editMessage(
                 `Không lấy được thời lượng video ${lessonOrTest.title}`
@@ -205,7 +201,7 @@ async function skipVideoLMS({ data, message }) {
           );
           if (videoData.data) {
             const durationVideo = await getDurationVideo(page, videoData.data);
-          await editMessage(`Đang bắt đầu tua ${lessonOrTest.title}...`);
+            await editMessage(`Đang bắt đầu tua ${lessonOrTest.title}...`);
 
             if (!isNaN(durationVideo)) {
               const isCompleteLessonVideo = await updateDataLMS(
@@ -222,10 +218,9 @@ async function skipVideoLMS({ data, message }) {
                   method: "PUT",
                 }
               );
-              console.log(isCompleteLessonVideo);
+              await editMessage(`Đã hoàn thành ${lessonOrTest.title} => ${isCompleteLessonVideo.data}`);
             }
           }
-          await editMessage(`Đã hoàn thành ${lessonOrTest.title}`);
 
           continue;
         }
