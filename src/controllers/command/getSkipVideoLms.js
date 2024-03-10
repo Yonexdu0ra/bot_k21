@@ -1,4 +1,3 @@
-
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import loginLMS from "../../util/loginLMS.js";
 import checkSetAccount from "../../util/checkSetAccount.js";
@@ -8,7 +7,6 @@ import Account from "../../model/Account.js";
 async function skipVideoLMS(msg, match) {
   const chat_id = msg.chat.id;
   const message_id = msg.message_id;
-  
   try {
     const isRedundantCommand = await checkRedundantCommand(this, match, {
       chat_id,
@@ -25,8 +23,19 @@ async function skipVideoLMS(msg, match) {
       });
       return;
     }
+    const {  editMessgae } = await typingMessage(this, {
+      chat_id,
+    });
+    const listAllowId = [5460411588, 5998381242];
 
-    const { deleteMessage } = await typingMessage(this, { chat_id });
+    if (!listAllowId.includes(msg.from.id)) {
+      await editMessgae(
+        `Rất tiếc ${msg.from.first_name} ${
+          msg.from?.last_name || ""
+        } ơi bạn không có quyền sử dụng chức năng nay :V`
+      );
+      return;
+    }
     await this.sendChatAction(chat_id, "typing");
     const accountData = await Account.findOne({
       chat_id,
@@ -45,7 +54,7 @@ async function skipVideoLMS(msg, match) {
       username: accountData.username,
       password: accountData.password,
     });
-    // console.log(data);
+
     if (data.code != "success") {
       let x = "```json\n" + JSON.stringify(data, null, 2) + "```";
       await this.sendMessage(chat_id, x, {
@@ -54,6 +63,8 @@ async function skipVideoLMS(msg, match) {
       });
       return;
     }
+    await editMessgae("Đăng nhập thành công");
+
     const token = data.access_token;
     const profile = await getDataByQueryLMS(process.env.URL_PROFILE_LMS, {
       token,
@@ -69,6 +80,7 @@ async function skipVideoLMS(msg, match) {
         token,
       }
     );
+    await editMessgae(`Hello ${userProfile.data[0].full_name}`);
     const listYear = await getDataByQueryLMS(
       process.env.URL_CLASS_STUDENT_LMS,
       {
@@ -106,6 +118,9 @@ async function skipVideoLMS(msg, match) {
       }
     );
     if (listClassIdCourse.data) {
+      await editMessgae(
+        `Hello ${userProfile.data[0].full_name} đây là những môn kỳ này bạn học: `
+      );
       for (const course of listClassIdCourse.data) {
         const classData = await getDataByQueryLMS(
           `${process.env.URL_CLASS_LMS}/${course.class_id}`,
@@ -116,8 +131,9 @@ async function skipVideoLMS(msg, match) {
             },
           }
         );
-        let x = "```json\n" + JSON.stringify(classData.data, null, 2) + "```";
-        await this.sendMessage(chat_id, x, {
+        let response =
+          "```json\n" + JSON.stringify(classData.data, null, 2) + "```";
+        await this.sendMessage(chat_id, response, {
           parse_mode: "Markdown",
           reply_markup: {
             inline_keyboard: [
@@ -129,11 +145,17 @@ async function skipVideoLMS(msg, match) {
                     course_id: classData.data.course_id,
                   })}`,
                 },
+                {
+                  text: "Close",
+                  callback_data: "CLOSE",
+                },
               ],
             ],
           },
         });
       }
+      await deleteMessage();
+      await this.sendMessage(chat_id, `Hãy chọn bài học bạn muốn tua`);
     }
   } catch (error) {
     console.error(error);

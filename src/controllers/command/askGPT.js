@@ -2,7 +2,6 @@ import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import nodeFetch from "node-fetch";
 import typingMessage from "../../util/tyingMessage.js";
 import { config } from "dotenv";
-import { Readable } from "stream";
 config();
 async function askGPT(msg, match) {
   const chat_id = msg.chat.id;
@@ -12,7 +11,6 @@ async function askGPT(msg, match) {
       chat_id,
       message_id,
     });
-    // console.log(msg);
     if (!isRedundantCommand) {
       return;
     }
@@ -30,7 +28,7 @@ async function askGPT(msg, match) {
       );
       return;
     }
-    const { deleteMessage, editMessage } = await typingMessage(this, { chat_id });
+    const { deleteMessage } = await typingMessage(this, { chat_id });
     await this.sendChatAction(chat_id, "typing");
     let text = "";
     const res = await fetch(
@@ -54,11 +52,10 @@ async function askGPT(msg, match) {
       }
     );
     const data = await res.json();
+    await deleteMessage();
     for (const { candidates } of data) {
       text += candidates[0].content.parts[0].text;
     }
-    await editMessage('hehe')
-    // await deleteMessage();
     await this.sendMessage(chat_id, text, {
       reply_to_message_id: message_id,
       parse_mode: "Markdown",

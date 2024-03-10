@@ -14,7 +14,7 @@ async function skipVideoLMS({ data, message }) {
   const chat_id = message.chat.id;
   const message_id = message.message_id;
   try {
-    console.log(json);
+    
     const isSetAccount = await checkSetAccount(chat_id);
     if (!isSetAccount.status) {
       await this.sendMessage(chat_id, isSetAccount.message, {
@@ -36,8 +36,6 @@ async function skipVideoLMS({ data, message }) {
       username: accountData.username,
       password: accountData.password,
     });
-    // console.log(data);
-    // await deleteMessage();
     if (data.code != "success") {
       let x = "```json\n" + JSON.stringify(data, null, 2) + "```";
       await this.sendMessage(chat_id, x, {
@@ -118,9 +116,9 @@ async function skipVideoLMS({ data, message }) {
           (trackingData) => trackingData.lesson_id == lessonOrTest.id
         );
         // video đã hàng thành rồi thì bỏ qua
-        // if (listSeekVideo && listSeekVideo.completed) {
-        //   continue;
-        // }
+        if (listSeekVideo && listSeekVideo.completed) {
+          continue;
+        }
         // case chưa xem video nào
         if (!listSeekVideo) {
           // tạo mới video hoặc xác nhận hoàn thành
@@ -138,8 +136,6 @@ async function skipVideoLMS({ data, message }) {
               token,
             }
           );
-
-          
           // case lesson video
           if (newDataTrackingVideo.data && lessonOrTest.video !== null) {
             const videoData = await getFileLMS(
