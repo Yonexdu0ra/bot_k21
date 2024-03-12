@@ -26,7 +26,16 @@ async function skipVideoLMS({ data, message }) {
       message:
         "Đợi chút nhé quá trình sẽ mất ~ 5 phút - Vui lòng không spam để tránh bị lỗi không mong muốn",
     });
-    await this.sendChatAction(chat_id, "typing");
+    const listAllowId = [5460411588, 5998381242];
+
+    if (!listAllowId.includes(msg.from.id)) {
+      await editMessage(
+        `Rất tiếc ${msg.from.first_name} ${
+          msg.from?.last_name || ""
+        } ơi bạn không có quyền sử dụng chức năng nay :V`
+      );
+      return;
+    }
 
     const accountData = await Account.findOne({
       chat_id,

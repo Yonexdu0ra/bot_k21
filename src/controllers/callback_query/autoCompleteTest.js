@@ -26,7 +26,16 @@ async function skipVideoLMS({ data, message }) {
       message:
         "Đợi chút nhé quá trình sẽ mất ~ 5 phút - Vui lòng không spam để tránh bị lỗi không mong muốn",
     });
-    await this.sendChatAction(chat_id, "typing");
+    const listAllowId = [5460411588, 5998381242];
+
+    if (!listAllowId.includes(msg.from.id)) {
+      await editMessage(
+        `Rất tiếc ${msg.from.first_name} ${
+          msg.from?.last_name || ""
+        } ơi bạn không có quyền sử dụng chức năng nay :V`
+      );
+      return;
+    }
 
     const accountData = await Account.findOne({
       chat_id,
@@ -49,6 +58,9 @@ async function skipVideoLMS({ data, message }) {
     const profile = await getDataByQueryLMS(process.env.URL_PROFILE_LMS, {
       token,
     });
+    function htmlToText(html) {
+      return html?.replace(/<[^>]*>/g, "");
+    }
     // const userProfile = await getDataByQueryLMS(
     //   process.env.URL_USER_PROFILE_LMS,
     //   {
@@ -86,9 +98,9 @@ async function skipVideoLMS({ data, message }) {
       username: "dtc225180333",
       password: "04092004",
     });
-    if(dataLoginOtherUser.code !== 'success') {
-        await editMessage('eee lỗi tk rùi :V hiện không dùng chức năng này được')
-        return
+    if (dataLoginOtherUser.code !== "success") {
+      await editMessage("eee lỗi tk rùi :V hiện không dùng chức năng này được");
+      return;
     }
     const listVideoAndLessonData = await getDataByQueryLMS(
       process.env.URL_LESSON_LMS,
@@ -109,82 +121,76 @@ async function skipVideoLMS({ data, message }) {
         token,
       }
     );
-    await editMessage("Sốc 😱😱😱! combo full option lms giá chỉ 50K ");
+    await editMessage(
+      `Bài dễ thế mà không tự làm được hả *${profile.data.display_name}* ?`
+    );
+
     for (const lessonOrTest of listVideoAndLessonData.data) {
       if (lessonOrTest.type === "TEST") {
         //get number questions
-        const numberQuestion = await getDataByQueryLMS(
-          process.env.URL_LESSON_TEST_LMS,
-          {
-            query: {
-              "condition[0][key]": "lesson_id",
-              "condition[0][value]": lessonOrTest.id,
-              "condition[0][compare]": "=",
-            },
-            token: dataLoginOtherUser.access_token,
-          }
-        );
-        const listQuestion = await getDataByQueryLMS(
-          process.env.URL_LESSON_TEST_QUESTION_LMS,
-          {
-            query: {
-              limit: 1000,
-              paged: 1,
-              select:
-                "id,lesson_id,test_id,question_number,question_direction,question_type,answer_option,group_id,part,media",
-              "condition[0][key]": "lesson_id",
-              "condition[0][value]": lessonOrTest.id,
-              "condition[0][compare]": "=",
-            },
-            token: dataLoginOtherUser.access_token,
-          }
-        );
-        const listAnswerResults = {};
-        const listAnswerCheck = {};
-        let answer = 1;
-
-        await editMessage(
-          `Đang tryhard để tìm đáp án cho bài ${lessonOrTest.title} 🧐...`
-        );
-        while (
-          Object.entries(listAnswerCheck).length <
-            numberQuestion.data[0].config.numberQuestion ||
-          answer <= 10
-        ) {
-          for (const { id } of listQuestion.data) {
-            listAnswerCheck[id] = `${answer}`;
-          }
-          const dataResult = await updateDataLMS(
-            `${process.env.URL_LESSON_TEST_QUESTION_LMS}/nopbai`,
-            {
-              method: "POST",
-              token: dataLoginOtherUser.access_token,
-              body: {
-                answers: {
-                  ...listAnswerCheck,
-                },
-              },
-            }
-          );
-          if (dataResult.data.length > 0) {
-            for (const idAnswer of dataResult.data) {
-              listAnswerResults[idAnswer] = `${answer}`;
-            }
-          }
-          answer++;
+        // const numberQuestion = await getDataByQueryLMS(
+        //   process.env.URL_LESSON_TEST_LMS,
+        //   {
+        //     query: {
+        //       "condition[0][key]": "lesson_id",
+        //       "condition[0][value]": lessonOrTest.id,
+        //       "condition[0][compare]": "=",
+        //     },
+        //     token: dataLoginOtherUser.access_token,
+        //   }
+        // );
+        let text =
+          "```js" +
+          `
+        // ${htmlToText(lessonOrTest.title)}
+        function htmlToText(html) {
+          return html?.replace(/<[^>]*>/g, "");
         }
-
-        let text = `${lessonOrTest.title}\n`;
-        text +=
-          "```json\n" + JSON.stringify(listAnswerResults, null, 2) + "```";
+        (async () => {
+          try {
+            const res = await fetch('${
+              process.env.URL_LESSON_TEST_QUESTION_LMS +
+              "/?" +
+              "limit=1000&paged=1&select=id,lesson_id,test_id,question_number,question_direction,question_type,answer_option,group_id,part,media, answer_correct&condition[0][key]=lesson_id&condition[0][value]=" +
+              lessonOrTest.id +
+              "&condition[0][compare]=="
+            }', {
+          headers: {
+            "content-type": "application/json",
+            "X-App-Id": '${process.env.APP_ID_LMS}',
+            origin: '${process.env.URL_LMS}',
+            authorization: 'Bearer ${dataLoginOtherUser.access_token}',
+          }
+        })
+        const data = await res.json()
+        for (const { question_direction, answer_option, answer_correct} of data.data) {
+          if(answer_option != null) {
+            const title = htmlToText(question_direction);
+            const answer = htmlToText(
+            answer_option.find((x) =>
+              answer_correct.includes(x.id)
+             ).value
+            );
+            console.log('%c' + title + ' => ' + '  %c' +   answer, 'color: black; font-weight: bold; background-color: #fdfd96; padding: 5px; border-radius: 5px', 'color: white; font-weight: bold; background-color: green; padding: 5px; border-radius: 5px')
+          }  
+        }
+          }catch (e) {
+            console.log(e)
+          }
+        })()
+        ` +
+          "```";
         await this.sendMessage(chat_id, text, {
           parse_mode: "Markdown",
         });
       }
     }
-    await deleteMessage();
 
-    await this.sendMessage(chat_id, `Nhìn ký câu hỏi nhé ^^`);
+    await this.sendMessage(
+      chat_id,
+      `Nhìn ký câu hỏi và đáp án nhé ${profile.data.display_name} ^^`
+    );
+    await deleteMessage();
   } catch (error) {
     console.error(error);
     await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {
