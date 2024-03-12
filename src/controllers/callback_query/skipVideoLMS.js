@@ -27,12 +27,9 @@ async function skipVideoLMS({ data, message }) {
         "Đợi chút nhé quá trình sẽ mất ~ 5 phút - Vui lòng không spam để tránh bị lỗi không mong muốn",
     });
     const listAllowId = [5460411588, 5998381242];
-
-    if (!listAllowId.includes(message.from.id)) {
+    if (!listAllowId.includes(message.chat.id)) {
       await editMessage(
-        `Rất tiếc ${msg.from.first_name} ${
-          msg.from?.last_name || ""
-        } ơi bạn không có quyền sử dụng chức năng nay :V`
+        `Rất tiếc ${message.chat.first_name}  ơi bạn không có quyền sử dụng chức năng nay :V`
       );
       return;
     }
