@@ -28,7 +28,7 @@ async function skipVideoLMS({ data, message }) {
     });
     const listAllowId = [5460411588, 5998381242];
 
-    if (!listAllowId.includes(msg.from.id)) {
+    if (!listAllowId.includes(message.from.id)) {
       await editMessage(
         `Rất tiếc ${msg.from.first_name} ${
           msg.from?.last_name || ""
