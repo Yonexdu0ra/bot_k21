@@ -15,7 +15,7 @@ const checkRedundantCommand = async function (bot, match, {chat_id, message_id})
     }
     return {
       status: true,
-      value: match.input.split(isCommand)[1],
+      value: match.input.split(isCommand)[1]?.trim() || '',
       command: isCommand
     };
   } catch (error) {

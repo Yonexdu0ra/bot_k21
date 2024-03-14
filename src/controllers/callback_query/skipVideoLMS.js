@@ -6,10 +6,12 @@ import getFileLMS from "../../util/getFileLMS.js";
 import getDurationVideo from "../../util/getDurationVideo.js";
 import typingMessage from "../../util/tyingMessage.js";
 import Account from "../../model/Account.js";
+import Key from "../../model/Key.js";
 import puppeteer from "puppeteer";
 import configBrowser from "../../config/browser.js";
 async function skipVideoLMS({ data, message }) {
   // const timeStartSkip = new Date();
+
   const json = JSON.parse(data);
   const chat_id = message.chat.id;
   const message_id = message.message_id;
@@ -21,22 +23,46 @@ async function skipVideoLMS({ data, message }) {
       });
       return;
     }
-    const { deleteMessage, editMessage } = await typingMessage(this, {
+    const { editMessage } = await typingMessage(this, {
       chat_id,
       message:
         "Đợi chút nhé quá trình sẽ mất ~ 5 phút - Vui lòng không spam để tránh bị lỗi không mong muốn",
     });
-    const listAllowId = [5460411588, 5998381242];
-    if (!listAllowId.includes(message.chat.id)) {
-      await editMessage(
-        `Rất tiếc ${message.chat.first_name}  ơi bạn không có quyền sử dụng chức năng nay :V`
-      );
-      return;
-    }
-
     const accountData = await Account.findOne({
       chat_id,
     });
+    const isKey = await Key.findOne({ key: accountData.key });
+    if (!isKey) {
+      await this.deleteMessage(chat_id, message_id);
+      await editMessage("Hmm... bạn nên sử dụng key mới");
+      return;
+    }
+    if (isKey.type !== "LESSON") {
+      await editMessage("KEY của bạn không dùng được chức năng này");
+      return;
+    }
+    if (isKey.count < 1) {
+      await editMessage(
+        `Hmm... key bạn hết lượt sử dụng rồi [${message.from.first_name} ${
+          message.from.last_name || ""
+        }](tg://user?id=${message.from.id})`
+      );
+      return;
+    }
+    await editMessage(
+      `Trước khi thực hiện mình sẽ trừ đi 1 lần sử dụng của key nhé [${
+        message.from.first_name
+      } ${message.from.last_name || ""}](tg://user?id=${message.from.id})`
+    );
+    await Key.findOneAndUpdate(
+      {
+        key: accountData.key,
+      },
+      {
+        count: isKey.count - 1,
+      }
+    );
+    await editMessage("Bắt đầu thực hiện nào...");
     const data = await loginLMS({
       username: accountData.username,
       password: accountData.password,
@@ -224,7 +250,9 @@ async function skipVideoLMS({ data, message }) {
                   method: "PUT",
                 }
               );
-              await editMessage(`Đã hoàn thành ${lessonOrTest.title} => ${isCompleteLessonVideo.data}`);
+              await editMessage(
+                `Đã hoàn thành ${lessonOrTest.title} => ${isCompleteLessonVideo.data}`
+              );
             }
           }
 
@@ -232,9 +260,15 @@ async function skipVideoLMS({ data, message }) {
         }
       }
     }
-    await deleteMessage();
+    // await deleteMessage();
     await browser.close();
-    await this.sendMessage(chat_id, `Đã xem xong rùi nhé`);
+    await this.sendMessage(
+      chat_id,
+      `*Đã tua xong* có lỗi gì thì báo [Cường](https://t.me/nmcuong04) hỗ trợ nhé `,
+      {
+        parse_mode: "Markdown",
+      }
+    );
   } catch (error) {
     console.error(error);
     await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {

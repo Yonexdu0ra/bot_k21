@@ -4,6 +4,7 @@ import checkSetAccount from "../../util/checkSetAccount.js";
 import typingMessage from "../../util/tyingMessage.js";
 import getDataByQueryLMS from "../../util/getDataByQueryLMS.js";
 import Account from "../../model/Account.js";
+import Key from "../../model/Key.js";
 async function skipVideoLMS(msg, match) {
   const chat_id = msg.chat.id;
   const message_id = msg.message_id;
@@ -28,26 +29,35 @@ async function skipVideoLMS(msg, match) {
       chat_id,
     });
     await this.sendChatAction(chat_id, "typing");
+    
     const accountData = await Account.findOne({
       chat_id,
     });
-    const listAllowId = [5460411588, 5998381242];
 
-    if (!listAllowId.includes(msg.from.id)) {
+    if (!accountData) {
       await editMessage(
-        `Rất tiếc ${msg.from.first_name} ${
-          msg.from?.last_name || ""
-        } ơi bạn không có quyền sử dụng chức năng nay :V`
+        `Vui lòng điền username và password để sử  dụng chức năng này.`
       );
       return;
     }
-    if (!accountData) {
-      await this.sendMessage(
-        chat_id,
-        `Vui lòng điền username và password để sử  dụng chức năng này.`,
-        {
-          reply_to_message_id: message_id,
-        }
+    if (!accountData.key) {
+      await editMessage(
+        `Để sử dụng chức năng này bạn cần liên hệ [Cường](https://t.me/nmcuong04) để lấy key nhé`
+      );
+      return;
+    }
+
+    const isKey = await Key.findOne({ key: accountData.key });
+    if (!isKey || isKey.count < 1) {
+      await editMessage(
+        `Rất tiếc key của bạn hết lượt sử dụng rùi liên hệ [Cường](https://t.me/nmcuong04) để tăng thêm lượt nhé !`
+      );
+      return;
+    }
+    
+    if (isKey.type !== "LESSON") {
+      await editMessage(
+        `Rất tiếc key của bạn chỉ có thể dùng cho lấy đáp án lms!`
       );
       return;
     }
@@ -171,11 +181,15 @@ async function skipVideoLMS(msg, match) {
             inline_keyboard: [
               [
                 {
-                  text: `Tua ${classData.data.name}`,
+                  text: `Tua ${classData.data.name.slice(
+                    0,
+                    classData.data.name.indexOf("(") || classData.data.name.length
+                  )}`,
                   callback_data: `SKIP-${JSON.stringify({
                     class_id: course.class_id,
                     course_id: classData.data.course_id,
                     class_studentId: course.id,
+                    // key: accountData.key,
                   })}`,
                 },
                 {

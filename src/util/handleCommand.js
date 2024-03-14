@@ -12,6 +12,9 @@ import getDiemThiICTU from "../controllers/command/getDiemThiICTU.js";
 import skipVideoLMS from "../controllers/command/skipVideoLMS.js";
 import autoCompleteTestLMS from "../controllers/command/autoCompleteTest.js";
 import createQR from "../controllers/command/createQR.js";
+import addKey from '../controllers/command/addKey.js'
+import setKey from '../controllers/command/setKey.js'
+import getKey from '../controllers/command/getKey.js'
 const handleCommand = [
   {
     regex: /\/ask/,
@@ -73,6 +76,18 @@ const handleCommand = [
   {
     regex: /\/auto_complete_test_lms/,
     handler: autoCompleteTestLMS,
+  },
+  {
+    regex: /\/newKey/,
+    handler: addKey,
+  },
+  {
+    regex: /\/setKey/,
+    handler: setKey,
+  },
+  {
+    regex: /\/getKey/,
+    handler: getKey,
   },
 ];
 
