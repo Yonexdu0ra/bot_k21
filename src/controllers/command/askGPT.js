@@ -28,7 +28,10 @@ async function askGPT(msg, match) {
       );
       return;
     }
-    const { deleteMessage } = await typingMessage(this, { chat_id });
+    const { editMessage } = await typingMessage(this, {
+      chat_id,
+      message: "Câu hỏi hay đấy",
+    });
     await this.sendChatAction(chat_id, "typing");
     let text = "";
     const res = await fetch(
@@ -52,44 +55,26 @@ async function askGPT(msg, match) {
       }
     );
     const data = await res.json();
-    await deleteMessage();
-    for (const { candidates } of data) {
-      text += candidates[0].content.parts[0].text;
+    if (data[0].error) {
+      await editMessage(data[0].error.message);
+      return;
     }
-    await this.sendMessage(chat_id, text, {
-      reply_to_message_id: message_id,
-      parse_mode: "Markdown",
-    });
-    // const res = await nodeFetch("https://api.openai.com/v1/chat/completions", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${process.env.API_TOKEN_OPENAI
-    //       }`,
-    //   },
-    //   body: JSON.stringify({
-    //     model: "gpt-3.5-turbo-0613",
-    //     messages: [{ role: "user", content: value }],
-    //   }),
-    // });
-    // const data = await res.json();
-    // if (data.error) {
-    //   await this.sendMessage(chat_id, data.error.message, {
-    //     reply_to_message_id: message_id,
-    //   });
-    //   return;
-    // }
-    // // let text = data.choices[0].message.content;
-    // let text = data.candidates[0].content.parts[0].text;
-    // if (text) {
-    //   await this.sendMessage(chat_id, text, {
-    //     reply_to_message_id: message_id,
-    //     parse_mode: "Markdown",
-    //   });
-    // }
+    for (const { candidates } of data) {
+      //  candidates?.content?.parts[0]?.text;
+      for (const x of candidates) {
+        if (x.content) {
+          for (const part of x.content.parts) {
+            if (part.text) {
+              text += part.text;
+            }
+          }
+        }
+      }
+    }
+    await editMessage(text);
   } catch (error) {
     console.log(error);
-    await this.sendMessage(chat_id, `${JSON.stringify(error)}`, {
+    await this.sendMessage(chat_id, `${JSON.stringify("Thử lại sau nhé")}`, {
       reply_to_message_id: message_id,
     });
   }

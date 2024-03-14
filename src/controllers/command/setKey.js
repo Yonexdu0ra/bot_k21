@@ -16,7 +16,7 @@ async function setKey(msg, match) {
     const { value, command } = isRedundantCommand;
     const { editMessage } = await typing_message(this, {
       chat_id,
-      message: `*${value}*`
+      message: `*${value}*`,
     });
 
     if (!value) {
@@ -36,23 +36,26 @@ async function setKey(msg, match) {
       return;
     }
     const isAccount = await Account.findOne({
-      chat_id
-    })
-    if(!isAccount) {
-      await editMessage('Đợi mình một chút nữa nhé')
+      chat_id,
+    });
+    if (!isAccount) {
+      await editMessage("Đợi mình một chút nữa nhé");
       await Account.create({
         chat_id,
-        key: value
-      })
+        key: value,
+      });
     } else {
-      await Account.findOneAndUpdate({ chat_id}, {
-        key: value
-      })
+      await Account.findOneAndUpdate(
+        { chat_id },
+        {
+          key: value,
+        }
+      );
     }
     await editMessage(
       `set key thành công key còn ${isHasKey.count} lần sử dụng nhé [${
         msg.from.first_name
-      } ${ msg.from.last_name || ''}](tg://user?id=${msg.from.id}) !`
+      } ${msg.from.last_name || ""}](tg://user?id=${msg.from.id}) !`
     );
   } catch (error) {
     console.log(error);

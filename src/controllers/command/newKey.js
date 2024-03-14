@@ -13,7 +13,7 @@ async function addKey(msg, match) {
       return;
     }
     const { value } = isRedundantCommand;
-    const { deleteMessage } = await typing_message(this, {
+    const { deleteMessage, editMessage } = await typing_message(this, {
       chat_id,
     });
     const listAllowId = [5460411588, 5998381242];
