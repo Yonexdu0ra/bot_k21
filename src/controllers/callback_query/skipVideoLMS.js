@@ -43,16 +43,12 @@ async function skipVideoLMS({ data, message }) {
     }
     if (isKey.count < 1) {
       await editMessage(
-        `Hmm... key bạn hết lượt sử dụng rồi [${message.from.first_name} ${
-          message.from.last_name || ""
-        }](tg://user?id=${message.from.id})`
+        `Hmm... key bạn hết lượt sử dụng rồi liên hệ [Cường](https://t.me/nmcuong04) để lấy key nhé`
       );
       return;
     }
     await editMessage(
-      `Trước khi thực hiện mình sẽ trừ đi 1 lần sử dụng của key nhé [${
-        message.from.first_name
-      } ${message.from.last_name || ""}](tg://user?id=${message.from.id})`
+      `Trước khi thực hiện mình sẽ trừ đi 1 lần sử dụng của key nhé `
     );
     await Key.findOneAndUpdate(
       {

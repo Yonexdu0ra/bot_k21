@@ -36,7 +36,7 @@ async function newKey({ data, message }) {
       count: json.count,
       type: json.type,
     });
-    await editMessage(`\`\`\`${keyData.key} \`\`\` \nLoại: *${keyData.type}* \n\n Số lượt còn lại: *${keyData.count}*`)
+    await editMessage(`\`\`\`${newKey} \`\`\` \nLoại: *${keyData.type}* \n\n Số lượt còn lại: *${keyData.count}*`)
   } catch (error) {
     console.error(error);
     await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {

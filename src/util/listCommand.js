@@ -22,4 +22,7 @@ export default [
   { command: "/help", description: "Thông tin các commnand có thể dùng" },
   { command: "/skip_video_lms", description: "Tua danh sách các video trên LMS" },
   { command: "/auto_complete_test_lms", description: "Tự động làm bài tập trên LMS" },
+  { command: "/new_key", description: "Tạo mới key (Admin)" },
+  { command: "/set_key", description: "Sửa dụng key" },
+  { command: "/get_key", description: "Lấy danh sách key (Admin)" },
 ];

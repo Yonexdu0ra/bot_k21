@@ -28,7 +28,9 @@ async function skipVideoLMS({ data, message }) {
     const isKey = await Key.findOne({ key: accountData.key });
     if (!isKey) {
       await this.deleteMessage(chat_id, message_id);
-      await editMessage("Hmm... bạn nên sử dụng key mới");
+      await editMessage(
+        "Hmm... key bạn hết lượt sử dụng rồi liên hệ [Cường](https://t.me/nmcuong04) để lấy key nhé"
+      );
       return;
     }
     if(isKey.type !== 'TEST') {
@@ -37,9 +39,7 @@ async function skipVideoLMS({ data, message }) {
     }
     if (isKey.count < 1) {
       await editMessage(
-        `Hmm... key bạn hết lượt sử dụng rồi [${message.from.first_name} ${
-          message.from.last_name || ""
-        }](tg://user?id=${message.from.id})`
+        `Hmm... key bạn hết lượt sử dụng rồi`
       );
       return;
     }

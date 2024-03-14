@@ -12,7 +12,7 @@ import getDiemThiICTU from "../controllers/command/getDiemThiICTU.js";
 import skipVideoLMS from "../controllers/command/skipVideoLMS.js";
 import autoCompleteTestLMS from "../controllers/command/autoCompleteTest.js";
 import createQR from "../controllers/command/createQR.js";
-import addKey from '../controllers/command/addKey.js'
+import newKey from '../controllers/command/newKey.js'
 import setKey from '../controllers/command/setKey.js'
 import getKey from '../controllers/command/getKey.js'
 const handleCommand = [
@@ -70,23 +70,23 @@ const handleCommand = [
     handler: help,
   },
   {
-    regex: /\/skip_video_lms/,
+    regex: /\/complete_video_lms/,
     handler: skipVideoLMS,
   },
   {
-    regex: /\/auto_complete_test_lms/,
+    regex: /\/get_anwer_lms/,
     handler: autoCompleteTestLMS,
   },
   {
-    regex: /\/newKey/,
-    handler: addKey,
+    regex: /\/new_key/,
+    handler: newKey,
   },
   {
-    regex: /\/setKey/,
+    regex: /\/set_key/,
     handler: setKey,
   },
   {
-    regex: /\/getKey/,
+    regex: /\/get_key/,
     handler: getKey,
   },
 ];

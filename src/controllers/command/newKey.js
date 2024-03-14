@@ -20,9 +20,7 @@ async function addKey(msg, match) {
 
     if (!listAllowId.includes(msg.from.id)) {
       await editMessage(
-        `Rất tiếc ${msg.from.first_name} ${
-          msg.from?.last_name || ""
-        } ơi bạn không có quyền sử dụng chức năng nay :V`
+        `Rất tiếc bạn không có quyền sử dụng chức năng nay liên hệ [Cường](https://t.me/nmcuong04) để lấy key nhé`
       );
       return;
     }

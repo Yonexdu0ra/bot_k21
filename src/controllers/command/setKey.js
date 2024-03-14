@@ -14,12 +14,12 @@ async function setKey(msg, match) {
       return;
     }
     const { value, command } = isRedundantCommand;
-    const { editMessage, deleteMessage } = await typing_message(this, {
+    const { editMessage } = await typing_message(this, {
       chat_id,
       message: `*${value}*`
     });
 
-    if (!value?.trim()) {
+    if (!value) {
       await editMessage(
         `Vui lòng nhập theo cúp pháp: ${command} *key bạn được cung cấp*`
       );

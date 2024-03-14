@@ -12,7 +12,7 @@ async function getKey(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
-    const { value, command } = isRedundantCommand;
+    const { value } = isRedundantCommand;
     const { editMessage } = await typing_message(this, {
       chat_id,
     });
@@ -20,9 +20,7 @@ async function getKey(msg, match) {
 
     if (!listAllowId.includes(msg.from.id)) {
       await editMessage(
-        `Rất tiếc ${msg.from.first_name} ${
-          msg.from?.last_name || ""
-        } ơi bạn không có quyền sử dụng chức năng nay :V`
+        `Rất tiếc bạn không có quyền sử dụng chức năng nay liên hệ [Cường](https://t.me/nmcuong04) để lấy key nhé`
       );
       return;
     }
@@ -35,9 +33,9 @@ async function getKey(msg, match) {
       for (const keyData of listKey) {
         await this.sendMessage(
           chat_id,
-          `\n ${"```" + keyData.key + "```"}\nSố lượt còn lại: *${
-            keyData.count
-          }*`,
+          `\n ${"```" + keyData.key + "```"}\nLoại Key: ${
+            keyData.type
+          }\nSố lượt còn lại: *${keyData.count}*`,
           {
             parse_mode: "Markdown",
             message_id,
