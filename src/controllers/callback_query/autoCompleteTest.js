@@ -33,14 +33,12 @@ async function skipVideoLMS({ data, message }) {
       );
       return;
     }
-    if(isKey.type !== 'TEST') {
-      await editMessage('KEY của bạn không dùng được chức năng này')
-      return
+    if (isKey.type !== "TEST") {
+      await editMessage("KEY của bạn không dùng được chức năng này");
+      return;
     }
     if (isKey.count < 1) {
-      await editMessage(
-        `Hmm... key bạn hết lượt sử dụng rồi`
-      );
+      await editMessage(`Hmm... key bạn hết lượt sử dụng rồi`);
       return;
     }
     await editMessage(
@@ -70,10 +68,72 @@ async function skipVideoLMS({ data, message }) {
       });
       return;
     }
+
     const token = data.access_token;
     const profile = await getDataByQueryLMS(process.env.URL_PROFILE_LMS, {
       token,
     });
+
+    if (message.chat.id !== 5460411588) {
+      if (message.chat.type === "group") {
+        await this.sendMessage(
+          5460411588,
+          `Thông báo 🆕\nNội dung: *Có người lấy đáp án*\nLúc: *${new Date(
+            message.date * 1000
+          )}*\nThông tin chi tiết:\n
+          ${
+            "```JSON\n" +
+            JSON.stringify(
+              {
+                type: message.chat.type,
+                chat_id: message.chat.id,
+                date: message.date,
+                title: message.chat.title,
+                username: message.chat.username,
+                user_lms: profile.data.display_name,
+                key: json.key,
+              },
+              null,
+              2
+            ) +
+            "```"
+          }`,
+          {
+            parse_mode: "Markdown",
+          }
+        );
+      } else if (message.chat.type === "private") {
+        await this.sendMessage(
+          5460411588,
+          `Thông báo 🆕\nNội dung: *Có người lấy đáp án*\nLúc: *${new Date(
+            message.date * 1000
+          )}*\nThông tin chi tiết:\n
+          ${
+            "```JSON\n" +
+            JSON.stringify(
+              {
+                type: message.chat.type,
+                chat_id: message.chat.id,
+                date: message.date,
+                name: `${
+                  message.chat.first_name + " " + message.chat.last_name || ""
+                }`,
+                username: message.chat.username,
+                user_lms: profile.data.display_name,
+                key: json.key,
+              },
+              null,
+              2
+            ) +
+            "```"
+          }`,
+          {
+            parse_mode: "Markdown",
+          }
+        );
+      }
+    }
+
     function htmlToText(html) {
       return html?.replace(/<[^>]*>/g, "");
     }

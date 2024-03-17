@@ -33,9 +33,9 @@ async function getKey(msg, match) {
       for (const keyData of listKey) {
         await this.sendMessage(
           chat_id,
-          `\n ${"```" + keyData.key + "```"}\nLoại Key: ${
+          `\n ${"```" + keyData.key + "```"}\nLoại Key: *${
             keyData.type
-          }\nSố lượt còn lại: *${keyData.count}*`,
+          }*\nSố lượt còn lại: *${keyData.count}*`,
           {
             parse_mode: "Markdown",
             message_id,

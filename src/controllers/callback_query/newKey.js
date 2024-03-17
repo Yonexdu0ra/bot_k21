@@ -28,15 +28,18 @@ async function newKey({ data, message }) {
       // để tạo ra chuỗi có khả năng duy nhất cao
       return `${sign}_${timestamp}${randomString}`;
     }
-    
+
     const newKey = generateUniqueId(`NMC_${json.type}`);
-  
+
     const keyData = await Key.create({
       key: newKey,
       count: json.count,
       type: json.type,
     });
-    await editMessage(`\`\`\`${newKey} \`\`\` \nLoại: *${keyData.type}* \n\n Số lượt còn lại: *${keyData.count}*`)
+    let key = "```" + newKey + "```";
+    await editMessage(
+      `${key} \nLoại: *${keyData.type}* \n\n Số lượt còn lại: *${keyData.count}*`
+    );
   } catch (error) {
     console.error(error);
     await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {

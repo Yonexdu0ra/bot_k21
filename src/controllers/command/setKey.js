@@ -16,18 +16,16 @@ async function setKey(msg, match) {
     const { value, command } = isRedundantCommand;
     const { editMessage } = await typing_message(this, {
       chat_id,
-      message: `*${value}*`,
     });
-
-    if (!value) {
+    if (value.length < 1) {
       await editMessage(
-        `Vui lòng nhập theo cúp pháp: ${command} *key bạn được cung cấp*`
+        `Vui lòng nhập theo cúp pháp: *${command}* *key bạn được cung cấp*`
       );
       return;
     }
     await editMessage(`Đợi chút để mình xác thực *key* nhé`);
     const isHasKey = await Key.findOne({
-      key: value.trim(),
+      key: value,
     });
     if (!isHasKey) {
       await editMessage(

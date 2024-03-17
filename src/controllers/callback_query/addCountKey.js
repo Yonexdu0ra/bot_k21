@@ -31,7 +31,7 @@ async function addCountKey({ data, message }) {
     );
     await deleteMessage();
     await this.editMessageText(
-      `\n ${"```" + newKeyData.key + "```"}\nSố lượt còn lại: *${
+      `\n ${"```" + newKeyData.key + "```"}\nLoại key: *${newKeyData.type}*\nSố lượt còn lại: *${
         newKeyData.count
       }*`,
       {

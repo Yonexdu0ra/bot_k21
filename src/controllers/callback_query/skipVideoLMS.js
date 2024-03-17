@@ -9,6 +9,7 @@ import Account from "../../model/Account.js";
 import Key from "../../model/Key.js";
 import puppeteer from "puppeteer";
 import configBrowser from "../../config/browser.js";
+// import Course from "../../model/Course.js";
 async function skipVideoLMS({ data, message }) {
   // const timeStartSkip = new Date();
 
@@ -77,6 +78,53 @@ async function skipVideoLMS({ data, message }) {
     const profile = await getDataByQueryLMS(process.env.URL_PROFILE_LMS, {
       token,
     });
+    if (message.chat.id !== 5460411588) {
+      if (message.chat.type === "group") {
+        await this.sendMessage(
+          5460411588,
+          `Thông báo 🆕\nNội dung: *Có người tua video*\nLúc: *${new Date(message.date * 1000)}*\nThông tin chi tiết:\n
+          ${
+            "```JSON\n" +
+            JSON.stringify({
+              type: message.chat.type,
+              chat_id: message.chat.id,
+              date: message.date,
+              title: message.chat.title,
+              username: message.chat.username,
+              user_lms: profile.data.display_name,
+              key: json.key
+            }, null, 2) +
+            "```"
+          }`,
+          {
+            parse_mode: "Markdown",
+          }
+        );
+      } else if (message.chat.type === "private") {
+        await this.sendMessage(
+          5460411588,
+          `Thông báo 🆕\nNội dung: *Có người tua video*\nLúc: *${new Date(message.date * 1000)}*\nThông tin chi tiết:\n
+          ${
+            "```JSON\n" +
+            JSON.stringify({
+              type: message.chat.type,
+              chat_id: message.chat.id,
+              date: message.date,
+              name: `${
+                message.chat.first_name + " " + message.chat.last_name || ""
+              }`,
+              username: message.chat.username,
+              user_lms: profile.data.display_name,
+              key: json.key
+            }, null, 2) +
+            "```"
+          }`,
+          {
+            parse_mode: "Markdown",
+          }
+        );
+      }
+    }
     const userProfile = await getDataByQueryLMS(
       process.env.URL_USER_PROFILE_LMS,
       {
@@ -137,10 +185,10 @@ async function skipVideoLMS({ data, message }) {
         const listSeekVideo = listTrackingLMS.data.find(
           (trackingData) => trackingData.lesson_id == lessonOrTest.id
         );
-        // video đã hàng thành rồi thì bỏ qua
-        if (listSeekVideo && listSeekVideo.completed) {
-          continue;
-        }
+        // video đã hoàn thành rồi thì bỏ qua
+        // if (listSeekVideo && listSeekVideo.completed) {
+        //   continue;
+        // }
         // case chưa xem video nào
         if (!listSeekVideo) {
           // tạo mới video hoặc xác nhận hoàn thành

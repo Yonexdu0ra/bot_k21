@@ -3,10 +3,12 @@ const { Schema, model } = mongoose;
 
 const courseSchema = new Schema(
   {
-    subject: { type: String, unique: true },
-    class_id: { type: Number },
-    type: { type: String },
-    lesson: { type: S },
+    subject: { type: String },
+    class_id: { type: Number, unique: true },
+    lessons: { type: Array },
+    course_id: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

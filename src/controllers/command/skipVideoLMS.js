@@ -5,6 +5,7 @@ import typingMessage from "../../util/tyingMessage.js";
 import getDataByQueryLMS from "../../util/getDataByQueryLMS.js";
 import Account from "../../model/Account.js";
 import Key from "../../model/Key.js";
+import Course from "../../model/Course.js";
 async function skipVideoLMS(msg, match) {
   const chat_id = msg.chat.id;
   const message_id = msg.message_id;
@@ -25,11 +26,11 @@ async function skipVideoLMS(msg, match) {
       return;
     }
 
-    const { deleteMessage,  editMessage } = await typingMessage(this, {
+    const { deleteMessage, editMessage } = await typingMessage(this, {
       chat_id,
     });
     await this.sendChatAction(chat_id, "typing");
-    
+
     const accountData = await Account.findOne({
       chat_id,
     });
@@ -54,7 +55,7 @@ async function skipVideoLMS(msg, match) {
       );
       return;
     }
-    
+
     if (isKey.type !== "LESSON") {
       await editMessage(
         `Rất tiếc key của bạn chỉ có thể dùng cho lấy đáp án lms!`
@@ -136,6 +137,7 @@ async function skipVideoLMS(msg, match) {
           }
         );
         // console.log(classData);
+  
         const completedData = await await getDataByQueryLMS(
           `${process.env.URL_CLASS_STUDENT_STRACKING_LMS}`,
           {
@@ -183,7 +185,8 @@ async function skipVideoLMS(msg, match) {
                 {
                   text: `Tua ${classData.data.name.slice(
                     0,
-                    classData.data.name.indexOf("(") || classData.data.name.length
+                    classData.data.name.indexOf("(") ||
+                      classData.data.name.length
                   )}`,
                   callback_data: `SKIP-${JSON.stringify({
                     class_id: course.class_id,
