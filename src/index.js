@@ -1,3 +1,4 @@
+process.env.TZ = "Asia/Bangkok"; // set up time zone UTC +7
 import telegramBot from "node-telegram-bot-api";
 import express from "express";
 import handleCommand from "./util/handleCommand.js";
