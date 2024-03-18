@@ -24,11 +24,12 @@ async function getLichHocICTU(msg, match) {
       });
       return;
     }
-    const { deleteMessage } = await typingMessage(this, {
-      chat_id,
-      message: `Đợi chút nhé...\n\n(sau 18h chủ nhật hàng tuần lịch sẽ là của tuần kế tiếp nhé ^^) `,
-    });
-    await this.sendChatAction(chat_id, "typing");
+    // const { deleteMessage } = await typingMessage(this, {
+    //   chat_id,
+    //   message: `Đợi chút nhé...\n\n(sau 18h chủ nhật hàng tuần lịch sẽ là của tuần kế tiếp nhé ^^) `,
+    // });
+    await this.sendMessage(chat_id, "Chức nay này hiện tại đang tạm dừng");
+    return
     const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
     page.on("dialog", async (dialog) => {
