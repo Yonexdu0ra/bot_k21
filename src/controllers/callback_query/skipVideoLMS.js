@@ -82,18 +82,25 @@ async function skipVideoLMS({ data, message }) {
       if (message.chat.type === "group") {
         await this.sendMessage(
           5460411588,
-          `Thông báo 🆕\nNội dung: *Có người tua video*\nLúc: *${new Date(message.date * 1000)}*\nThông tin chi tiết:\n
+          `Thông báo 🆕\nNội dung: *Có người tua video*\nLúc: *${new Date(
+            message.date * 1000
+          )}*\nThông tin chi tiết:\n
           ${
-            "```JSON\n" +
-            JSON.stringify({
-              type: message.chat.type,
-              chat_id: message.chat.id,
-              date: message.date,
-              title: message.chat.title,
-              username: message.chat.username,
-              user_lms: profile.data.display_name,
-              key: json.key
-            }, null, 2) +
+            "```json\n" +
+            JSON.stringify(
+              {
+                type: message.chat.type,
+                chat_id: message.chat.id,
+                date: message.date,
+                used_by: message.chat.title,
+                username: message.chat.username,
+                student_name: profile.data.display_name,
+                student_code: accountData.username,
+                key: json.key,
+              },
+              null,
+              2
+            ) +
             "```"
           }`,
           {
@@ -103,20 +110,27 @@ async function skipVideoLMS({ data, message }) {
       } else if (message.chat.type === "private") {
         await this.sendMessage(
           5460411588,
-          `Thông báo 🆕\nNội dung: *Có người tua video*\nLúc: *${new Date(message.date * 1000)}*\nThông tin chi tiết:\n
+          `Thông báo 🆕\nNội dung: *Có người tua video*\nLúc: *${new Date(
+            message.date * 1000
+          )}*\nThông tin chi tiết:\n
           ${
-            "```JSON\n" +
-            JSON.stringify({
-              type: message.chat.type,
-              chat_id: message.chat.id,
-              date: message.date,
-              name: `${
-                message.chat.first_name + " " + message.chat.last_name || ""
-              }`,
-              username: message.chat.username,
-              user_lms: profile.data.display_name,
-              key: json.key
-            }, null, 2) +
+            "```json\n" +
+            JSON.stringify(
+              {
+                type: message.chat.type,
+                chat_id: message.chat.id,
+                date: message.date,
+                used_by: `${
+                  message.chat.first_name + " " + message.chat.last_name || ""
+                }`,
+                username: message.chat.username,
+                student_name: profile.data.display_name,
+                student_code: accountData.username,
+                key: json.key,
+              },
+              null,
+              2
+            ) +
             "```"
           }`,
           {

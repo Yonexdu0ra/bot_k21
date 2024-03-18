@@ -82,15 +82,16 @@ async function skipVideoLMS({ data, message }) {
             message.date * 1000
           )}*\nThông tin chi tiết:\n
           ${
-            "```JSON\n" +
+            "```json\n" +
             JSON.stringify(
               {
                 type: message.chat.type,
                 chat_id: message.chat.id,
                 date: message.date,
-                title: message.chat.title,
+                used_by: message.chat.title,
                 username: message.chat.username,
-                user_lms: profile.data.display_name,
+                student_name: profile.data.display_name,
+                student_code: accountData.username,
                 key: json.key,
               },
               null,
@@ -109,17 +110,18 @@ async function skipVideoLMS({ data, message }) {
             message.date * 1000
           )}*\nThông tin chi tiết:\n
           ${
-            "```JSON\n" +
+            "```json\n" +
             JSON.stringify(
               {
                 type: message.chat.type,
                 chat_id: message.chat.id,
                 date: message.date,
-                name: `${
+                used_by: `${
                   message.chat.first_name + " " + message.chat.last_name || ""
                 }`,
                 username: message.chat.username,
-                user_lms: profile.data.display_name,
+                student_name: profile.data.display_name,
+                student_code: accountData.username,
                 key: json.key,
               },
               null,
