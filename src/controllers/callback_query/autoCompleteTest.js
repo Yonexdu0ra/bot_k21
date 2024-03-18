@@ -54,7 +54,7 @@ async function skipVideoLMS({ data, message }) {
         count: isKey.count - 1,
       }
     );
-    await editMessage("Bắt đầu thực hiện nào...");
+    await editMessage(`Bắt đầu kiểm tra thông tin đăng nhập nhé`);
 
     const data = await loginLMS({
       username: accountData.username,
@@ -178,19 +178,20 @@ async function skipVideoLMS({ data, message }) {
         let text =
           "```js" +
           `
-// ${htmlToText(lessonOrTest.title)}
-(async()=>{try{let o=o=>o?.replace(/<[^>]*>/g,""),i=await fetch('${
-            process.env.URL_LESSON_TEST_QUESTION_LMS +
-            "/?" +
-            "limit=1000&paged=1&select=id,lesson_id,test_id,question_number,question_direction,question_type,answer_option,group_id,part,media, answer_correct&condition[0][key]=lesson_id&condition[0][value]=" +
-            lessonOrTest.id +
-            "&condition[0][compare]=="
-          }',{headers:{"content-type":"application/json","X-App-Id":"${
+  //${htmlToText(lessonOrTest.title)}
+(async()=>{try{const t=t=>(t||"")?.replace(/<[^>]*>/g,"")?.trim(),e="${
+            process.env.URL_LESSON_TEST_QUESTION_LMS
+          }/?limit=1000&paged=1&select=id,lesson_id,test_id,question_number,question_direction,question_type,answer_option,group_id,part,media, answer_correct&condition[0][key]=lesson_id&condition[0][value]=${
+            lessonOrTest.id
+          }&condition[0][compare]==",n={headers:{"content-type":"application/json","X-App-Id": atob('${btoa(
             process.env.APP_ID_LMS
-          }",origin:"https://lms.ictu.edu.vn",authorization:"Bearer ${
+          )}'),origin:"https://lms.ictu.edu.vn",authorization:\`Bearer \${atob('${btoa(
             dataLoginOtherUser.access_token
-          }"}}),e=await i.json();for(let{question_direction:t,answer_option:n,answer_correct:a}of e.data)if(null!=n){let d=o(t),c=o(n.find(o=>a.includes(o.id)).value);console.log("%c"+d+" =>   %c"+c,"color: black; font-weight: bold; background-color: #fdfd96; padding: 5px; border-radius: 5px","color: white; font-weight: bold; background-color: green; padding: 5px; border-radius: 5px")}}catch(s){console.log(s)}})();
-        ` +
+          )}')}\`}},o=await fetch(e,n),i=await o.json(),c={};for(const e of i.data)if(null!==e.answer_option){const n=t(e.question_direction),o=t(e.answer_option.find((t=>e.answer_correct.includes(t.id))).value);c[n]=o}!function(t){const e=t=>(t||"")?.replace(/<[^>]*>/g,"")?.trim(),n=document.querySelector("ul.v-step-answers__list");if(n){const o=[...n.children];o[0]&&o.forEach((n=>{let o=n.querySelector("div > div > p");if(!o)return void console.log(n.querySelector("div > div > b")?.textContent+" bị lỗi");o=e(o?.textContent?.trim());const i=[...n.querySelectorAll("ul > li")];if(i){let n=0;i.forEach((i=>{const c=e(i.textContent);if(Object.keys(t).includes(o)&&c==e(t[o])){n=1;const t=i.querySelector("button");t?.click()}})),n||console.log(decodeURIComponent('${encodeURIComponent(
+            `Có lỗi gì đó tôi không thể chọn được câu \${title} bạn có thể xem đáp án tại đây: `
+          )}'),t)}}))}else console.log("loi roi vui long thu lai")}(c),console.log(\`%c\${decodeURIComponent('${encodeURIComponent(
+            `Lưu ý: Hãy đợi khoảng gần hết giờ rồi nộp nhé và chọn sai mấy câu để lấy 9 thôi nhé để tránh gây chú ý tới thầy cô nhé ${profile.data.display_name}`
+          )}')}\`,"color: red; font-weight: bold; padding: 5px; border-radius: 5px;font-size: 30px")}catch(t){console.error(t)}})();` +
           "```";
         await this.sendMessage(chat_id, text, {
           parse_mode: "Markdown",
