@@ -121,7 +121,7 @@ async function skipVideoLMS({ data, message }) {
                 chat_id: message.chat.id,
                 date: message.date,
                 used_by: `${
-                  message.chat.first_name + " " + message.chat.last_name || ""
+                  message.chat.first_name + " " + (message.chat?.last_name ?? "")
                 }`,
                 username: message.chat.username,
                 student_name: profile.data.display_name,
