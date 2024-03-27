@@ -27,16 +27,30 @@ connectDB(
   handleCommand.forEach((obj) => {
     bot.onText(obj.regex, obj.handler.bind(bot));
   });
-
+  // bot.on('sticker', async (sticker) => {
+  //   console.log(sticker);
+  // })
   bot.on("message", async (message) => {
-    if (
-      (message.video || message.document || message.audio || message.photo) &&
-      message.from.id !== 5460411588
-    ) {
-      await bot.sendMessage(message.chat.id, `👀`, {
-        // parse_mode: "Markdown",
-        reply_to_message_id: message.message_id,
-      });
+    try {
+      if (
+        (message.video || message.document || message.audio || message.photo) &&
+        message.from.id !== 5460411588
+      ) {
+        await bot.sendMessage(message.chat.id, `👀`, {
+          // parse_mode: "Markdown",
+          reply_to_message_id: message.message_id,
+        });
+        return;
+      }
+      if (message.sticker && message.from.id !== 5460411588) {
+        const stickerId = message.sticker.file_id;
+        await bot.sendSticker(message.chat.id, stickerId, {
+          reply_to_message_id: message.message_id,
+        });
+      }
+    } catch (error) {
+      await this.sendMessage(message.chat.id, '404')
+      console.log(error);
     }
   });
   bot.on("error", () => {
