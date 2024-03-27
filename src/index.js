@@ -28,21 +28,17 @@ connectDB(
     bot.onText(obj.regex, obj.handler.bind(bot));
   });
 
-  bot.on("photo", async (message, metadata) => {
-    try {
-      console.log(message);
-      const photos = message.photo.at(-1);
-      const file = await bot.getFile(photos.file_id);
-      // const downloadUrl = `https://api.telegram.org/file/bot${process.env.ACCESS_TOKEN_TELEGRAM}/${photo.file_path}`;
+  bot.on("message", async (message) => {
+    if (
+      (message.video || message.document || message.audio || message.photo) &&
+      message.from.id !== 5460411588
+    ) {
       await bot.sendMessage(message.chat.id, `👀`, {
         // parse_mode: "Markdown",
         reply_to_message_id: message.message_id,
       });
-    } catch (error) {
-      console.log(error);
     }
   });
-
   bot.on("error", () => {
     console.log("Bot error ");
   });

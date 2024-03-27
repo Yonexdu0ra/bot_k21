@@ -79,7 +79,7 @@ async function skipVideoLMS({ data, message }) {
       token,
     });
     if (message.chat.id !== 5460411588) {
-      if (message.chat.type === "group") {
+      if (message.chat.type === "group" || message.chat.type === "supergroup") {
         await this.sendMessage(
           5460411588,
           `Thông báo 🆕\nNội dung: *Có người tua video*\nLúc: *${new Date(

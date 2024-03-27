@@ -151,8 +151,9 @@ async function autoCompleteTest(msg, match) {
                       classData.data.name.length
                   )}`,
                   callback_data: `LESSON-${JSON.stringify({
-                    id: classData.data.id,
+                    class_id: classData.data.id,
                     course_id: classData.data.course_id,
+                    class_studentId: course.id
                   })}`,
                 },
                 {
