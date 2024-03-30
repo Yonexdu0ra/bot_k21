@@ -5,7 +5,7 @@ import checkSetAccount from "../../util/checkSetAccount.js";
 import selectSemester from "../../util/selectSemester.js";
 import typingMessage from "../../util/tyingMessage.js";
 import browerConfig from "../../config/browser.js";
-import convertDateUTC from "../../util/convertDateUTC.js";
+// import convertDateUTC from "../../util/convertDateUTC.js";
 async function getLichHocICTU(msg, match) {
   const chat_id = msg.chat.id;
   const message_id = msg.message_id;
@@ -84,7 +84,7 @@ async function getLichHocICTU(msg, match) {
             class_code: listTd[i++].innerText || "",
             time: listTd[i++].innerText || "",
             address: (listTd[i++].innerText || "").replace(/[\n\t]/g, " "),
-            teacher_name: listTd[i++].innerText || "",
+            Lecturers: listTd[i++].innerText || "",
             number_of_student: listTd[i++].innerText || "",
             number_of_student_register: listTd[i++].innerText || "",
             credits: listTd[i++].innerText || "",
