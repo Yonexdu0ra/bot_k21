@@ -11,11 +11,11 @@ async function help(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
-    let text = "Danh sách các lệnh tương tác với Bot:\n";
+    let text = "_Danh sách các lệnh tương tác với Bot_:\n";
     for await (const { command, description } of listCommand) {
-      text += `<strong>${command}</strong>: <strong>${description}</strong>\n`;
+      text += `\`${command}\`:  *${description}*\n`;
     }
-    await this.sendMessage(chat_id, text, { parse_mode: "HTML" });
+    await this.sendMessage(chat_id, text, { parse_mode: "Markdown" });
   } catch (error) {
     console.log(error);
   }

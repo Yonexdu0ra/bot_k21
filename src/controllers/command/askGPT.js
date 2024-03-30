@@ -1,5 +1,5 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
-import nodeFetch from "node-fetch";
+// import nodeFetch from "node-fetch";
 import typingMessage from "../../util/tyingMessage.js";
 import { config } from "dotenv";
 config();
@@ -15,24 +15,17 @@ async function askGPT(msg, match) {
       return;
     }
     const { value, command } = isRedundantCommand;
+    const { editMessage } = await typingMessage(this, {
+      chat_id,
+      message: "Loading...",
+    });
     if (!value.trim()) {
-      await this.sendMessage(
+      await editMessage(
         chat_id,
-        `Vui lòng điền nội dung theo cú pháp ${command} <strong>Câu hỏi</strong> trong đó <strong>Câu hoi</strong> bạn điền bất kì câu nào bạn muốn hỏi\n\nVí dụ: ${command} <strong>Hãy gọi tôi là ${
-          msg.chat.first_name || msg.from.first_name || "thằng"
-        }  ${msg.chat.last_name || msg.from.last_name || ""}   bê đê</strong>`,
-        {
-          parse_mode: "HTML",
-          reply_to_message_id: message_id,
-        }
+        `Vui lòng điền nội dung theo cú pháp \`${command}\` *Câu hỏi bạn muốn hỏi*`
       );
       return;
     }
-    const { editMessage } = await typingMessage(this, {
-      chat_id,
-      message: "Câu hỏi hay đấy",
-    });
-    await this.sendChatAction(chat_id, "typing");
     let text = "";
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:streamGenerateContent?key=${process.env.API_TOKEN_GEMINIAI}`,

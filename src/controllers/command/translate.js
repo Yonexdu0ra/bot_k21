@@ -1,5 +1,7 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
-import nodeFetch from "node-fetch";
+// import nodeFetch from "node-fetch";
+import typingMessage from "../../util/tyingMessage.js";
+
 async function translate(msg, match) {
   try {
     const chat_id = msg.chat.id;
@@ -12,14 +14,13 @@ async function translate(msg, match) {
       return;
     }
     const { value, command } = isRedundantCommand;
+    const { editMessage } = await typingMessage(this, {
+      chat_id,
+      message: "loading...",
+    });
     if (!value.trim()) {
-      await this.sendMessage(
-        chat_id,
-        `Vui lòng điền nội dung theo cú pháp: ${command} <strong>fuck you</strong> <strong>[vi]</strong>\nTrong đó <strong>[vi]</strong> là viết tắt của ngôn ngữ muốn dịch sang tiếng anh sẽ là <strong>[en]</strong> nên để ở cuối văn bản`,
-        {
-          parse_mode: "HTML",
-          reply_to_message_id: message_id,
-        }
+      await editMessage(
+        `Vui lòng điền nội dung theo cú pháp: \`${command} Xin chào [en]\`\n\nTrong đó *Xin chào* là nội dung muốn dịch, *en* là ngôn ngữ muốn dịch sang mặc định không và để trong dấu *[ ]* mặc định sẽ là *[vi]* bạn có thể xem các mã quốc gia [tại đây](https://bankervn.com/ten-quoc-gia-tieng-anh/)`
       );
       return;
     }
@@ -44,17 +45,14 @@ async function translate(msg, match) {
     const url =
       "https://translate.googleapis.com/translate_a/single?client=gtx&sl";
 
-    const res = await nodeFetch(
+    const res = await fetch(
       `${url}=${options.source}&tl=${options.target}&dt=t&q=${encodeURI(
         options.text
       )}`
     );
     const data = await res.json();
     const text = data[0].reduce((curr, nextData) => curr + nextData[0], "");
-    await this.sendMessage(chat_id, `<code>${text}</code>`, {
-      parse_mode: "HTML",
-      reply_to_message_id: message_id,
-    });
+    await editMessage(`\`${text}\``)
   } catch (error) {
     console.log(error);
   }

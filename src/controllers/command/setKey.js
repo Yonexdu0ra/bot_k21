@@ -19,7 +19,7 @@ async function setKey(msg, match) {
     });
     if (value.length < 1) {
       await editMessage(
-        `Vui lòng nhập theo cúp pháp: *${command}* *key bạn được cung cấp*`
+        `Vui lòng nhập theo cúp pháp: \`${command}\`  *key bạn được cung cấp*`
       );
       return;
     }

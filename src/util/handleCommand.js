@@ -70,11 +70,11 @@ const handleCommand = [
     handler: help,
   },
   {
-    regex: /\/complete_lesson_lms/,
+    regex: /\/skip_video_lms/,
     handler: skipVideoLMS,
   },
   {
-    regex: /\/get_test_answer_lms/,
+    regex: /\/get_answer_lesson_lms/,
     handler: autoCompleteTestLMS,
   },
   {

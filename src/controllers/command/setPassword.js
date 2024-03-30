@@ -1,5 +1,6 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import Account from "../../model/Account.js";
+import tyingMessage from "../../util/tyingMessage.js";
 async function setPassword(msg, match) {
   try {
     const chat_id = msg.chat.id;
@@ -11,15 +12,19 @@ async function setPassword(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
+    const { editMessage } = await tyingMessage(this, { chat_id });
     const { value, command } = isRedundantCommand;
     if (!value.trim()) {
-      await this.sendMessage(
-        chat_id,
-        `Vui lòng điền theo cú pháp: ${command} <strong>Password</strong>`,
-        {
-          parse_mode: "HTML",
-          reply_to_message_id: message_id,
-        }
+      // await this.sendMessage(
+      //   chat_id,
+      //   `Vui lòng điền theo cú pháp: ${command} <strong>Password</strong>`,
+      //   {
+      //     parse_mode: "HTML",
+      //     reply_to_message_id: message_id,
+      //   }
+      // );
+      await editMessage(
+        `Vui lòng diền theo cú pháp: \`${command} Password\``
       );
       return;
     }
@@ -36,25 +41,10 @@ async function setPassword(msg, match) {
           password: value.trim(),
         }
       );
-      await this.sendMessage(
-        chat_id,
-        `set <strong>Password</strong> thành công`,
-        {
-          parse_mode: "HTML",
-          reply_to_message_id: message_id,
-        }
-      );
+      await editMessage(`set *Password* thành công`);
       return;
     }
-    await this.sendMessage(
-      chat_id,
-      `set <strong>Password</strong> không thành công`,
-      {
-        parse_mode: "HTML",
-        reply_to_message_id: message_id,
-        
-      }
-    );
+    await editMessage(`set ~Password thất bại~`);
   } catch (error) {
     console.log(error);
   }

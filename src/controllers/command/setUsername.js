@@ -1,10 +1,11 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import Account from "../../model/Account.js";
+import tyingMessage from "../../util/tyingMessage.js";
 async function setUsername(msg, match) {
   try {
     const chat_id = msg.chat.id;
     const message_id = msg.message_id;
-    const a = await Account.find({})
+    const a = await Account.find({});
     const isRedundantCommand = await checkRedundantCommand(this, match, {
       chat_id,
       message_id,
@@ -12,16 +13,10 @@ async function setUsername(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
+    const { editMessage } = await tyingMessage(this, { chat_id });
     const { value, command } = isRedundantCommand;
     if (!value.trim()) {
-      await this.sendMessage(
-        chat_id,
-        `Vui lòng điền theo cú pháp: ${command} <strong>Username</strong>`,
-        {
-          parse_mode: "HTML",
-          reply_to_message_id: message_id,
-        }
-      );
+      await editMessage(`Vui lòng diền theo cú pháp: \`${command} Username\``);
       return;
     }
     let acccount = await Account.findOne({ chat_id });
@@ -37,24 +32,11 @@ async function setUsername(msg, match) {
           username: value.trim(),
         }
       );
-      await this.sendMessage(
-        chat_id,
-        `set <strong>Username</strong> thành công`,
-        {
-          parse_mode: "HTML",
-          reply_to_message_id: message_id,
-        }
-      );
+      await editMessage(`set *Username* thành công`);
+
       return;
     }
-    await this.sendMessage(
-      chat_id,
-      `set <strong>Username</strong> không thành công`,
-      {
-        parse_mode: "HTML",
-        reply_to_message_id: message_id,
-      }
-    );
+    await editMessage(`set ~Username thất bại~`);
   } catch (error) {
     console.log(error);
   }

@@ -20,8 +20,14 @@ export default [
   { command: "/set_user", description: "Thiết lập Username" },
   { command: "/set_pass", description: "Thiết lập Password" },
   { command: "/help", description: "Thông tin các commnand có thể dùng" },
-  { command: "/complete_lesson_lms", description: "Tua danh sách các video trên LMS" },
-  { command: "/get_test_answer_lms", description: "Lấy đáp án bài tập trên LMS" },
+  {
+    command: "/skip_video_lms",
+    description: "Tua danh sách các video trên LMS",
+  },
+  {
+    command: "/get_answer_lesson_lms",
+    description: "Lấy đáp án bài tập trên LMS",
+  },
   { command: "/new_key", description: "Tạo mới key (Admin)" },
   { command: "/set_key", description: "Sửa dụng key" },
   { command: "/get_key", description: "Lấy danh sách key (Admin)" },

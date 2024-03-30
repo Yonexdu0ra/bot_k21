@@ -26,11 +26,9 @@ async function skipVideoLMS(msg, match) {
       return;
     }
 
-    const { deleteMessage, editMessage } = await typingMessage(this, {
+    const { editMessage } = await typingMessage(this, {
       chat_id,
     });
-    await this.sendChatAction(chat_id, "typing");
-
     const accountData = await Account.findOne({
       chat_id,
     });
@@ -67,17 +65,16 @@ async function skipVideoLMS(msg, match) {
       password: accountData.password,
     });
     if (data.code != "success") {
-      let x = "```json\n" + JSON.stringify(data, null, 2) + "```";
-      await this.sendMessage(chat_id, x, {
-        reply_to_message_id: message_id,
-        parse_mode: "Markdown",
-      });
+      await editMessage(`\`\`\`JSON\n${JSON.stringify(data, null, 2)}\`\`\``);
       return;
     }
     const token = data.access_token;
     const profile = await getDataByQueryLMS(process.env.URL_PROFILE_LMS, {
       token,
     });
+    await editMessage(
+      `Hello *${profile.data.display_name}* !`
+    );
     const userProfile = await getDataByQueryLMS(
       process.env.URL_USER_PROFILE_LMS,
       {
@@ -125,6 +122,7 @@ async function skipVideoLMS(msg, match) {
         token,
       }
     );
+    await editMessage('Hãy lựa chọn môn học bạn muốn hoàn thành video cấp tốc')
     if (listClassIdCourse.data) {
       for (const course of listClassIdCourse.data) {
         const classData = await getDataByQueryLMS(
@@ -136,8 +134,6 @@ async function skipVideoLMS(msg, match) {
             },
           }
         );
-        // console.log(classData);
-  
         const completedData = await await getDataByQueryLMS(
           `${process.env.URL_CLASS_STUDENT_STRACKING_LMS}`,
           {
@@ -164,9 +160,9 @@ async function skipVideoLMS(msg, match) {
             totalLessonCompleted++;
           }
         }
-        let x =
-          "```json\n" +
-          JSON.stringify(
+        await this.sendMessage(
+          chat_id,
+          `\`\`\`JSON\n${JSON.stringify(
             {
               ...classData.data,
               complete: `${Math.floor(
@@ -175,36 +171,35 @@ async function skipVideoLMS(msg, match) {
             },
             null,
             2
-          ) +
-          "```";
-        await this.sendMessage(chat_id, x, {
-          parse_mode: "Markdown",
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: `Tua ${classData.data.name.slice(
-                    0,
-                    classData.data.name.indexOf("(") ||
-                      classData.data.name.length
-                  )}`,
-                  callback_data: `SKIP-${JSON.stringify({
-                    class_id: course.class_id,
-                    course_id: classData.data.course_id,
-                    class_studentId: course.id,
-                    // key: accountData.key,
-                  })}`,
-                },
-                {
-                  text: `Close`,
-                  callback_data: `CLOSE`,
-                },
+          )}\`\`\``,
+          {
+            parse_mode: "Markdown",
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: `Tua ${classData.data.name.slice(
+                      0,
+                      classData.data.name.indexOf("(") ||
+                        classData.data.name.length
+                    )}`,
+                    callback_data: `SKIP-${JSON.stringify({
+                      class_id: course.class_id,
+                      course_id: classData.data.course_id,
+                      class_studentId: course.id,
+                      // key: accountData.key,
+                    })}`,
+                  },
+                  {
+                    text: `Close`,
+                    callback_data: `CLOSE`,
+                  },
+                ],
               ],
-            ],
-          },
-        });
+            },
+          }
+        );
       }
-      await deleteMessage();
     }
   } catch (error) {
     console.error(error);

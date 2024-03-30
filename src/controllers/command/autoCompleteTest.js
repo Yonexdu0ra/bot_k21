@@ -62,11 +62,7 @@ async function autoCompleteTest(msg, match) {
     });
 
     if (data.code != "success") {
-      let x = "```json\n" + JSON.stringify(data, null, 2) + "```";
-      await this.sendMessage(chat_id, x, {
-        reply_to_message_id: message_id,
-        parse_mode: "Markdown",
-      });
+      await editMessage(`\`\`\`JSON\n${JSON.stringify(data, null, 2)}\`\`\``);
       return;
     }
     await editMessage("Đăng nhập thành công");
@@ -75,6 +71,7 @@ async function autoCompleteTest(msg, match) {
     const profile = await getDataByQueryLMS(process.env.URL_PROFILE_LMS, {
       token,
     });
+    
     const userProfile = await getDataByQueryLMS(
       process.env.URL_USER_PROFILE_LMS,
       {
@@ -125,7 +122,7 @@ async function autoCompleteTest(msg, match) {
     );
     if (listClassIdCourse.data) {
       await editMessage(
-        `Hello ${userProfile.data[0].full_name} đây là những môn kỳ này bạn học: `
+        `*${userProfile.data[0].full_name}* ơi đây là những môn học kì này cùa bạn hãy chọn môn bạn muốn lấy đáp án ở dưới đây: `
       );
       for (const course of listClassIdCourse.data) {
         const classData = await getDataByQueryLMS(
@@ -165,8 +162,6 @@ async function autoCompleteTest(msg, match) {
           },
         });
       }
-      await deleteMessage();
-      await this.sendMessage(chat_id, `Hãy chọn bài học bạn muốn làm`);
     }
   } catch (error) {
     console.error(error);

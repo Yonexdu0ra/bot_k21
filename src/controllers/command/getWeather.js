@@ -1,5 +1,7 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
-import nodeFetch from "node-fetch";
+// import nodeFetch from "node-fetch";
+import tyingMessage from "../../util/tyingMessage.js";
+
 async function getWeather(msg, match) {
   try {
     const chat_id = msg.chat.id;
@@ -12,14 +14,10 @@ async function getWeather(msg, match) {
       return;
     }
     const { value, command } = isRedundantCommand;
+    const { editMessage, deleteMessage } = await tyingMessage(this, { chat_id });
     if (!value.trim()) {
-      await this.sendMessage(
-        chat_id,
-        `Vui lòng điền nội dung cần theo cú phấp: ${command} <strong>Thai Nguyen</strong>\n trong đó <strong>Thai Nguyen</strong> là thành phố bạn muốn xem vui lòng nhập không dấu`,
-        {
-          parse_mode: "HTML",
-          reply_to_message_id: message_id,
-        }
+      await editMessage(
+        `Vui lòng điền nội dung theo cú pháp: \`${command} Thai Nguyen\`\n trong đó **Thai Nguyen** là thành phố bạn muốn xem và nhập không dấu`
       );
       return;
     }
@@ -27,6 +25,7 @@ async function getWeather(msg, match) {
     const res = await nodeFetch(url);
     const data = await res.json();
     if (data.cod == "200") {
+      await deleteMessage()
       await this.sendPhoto(
         chat_id,
         `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,

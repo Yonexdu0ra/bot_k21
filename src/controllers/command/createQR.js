@@ -1,5 +1,7 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
-import nodeFetch from "node-fetch";
+// import nodeFetch from "node-fetch";
+import typingMessage from "../../util/tyingMessage.js";
+
 async function createQR(msg, match) {
   try {
     const chat_id = msg.chat.id;
@@ -12,14 +14,13 @@ async function createQR(msg, match) {
       return;
     }
     const { value, command } = isRedundantCommand;
+    const { editMessage } = await typingMessage(this, {
+      chat_id,
+      message: 'loading...'
+    })
     if (!value.trim() || value.length < 1) {
-      await this.sendMessage(
-        chat_id,
-        `Vui lòng điền nội dung theo cú pháp: ${command} <strong>Nội dung bạn muốn đưa thành mã QR code</strong>`,
-        {
-          parse_mode: "HTML",
-          reply_to_message_id: message_id,
-        }
+      await editMessage(
+        `Vui lòng nhập theo cú pháp: \`${command}\` *Nội dung bạn muốn chuyển đổi thành mã QR code*`
       );
       return;
     }
