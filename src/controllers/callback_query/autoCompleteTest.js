@@ -146,9 +146,9 @@ async function skipVideoLMS({ data, message }) {
       }
     }
 
-    // function htmlToText(html) {
-    //   return html?.replace(/<[^>]*>/g, "");
-    // }
+    function htmlToText(html) {
+      return html?.replace(/<[^>]*>/g, "");
+    }
 
     await editMessage(`Hello ${profile.data.display_name}`);
     await editMessage(`Đang lấy thông tin môn học..`);
