@@ -13,8 +13,8 @@ async function setUsername(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
-    const { editMessage } = await tyingMessage(this, { chat_id });
     const { value, command } = isRedundantCommand;
+    const { editMessage } = await tyingMessage(this, { chat_id, message: value.trim() || '...' });
     if (!value.trim()) {
       await editMessage(`Vui lòng diền theo cú pháp: \`${command} Username\``);
       return;

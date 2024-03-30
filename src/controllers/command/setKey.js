@@ -3,9 +3,9 @@ import Key from "../../model/Key.js";
 import Account from "../../model/Account.js";
 import typing_message from "../../util/tyingMessage.js";
 async function setKey(msg, match) {
+  const chat_id = msg.chat.id;
+  const message_id = msg.message_id;
   try {
-    const chat_id = msg.chat.id;
-    const message_id = msg.message_id;
     const isRedundantCommand = await checkRedundantCommand(this, match, {
       chat_id,
       message_id,
@@ -57,6 +57,8 @@ async function setKey(msg, match) {
     );
   } catch (error) {
     console.log(error);
+    await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`);
+    return;
   }
 }
 

@@ -3,9 +3,9 @@ import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import typingMessage from "../../util/tyingMessage.js";
 
 async function translate(msg, match) {
+  const chat_id = msg.chat.id;
+  const message_id = msg.message_id;
   try {
-    const chat_id = msg.chat.id;
-    const message_id = msg.message_id;
     const isRedundantCommand = await checkRedundantCommand(this, match, {
       chat_id,
       message_id,
@@ -16,7 +16,7 @@ async function translate(msg, match) {
     const { value, command } = isRedundantCommand;
     const { editMessage } = await typingMessage(this, {
       chat_id,
-      message: "loading...",
+      message: value.trim() || "...",
     });
     if (!value.trim()) {
       await editMessage(
@@ -52,9 +52,11 @@ async function translate(msg, match) {
     );
     const data = await res.json();
     const text = data[0].reduce((curr, nextData) => curr + nextData[0], "");
-    await editMessage(`\`${text}\``)
+    await editMessage(`\`${text}\``);
   } catch (error) {
     console.log(error);
+    await this.sendMessage(chat_id, "Huhu lỗi rồi thử lại sau ít phút nhé");
+    return;
   }
 }
 

@@ -12,17 +12,12 @@ async function setPassword(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
-    const { editMessage } = await tyingMessage(this, { chat_id });
     const { value, command } = isRedundantCommand;
+    const { editMessage } = await tyingMessage(this, {
+      chat_id,
+      message: value.trim() || "...",
+    });
     if (!value.trim()) {
-      // await this.sendMessage(
-      //   chat_id,
-      //   `Vui lòng điền theo cú pháp: ${command} <strong>Password</strong>`,
-      //   {
-      //     parse_mode: "HTML",
-      //     reply_to_message_id: message_id,
-      //   }
-      // );
       await editMessage(
         `Vui lòng diền theo cú pháp: \`${command} Password\``
       );

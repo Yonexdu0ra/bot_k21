@@ -17,11 +17,10 @@ async function askGPT(msg, match) {
     const { value, command } = isRedundantCommand;
     const { editMessage } = await typingMessage(this, {
       chat_id,
-      message: "Loading...",
+      message: "Câu hỏi hay đấy 🤡",
     });
     if (!value.trim()) {
       await editMessage(
-        chat_id,
         `Vui lòng điền nội dung theo cú pháp \`${command}\` *Câu hỏi bạn muốn hỏi*`
       );
       return;
@@ -67,7 +66,7 @@ async function askGPT(msg, match) {
     await editMessage(text);
   } catch (error) {
     console.log(error);
-    await this.sendMessage(chat_id, `${JSON.stringify("Thử lại sau nhé")}`, {
+    await this.sendMessage(chat_id, `Thử lại sau nhé`, {
       reply_to_message_id: message_id,
     });
   }
