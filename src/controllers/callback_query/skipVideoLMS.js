@@ -105,6 +105,18 @@ async function skipVideoLMS({ data, message }) {
           }`,
           {
             parse_mode: "Markdown",
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "Phản hồi",
+                    callback_data: `RESPONSE-${JSON.stringify({
+                      chat_id: chat_id,
+                    })}`,
+                  },
+                ],
+              ],
+            },
           }
         );
       } else if (message.chat.type === "private") {
@@ -121,7 +133,9 @@ async function skipVideoLMS({ data, message }) {
                 chat_id: message.chat.id,
                 date: message.date,
                 used_by: `${
-                  message.chat.first_name + " " + (message.chat?.last_name ?? "")
+                  message.chat.first_name +
+                  " " +
+                  (message.chat?.last_name ?? "")
                 }`,
                 username: message.chat.username,
                 student_name: profile.data.display_name,
@@ -135,6 +149,18 @@ async function skipVideoLMS({ data, message }) {
           }`,
           {
             parse_mode: "Markdown",
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "Phản hồi",
+                    callback_data: `RESPONSE-${JSON.stringify({
+                      chat_id: chat_id,
+                    })}`,
+                  },
+                ],
+              ],
+            },
           }
         );
       }

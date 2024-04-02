@@ -109,6 +109,18 @@ async function skipVideoLMS({ data, message }) {
           }`,
           {
             parse_mode: "Markdown",
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "Phản hồi",
+                    callback_data: `RESPONSE-${JSON.stringify({
+                      chat_id: chat_id,
+                    })}`,
+                  },
+                ],
+              ],
+            },
           }
         );
       } else if (message.chat.type === "private") {
@@ -141,6 +153,18 @@ async function skipVideoLMS({ data, message }) {
           }`,
           {
             parse_mode: "Markdown",
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "Phản hồi",
+                    callback_data: `RESPONSE-${JSON.stringify({
+                      chat_id: chat_id,
+                    })}`,
+                  },
+                ],
+              ],
+            },
           }
         );
       }

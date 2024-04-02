@@ -33,23 +33,19 @@ connectDB(
   bot.on("message", async (message) => {
     try {
       if (
-        (message.video || message.document || message.audio || message.photo) &&
-        message.from.id !== 5460411588
+        message.video ||
+        message.document ||
+        message.audio ||
+        message.photo ||
+        message.sticker
       ) {
-        await bot.sendMessage(message.chat.id, `👀`, {
-          // parse_mode: "Markdown",
-          reply_to_message_id: message.message_id,
-        });
+        let a = await bot;
+        console.log(a);
+        await bot.sendDice(message.chat.id);
         return;
       }
-      if (message.sticker && message.from.id !== 5460411588) {
-        const stickerId = message.sticker.file_id;
-        await bot.sendSticker(message.chat.id, stickerId, {
-          reply_to_message_id: message.message_id,
-        });
-      }
     } catch (error) {
-      await this.sendMessage(message.chat.id, '404')
+      await this.sendMessage(message.chat.id, "404");
       console.log(error);
     }
   });
