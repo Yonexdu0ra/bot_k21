@@ -1,4 +1,4 @@
-const typing_message = async (bot, { chat_id, message = "Đợi chút nhé"}) => {
+const typing_message = async (bot, { chat_id, message = "Đợi chút nhé" }) => {
   try {
     const msg = await bot.sendMessage(chat_id, message, {
       parse_mode: "Markdown",

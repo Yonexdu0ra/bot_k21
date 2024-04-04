@@ -15,11 +15,12 @@ async function setPassword(msg, match) {
     const { value, command } = isRedundantCommand;
     const { editMessage } = await tyingMessage(this, {
       chat_id,
-      message: value.trim() || "...",
+      message: `...`,
     });
+    await this.deleteMessage(chat_id, message_id)
     if (!value.trim()) {
       await editMessage(
-        `Vui lòng diền theo cú pháp: \`${command} Password\``
+        `Vui lòng điền theo cú pháp: \`${command} Password\``
       );
       return;
     }

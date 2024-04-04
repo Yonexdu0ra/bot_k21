@@ -16,7 +16,7 @@ async function translate(msg, match) {
     const { value, command } = isRedundantCommand;
     const { editMessage } = await typingMessage(this, {
       chat_id,
-      message: `Đang dịch ${value.trim()}...`,
+      message: `__Đang dịch...__`,
     });
     if (!value.trim()) {
       await editMessage(
