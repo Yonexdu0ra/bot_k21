@@ -15,6 +15,7 @@ import createQR from "../controllers/command/createQR.js";
 import newKey from '../controllers/command/newKey.js'
 import setKey from '../controllers/command/setKey.js'
 import getKey from '../controllers/command/getKey.js'
+import dice from '../controllers/command/dice.js'
 const handleCommand = [
   {
     regex: /\/ask/,
@@ -88,6 +89,10 @@ const handleCommand = [
   {
     regex: /\/get_key/,
     handler: getKey,
+  },
+  {
+    regex: /\/dice/,
+    handler: dice,
   },
 ];
 

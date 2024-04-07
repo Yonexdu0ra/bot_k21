@@ -31,4 +31,5 @@ export default [
   { command: "/new_key", description: "Tạo mới key (Admin)" },
   { command: "/set_key", description: "Sửa dụng key" },
   { command: "/get_key", description: "Lấy danh sách key (Admin)" },
+  { command: "/dice", description: "Sticker xúc xắc ngẫu nhiên" },
 ];

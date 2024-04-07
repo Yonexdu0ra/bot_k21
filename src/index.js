@@ -28,28 +28,6 @@ connectDB(
   handleCommand.forEach((obj) => {
     bot.onText(obj.regex, obj.handler.bind(bot));
   });
-  // bot.on('sticker', async (sticker) => {
-  //   console.log(sticker);
-  // })
-  bot.on("message", async (message) => {
-    try {
-      if (
-        message.video ||
-        message.document ||
-        message.audio ||
-        message.photo ||
-        message.sticker
-      ) {
-        let a = await bot;
-        console.log(a);
-        await bot.sendDice(message.chat.id);
-        return;
-      }
-    } catch (error) {
-      await this.sendMessage(message.chat.id, "404");
-      console.log(error);
-    }
-  });
   bot.on("error", () => {
     console.log("Bot error ");
   });
