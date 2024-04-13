@@ -12,13 +12,17 @@ const typing_message = async (bot, { chat_id, message = "Đợi chút nhé" }) =
           console.log(error);
         }
       },
-      editMessage: async (text) => {
+      editMessage: async (text, options = {}) => {
         try {
-          await bot.editMessageText(text, {
-            chat_id: msg.chat.id,
-            message_id: msg.message_id,
-            parse_mode: "Markdown",
-          });
+          await bot.editMessageText(
+            text,
+            {
+              chat_id: msg.chat.id,
+              message_id: msg.message_id,
+              parse_mode: "Markdown",
+              ...options
+            }
+          );
         } catch (error) {
           console.log(error);
         }

@@ -22,7 +22,7 @@ async function getLichThiICTU(msg, match) {
       });
       return;
     }
-    const { deleteMessage } = await typingMessage(this, { chat_id });
+    const { editMessage } = await typingMessage(this, { chat_id });
     await this.sendChatAction(chat_id, "typing");
     const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
@@ -107,27 +107,18 @@ async function getLichThiICTU(msg, match) {
       }
     });
     await browser.close();
-    if (!tableData) {
-      await sendMessageFB(sender_psid, {
-        text: `Username hoặc Password không chính xác!`,
-      });
-      return;
-    } else if (tableData.length < 1) {
+    if (tableData.length < 1) {
       await deleteMessage();
-      await this.sendMessage(chat_id, `Hiện tại không có lịch thi`, {
-        reply_to_message_id: message_id,
-      });
+      await editMessage("Hiện bạn không có lịch thi của bạn")
       return;
     }
     let text = "Lịch thi của bạn là:\n";
     for (const data of tableData) {
-      text += `Môn: <strong>${data.hocPhan}</strong>\nHình thức thi: <strong>${data.hinhThucThi}</strong>\nNgày thi: <strong>${data.ngayThi}</strong>\nCa thi: <strong>${data.caThi}</strong>\nSố báo danh: <strong>${data.soBaoDanh}</strong>\nĐịa điểm: <strong>${data.diaDiem}</strong>\n\n\n`;
+      text += `Môn: *${data.hocPhan}*\nHình thức thi: *${data.hinhThucThi}*\nNgày thi: *${data.ngayThi}*\nCa thi: *${data.caThi}*\nSố báo danh: *${data.soBaoDanh}*\nĐịa điểm: *${data.diaDiem}*\n\n\n`;
     }
-    text += "<strong>Chúc bạn may mắn !</strong>";
-    await deleteMessage();
+    text += "*Chúc bạn may mắn !* 🍀";
     await this.sendMessage(chat_id, text, {
-      parse_mode: "HTML",
-      reply_to_message_id: message_id,
+      parse_mode: "Markdown",
     });
   } catch (error) {
     console.error(error);

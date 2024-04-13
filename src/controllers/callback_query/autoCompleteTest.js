@@ -5,6 +5,7 @@ import updateDataLMS from "../../util/updateDataLMS.js";
 import typingMessage from "../../util/tyingMessage.js";
 import Account from "../../model/Account.js";
 import Key from "../../model/Key.js";
+import dataConfig from '../../config/data.js'
 async function skipVideoLMS({ data, message }) {
   const json = JSON.parse(data);
   const chat_id = message.chat.id;
@@ -27,7 +28,7 @@ async function skipVideoLMS({ data, message }) {
     if (!isKey) {
       await this.deleteMessage(chat_id, message_id);
       await editMessage(
-        "Hmm... key bạn hết lượt sử dụng rồi liên hệ [Cường](https://t.me/nmcuong04) để lấy key nhé"
+        `Hmm... key bạn hết lượt sử dụng rồi liên hệ [${dataConfig.admin_name}](${dataConfig.contact_url}) để lấy key nhé`
       );
       return;
     }
@@ -329,7 +330,7 @@ async function skipVideoLMS({ data, message }) {
     //     if (lesson.test_results.length >= maxTest) {
     //       await this.sendMessage(
     //         chat_id,
-    //         `Rất tiếc bài *${lesson.title}* của bạn đã tới ngưỡng *${lesson.test_result.length}/${maxTest}* lần làm rùi hãy nhưng mình vẫn hỗ trợ sửa (điểm, số lần làm) nhé cần thì liên hệ [Cường](https://t.me/nmcuong04)`,
+    //         `Rất tiếc bài *${lesson.title}* của bạn đã tới ngưỡng *${lesson.test_result.length}/${maxTest}* lần làm rùi hãy nhưng mình vẫn hỗ trợ sửa (điểm, số lần làm) nhé cần thì liên hệ [${dataConfig.admin_name}](${dataConfig.contact_url})`,
     //         {
     //           parse_mode: "Markdown",
     //         }
@@ -444,7 +445,7 @@ async function skipVideoLMS({ data, message }) {
     //     }
     //     await this.sendMessage(
     //       chat_id,
-    //       `*1️⃣ Vào bài tập muốn làm ấn bắt đầu*\n*2️⃣ Bật F12*\n*3️⃣ Chọn mục console*\n*3️⃣ Dán code tương ứng ở trên ⬆*\n*Có lỗi gì thì báo* [Cường](https://t.me/nmcuong04) *hỗ trợ nhé*`,
+    //       `*1️⃣ Vào bài tập muốn làm ấn bắt đầu*\n*2️⃣ Bật F12*\n*3️⃣ Chọn mục console*\n*3️⃣ Dán code tương ứng ở trên ⬆*\n*Có lỗi gì thì báo* [${dataConfig.admin_name}](${dataConfig.contact_url}) *hỗ trợ nhé*`,
     //       {
     //         parse_mode: "Markdown",
     //       }
@@ -495,7 +496,7 @@ async function skipVideoLMS({ data, message }) {
     }
     await this.sendMessage(
       chat_id,
-      `*1️⃣ Vào bài tập muốn làm ấn bắt đầu*\n*2️⃣ Bật F12*\n*3️⃣ Chọn mục console*\n*3️⃣ Dán code tương ứng ở trên ⬆*\n*Có lỗi gì thì báo* [Cường](https://t.me/nmcuong04) *hỗ trợ nhé*`,
+      `*1️⃣ Vào bài tập muốn làm ấn bắt đầu*\n*2️⃣ Bật F12*\n*3️⃣ Chọn mục console*\n*3️⃣ Dán code tương ứng ở trên ⬆*\n*Có lỗi gì thì báo* [${dataConfig.admin_name}](${dataConfig.contact_url}) *hỗ trợ nhé*`,
       {
         parse_mode: "Markdown",
       }

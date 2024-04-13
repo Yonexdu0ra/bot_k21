@@ -5,6 +5,7 @@ import typingMessage from "../../util/tyingMessage.js";
 import getDataByQueryLMS from "../../util/getDataByQueryLMS.js";
 import Account from "../../model/Account.js";
 import Key from "../../model/Key.js";
+import dataConfig from '../../config/data.js'
 async function autoCompleteTest(msg, match) {
   const chat_id = msg.chat.id;
   const message_id = msg.message_id;
@@ -24,7 +25,7 @@ async function autoCompleteTest(msg, match) {
       });
       return;
     }
-    const { editMessage, deleteMessage } = await typingMessage(this, {
+    const { editMessage } = await typingMessage(this, {
       chat_id,
     });
 
@@ -40,7 +41,7 @@ async function autoCompleteTest(msg, match) {
     }
     if (!accountData.key) {
       await editMessage(
-        `Để sử dụng chức năng này bạn cần liên hệ [Cường](https://t.me/nmcuong04) để lấy key nhé`
+        `Để sử dụng chức năng này bạn cần liên hệ [${dataConfig.admin_name}](${dataConfig.contact_url}) để lấy key nhé`
       );
       return;
     }
@@ -48,7 +49,7 @@ async function autoCompleteTest(msg, match) {
     const isKey = await Key.findOne({ key: accountData.key });
     if (!isKey || isKey.count < 1) {
       await editMessage(
-        `Rất tiếc key của bạn hết lượt sử dụng rùi liên hệ [Cường](https://t.me/nmcuong04) để tăng thêm lượt nhé !`
+        `Rất tiếc key của bạn hết lượt sử dụng rùi liên hệ [${dataConfig.admin_name}](${dataConfig.contact_url}) để tăng thêm lượt nhé !`
       );
       return;
     }

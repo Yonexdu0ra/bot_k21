@@ -6,6 +6,7 @@ import removeKey from "./removeKey.js";
 import addKey from "./addCountKey.js";
 import reduceKey from "./reduceCountKey.js";
 import responseMessage from "./responseMessage.js";
+import getDiemThi from "./getDiemThi.js";
 async function callback_query(query) {
   try {
     const payload = query.data.split("-");
@@ -13,6 +14,13 @@ async function callback_query(query) {
     switch (type) {
       case "SKIP": {
         await skipVideoLMS.call(this, {
+          data: payload.join("-"),
+          message: query.message,
+        });
+        break;
+      }
+      case "GET_DIEM_THI": {
+        await getDiemThi.call(this, {
           data: payload.join("-"),
           message: query.message,
         });

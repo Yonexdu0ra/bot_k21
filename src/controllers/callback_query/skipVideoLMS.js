@@ -9,6 +9,8 @@ import Account from "../../model/Account.js";
 import Key from "../../model/Key.js";
 import puppeteer from "puppeteer";
 import configBrowser from "../../config/browser.js";
+import dataConfig from "../../config/data.js";
+
 // import Course from "../../model/Course.js";
 async function skipVideoLMS({ data, message }) {
   // const timeStartSkip = new Date();
@@ -44,7 +46,7 @@ async function skipVideoLMS({ data, message }) {
     }
     if (isKey.count < 1) {
       await editMessage(
-        `Hmm... key bạn hết lượt sử dụng rồi liên hệ [Cường](https://t.me/nmcuong04) để lấy key nhé`
+        `Hmm... key bạn hết lượt sử dụng rồi liên hệ [${dataConfig.admin_name}](${dataConfig.contact_url}) để lấy key nhé`
       );
       return;
     }
@@ -348,7 +350,7 @@ async function skipVideoLMS({ data, message }) {
     await browser.close();
     await this.sendMessage(
       chat_id,
-      `*Đã tua xong* có lỗi gì thì báo [Cường](https://t.me/nmcuong04) hỗ trợ nhé `,
+      `*Đã tua xong* có lỗi gì thì báo [${dataConfig.admin_name}](${dataConfig.contact_url}) hỗ trợ nhé `,
       {
         parse_mode: "Markdown",
       }

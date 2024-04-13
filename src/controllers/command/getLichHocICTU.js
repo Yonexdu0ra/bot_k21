@@ -84,7 +84,7 @@ async function getLichHocICTU(msg, match) {
             class_code: listTd[i++].innerText || "",
             time: listTd[i++].innerText || "",
             address: (listTd[i++].innerText || "").replace(/[\n\t]/g, " "),
-            Lecturers: listTd[i++].innerText || "",
+            lecturers: listTd[i++].innerText || "",
             number_of_student: listTd[i++].innerText || "",
             number_of_student_register: listTd[i++].innerText || "",
             credits: listTd[i++].innerText || "",
@@ -163,7 +163,7 @@ async function getLichHocICTU(msg, match) {
     );
     for (const iterator of newDataConvert) {
       // if (iterator.time === "Hiện không có Lịch 🎉✨") {
-      //   continue;
+      //   continue;  
       // }
       await this.sendMessage(
         chat_id,

@@ -29,10 +29,9 @@ async function reduceCountKey({ data, message }) {
       { new: true }
     );
     await deleteMessage();
+
     await this.editMessageText(
-      `\n ${"```" + newKeyData.key + "```"}\nLoại key: ${newKeyData.type}\nSố lượt còn lại: *${
-        newKeyData.count
-      }*`,
+      `Key:  \`${newKeyData.key}\`\nLoại: *${newKeyData.type}*\nSố lượt còn lại: *${newKeyData.count}*`,
       {
         chat_id,
         message_id,

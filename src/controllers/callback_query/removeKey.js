@@ -3,10 +3,10 @@ import typingMessage from "../../util/tyingMessage.js";
 import Key from "../../model/Key.js";
 async function removeKey({ data, message }) {
   // const timeStartSkip = new Date();
-  console.log(data);
+  // console.log(data);
   const chat_id = message.chat.id;
   const message_id = message.message_id;
-  console.log(message);
+  // console.log(message);
   try {
     const isSetAccount = await checkSetAccount(chat_id);
     if (!isSetAccount.status) {

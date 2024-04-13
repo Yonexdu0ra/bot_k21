@@ -1,6 +1,7 @@
 import checkSetAccount from "../../util/checkSetAccount.js";
 import typingMessage from "../../util/tyingMessage.js";
 import Key from "../../model/Key.js";
+import dataConfig from "../../config/data.js";
 async function newKey({ data, message }) {
   // const timeStartSkip = new Date();
   const json = JSON.parse(data);
@@ -14,7 +15,7 @@ async function newKey({ data, message }) {
       });
       return;
     }
-    const { deleteMessage, editMessage } = await typingMessage(this, {
+    const { editMessage } = await typingMessage(this, {
       chat_id,
       message: "Đang tạo mới key",
     });
@@ -29,16 +30,16 @@ async function newKey({ data, message }) {
       return `${sign}_${timestamp}${randomString}`;
     }
 
-    const newKey = generateUniqueId(`NMC_${json.type}`);
+    const newKey = generateUniqueId(`${dataConfig.sign}_${json.type}`);
 
     const keyData = await Key.create({
       key: newKey,
       count: json.count,
       type: json.type,
     });
-    let key = "```" + newKey + "```";
+
     await editMessage(
-      `${key} \nLoại: *${keyData.type}* \n\n Số lượt còn lại: *${keyData.count}*`
+      `Key:  \`${keyData.key}\`\n\nLoại:*${keyData.type}*\n\nSố lượt còn lại: *${keyData.count}*`
     );
   } catch (error) {
     console.error(error);

@@ -4,6 +4,7 @@ import loginDKTC from "../../util/loginDKTC.js";
 import checkSetAccount from "../../util/checkSetAccount.js";
 import typingMessage from "../../util/tyingMessage.js";
 import browerConfig from "../../config/browser.js";
+import { text } from "express";
 
 async function getDiemThiICTU(msg, match) {
   const chat_id = msg.chat.id;
@@ -23,7 +24,9 @@ async function getDiemThiICTU(msg, match) {
       });
       return;
     }
-    const { deleteMessage } = await typingMessage(this, { chat_id });
+    const { deleteMessage, editMessage } = await typingMessage(this, {
+      chat_id,
+    });
     await this.sendChatAction(chat_id, "typing");
     const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
@@ -45,155 +48,81 @@ async function getDiemThiICTU(msg, match) {
     await page.goto(
       "http://220.231.119.171/kcntt/(S(2o2qniiccej3u3x2pewpijla))/StudentMark.aspx"
     );
-    const isLich = await page.evaluate(() => {
-      return [...document.querySelectorAll(".cssListItem")][0] ? true : false;
-    });
-    if (!isLich) {
-      await selectSemester(page, 1);
-      await page.waitForNavigation();
-      await selectSemester(page, 2);
-      await page.waitForNavigation();
-    }
-    const tableData = await page.evaluate(() => {
-      // crawl dữ liệu table trong dktc
-      const listData = [];
-      const table = document.querySelector("#tblStudentMark");
-      if (table) {
-        const [head, ...body] = table.children[0].children;
-        body.pop();
-        if (body.length < 1) {
-          return listData;
-        }
-        body.forEach((trElement) => {
-          var _danhGia$innerText,
-            _diemCC$innerText,
-            _diemThi$innerText,
-            _diemTongKet$innerTex,
-            _tich$innerText;
-          const tenHocPhan = trElement.children[2];
-          const soTC = trElement.children[3];
-          const lanHoc = trElement.children[4];
-          const lanThi = trElement.children[5];
-          const diemThu = trElement.children[6];
-          const laDiemTongKetMon = trElement.children[7];
-          const danhGia = trElement.children[8];
-          const diemCC = trElement.children[10];
-          const diemThi = trElement.children[11];
-          const diemTongKet = trElement.children[12];
-          const tich = trElement.children[13];
-          const obj = {};
-          obj["tenHocPhan"] =
-            tenHocPhan === null || tenHocPhan === void 0
-              ? void 0
-              : tenHocPhan.innerText;
-          obj["soTC"] =
-            soTC === null || soTC === void 0 ? void 0 : soTC.innerText;
-          obj["lanHoc"] =
-            lanHoc === null || lanHoc === void 0 ? void 0 : lanHoc.innerText;
-          obj["lanThi"] =
-            lanThi === null || lanThi === void 0 ? void 0 : lanThi.innerText;
-          obj["diemThu"] =
-            diemThu === null || diemThu === void 0 ? void 0 : diemThu.innerText;
-          obj["laDiemTongKetMon"] =
-            laDiemTongKetMon === null || laDiemTongKetMon === void 0
-              ? void 0
-              : laDiemTongKetMon.innerText;
-          obj["danhGia"] =
-            (danhGia === null ||
-              danhGia === void 0 ||
-              (_danhGia$innerText = danhGia.innerText) === null ||
-              _danhGia$innerText === void 0
-              ? void 0
-              : _danhGia$innerText.trim()) == ""
-              ? "chưa có"
-              : danhGia === null || danhGia === void 0
-                ? void 0
-                : danhGia.innerText.trim();
-          obj["diemCC"] =
-            (diemCC === null ||
-              diemCC === void 0 ||
-              (_diemCC$innerText = diemCC.innerText) === null ||
-              _diemCC$innerText === void 0
-              ? void 0
-              : _diemCC$innerText.trim()) == ""
-              ? "chưa có"
-              : diemCC === null || diemCC === void 0
-                ? void 0
-                : diemCC.innerText.trim();
-          obj["diemThi"] =
-            (diemThi === null ||
-              diemThi === void 0 ||
-              (_diemThi$innerText = diemThi.innerText) === null ||
-              _diemThi$innerText === void 0
-              ? void 0
-              : _diemThi$innerText.trim()) == ""
-              ? "chưa có"
-              : diemThi === null || diemThi === void 0
-                ? void 0
-                : diemThi.innerText.trim();
-          obj["diemTongKet"] =
-            (diemTongKet === null ||
-              diemTongKet === void 0 ||
-              (_diemTongKet$innerTex = diemTongKet.innerText) === null ||
-              _diemTongKet$innerTex === void 0
-              ? void 0
-              : _diemTongKet$innerTex.trim()) == ""
-              ? "chưa có"
-              : diemTongKet === null || diemTongKet === void 0
-                ? void 0
-                : diemTongKet.innerText.trim();
-          obj["tich"] =
-            (tich === null ||
-              tich === void 0 ||
-              (_tich$innerText = tich.innerText) === null ||
-              _tich$innerText === void 0
-              ? void 0
-              : _tich$innerText.trim()) == ""
-              ? "chưa có"
-              : tich === null || tich === void 0
-                ? void 0
-                : tich.innerText.trim();
-          listData.push(obj);
-        });
-        return listData;
-      } else {
-        return listData;
+
+    const listHocKy = await page.evaluate(() => {
+      const select = document.querySelector("#drpHK");
+      if (!select) {
+        return [];
       }
+      const list = [...select.children].map((op, index) => ({
+        value: op.value,
+        index,
+      }));
+      return list;
     });
-    await browser.close();
-    if (tableData.length < 1) {
-      await deleteMessage();
-      await this.sendMessage(chat_id, "Không lấy được thông tin T_T", {
-        reply_message_id: message_id,
-      });
-      return;
+    // const inline_keyboard = [...(listHocKy.map((item) => [
+    //       {
+    //         text: item.value,
+    //         callback_data: `GET_DIEM_THI-${JSON.stringify({
+    //           value: item.value,
+    //           index: item.index,
+    //         })}`,
+    //       },
+    //     ])), {
+    //       text: "Close",
+    //       callback_data: "CLOSE",
+    //     }]
+    let i = listHocKy.length;
+    const inline_keyboard = [];
+    while(listHocKy.length > 6) {
+      const x = listHocKy.slice(0, 6);
+      inline_keyboard.push([
+        ...(x.map((item) => ({
+          text: item.value,
+          callback_data: `GET_DIEM_THI-${JSON.stringify({
+            value: item.value,
+            index: item.index,
+          })}`,
+        }))),
+      ]);
     }
-    await deleteMessage();
-    let text = "Thông tin điểm thi của bạn: \n";
-    for await (const data of tableData) {
-      text += `Môn: <strong>${data.tenHocPhan}</strong>\nCC: <strong>${data.diemCC
-        }</strong>\nĐiểm Thi: <strong>${data.diemThi
-        }</strong>\nĐiểm tổng kết: <strong>${data.diemTongKet
-        }</strong>\nTích: <strong>${data.tich}</strong>\nĐánh giá: <strong>${data.danhGia
-        }</strong>\nLần thi: <strong>${data.lanThi}</strong>\nĐiểm thứ: <strong>${data.diemThu
-        }</strong>\nLà điểm tổng kết môn: <strong>${data.laDiemTongKetMon
-        }</strong>\nLần học: <strong>${data.lanHoc}</strong>\n${"-".repeat(
-          data.tenHocPhan.length * 2
-        )}\n`;
-      if (text.length > 1300) {
-        this.sendMessage(chat_id, text, {
-          parse_mode: "HTML",
-          reply_message_id: message_id,
-        });
-        text = "";
-      }
+    if(listHocKy.length > 0) {
+      inline_keyboard.push([
+        ...listHocKy.map((item) => ({
+          text: item.value,
+          callback_data: `GET_DIEM_THI-${JSON.stringify({
+            value: item.value,
+            index: item.index,
+          })}`,
+        })),
+      ]);
     }
-    if (text.length > 1) {
-      await this.sendMessage(chat_id, text, {
-        parse_mode: "HTML",
-        reply_message_id: message_id,
-      });
-    }
+    inline_keyboard.push([
+      {
+        text: "Close",
+        callback_data: "CLOSE",
+      },
+    ]);
+    // for (const hocky of listHocKy) {
+    //   inline_keyboard.push([
+    //     {
+    //       text: hocky.value,
+    //       callback_data: `GET_DIEM_THI-${JSON.stringify({
+    //         value: hocky.value,
+    //         index: hocky.index,
+    //       })}`,
+    //     },
+    //   ]);
+    // }
+    // inline_keyboard.push({
+    //   text: "Close",
+    //   callback_data: "CLOSE",
+    // })
+    await editMessage(`Chọn học kỳ bạn muốn xem điểm: `, {
+      reply_markup: {
+        inline_keyboard: inline_keyboard,
+      },
+    });
   } catch (error) {
     console.error(error);
     await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {

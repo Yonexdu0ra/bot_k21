@@ -2,6 +2,7 @@ import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import Key from "../../model/Key.js";
 import Account from "../../model/Account.js";
 import typing_message from "../../util/tyingMessage.js";
+import dataConfig from "../../config/data.js";
 async function setKey(msg, match) {
   const chat_id = msg.chat.id;
   const message_id = msg.message_id;
@@ -29,7 +30,7 @@ async function setKey(msg, match) {
     });
     if (!isHasKey) {
       await editMessage(
-        `key không hợp lệ vui lòng liên hệ [Cường](https://t.me/nmcuong04) để lấy key`
+        `key không hợp lệ vui lòng liên hệ [${dataConfig.admin_name}](${dataConfig.contact_url}) để lấy key`
       );
       return;
     }

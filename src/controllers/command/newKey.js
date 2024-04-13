@@ -1,6 +1,7 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import Key from "../../model/Key.js";
 import typing_message from "../../util/tyingMessage.js";
+import dataConfig from "../../config/data.js";
 async function addKey(msg, match) {
   try {
     const chat_id = msg.chat.id;
@@ -20,7 +21,7 @@ async function addKey(msg, match) {
 
     if (!listAllowId.includes(msg.from.id)) {
       await editMessage(
-        `Rất tiếc bạn không có quyền sử dụng chức năng nay liên hệ [Cường](https://t.me/nmcuong04) để lấy key nhé`
+        `Rất tiếc bạn không có quyền sử dụng chức năng nay liên hệ [${dataConfig.admin_name}](${dataConfig.contact_url}) để lấy key nhé`
       );
       return;
     }
