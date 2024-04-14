@@ -60,18 +60,7 @@ async function getDiemThiICTU(msg, match) {
       }));
       return list;
     });
-    // const inline_keyboard = [...(listHocKy.map((item) => [
-    //       {
-    //         text: item.value,
-    //         callback_data: `GET_DIEM_THI-${JSON.stringify({
-    //           value: item.value,
-    //           index: item.index,
-    //         })}`,
-    //       },
-    //     ])), {
-    //       text: "Close",
-    //       callback_data: "CLOSE",
-    //     }]
+    await browser.close();
     let i = listHocKy.length;
     const inline_keyboard = [];
     while(listHocKy.length > 6) {
