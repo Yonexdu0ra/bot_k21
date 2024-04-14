@@ -33,18 +33,25 @@ async function getDiemThiICTU({ data, message }) {
       return;
     }
     await page.goto(
-      "http://220.231.119.171/kcntt/(S(2o2qniiccej3u3x2pewpijla))/StudentMark.aspx"
+      "http://220.231.119.171/kcntt/(S(2o2qniiccej3u3x2pewpijla))/StudentMark.aspx", {
+        waitUntil: 'domcontentloaded'
+      }
     );
     const selectoHocKy = await page.evaluate((index) => {
+      console.log(index, window.location.href);
       const select = document.querySelector("#drpHK");
-      if (select.selectedIndex != index) {
+      if(!select) {
+        return
+      }
+      if (select?.selectedIndex != index) {
         select.selectedIndex = index;
         select.dispatchEvent(new Event("change"));
       }
       return select.selectedIndex;
     }, json.index);
-    // if (json.index != selectoHocKy) {
-    // }
+    if (!selectoHocKy) {
+      await page.reload()
+    }
     await page.waitForNavigation();
     const listDiemThiData = await page.evaluate(() => {
       const table = document.querySelector("#tblStudentMark");

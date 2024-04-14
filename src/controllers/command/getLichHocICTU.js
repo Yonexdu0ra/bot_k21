@@ -17,6 +17,7 @@ async function getLichHocICTU(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
+    const { value, command } = isRedundantCommand;
     const isSetAccount = await checkSetAccount(chat_id);
     if (!isSetAccount.status) {
       await this.sendMessage(chat_id, isSetAccount.message, {
@@ -26,7 +27,7 @@ async function getLichHocICTU(msg, match) {
     }
     const { editMessage } = await typingMessage(this, {
       chat_id,
-      message: `Đợi tý để mình xác thực tài khoản Đăng ký tin chỉ nhé ^^`,
+      message: `Gợi ý: Bạn có thể thêm *detail* ở sau command để xem chi tiết các môn có học ẩn không có lịch học nhé\nVí dụ: \`${command} detail\``,
     });
 
     const browser = await puppeteer.launch(browerConfig);
@@ -161,16 +162,25 @@ async function getLichHocICTU(msg, match) {
     await editMessage(
       "Đây là lịch tuần này của bạn (*Mọi thông tin đều được lấy ở Đăng ký tín chỉ*): "
     );
+    let isHasMessage = false;
     for (const iterator of newDataConvert) {
-      // if (iterator.time === "Hiện không có Lịch 🎉✨") {
-      //   continue;  
-      // }
+      if (
+        iterator.time === "Hiện không có Lịch 🎉✨" && value?.toLowerCase()?.trim() !== 'detail'
+      ) {
+        continue;
+      }
       await this.sendMessage(
         chat_id,
         `\`\`\`json\n${JSON.stringify(iterator, null, 2)}\`\`\``,
         {
           parse_mode: "Markdown",
         }
+      );
+      isHasMessage = true;
+    }
+    if (!isHasMessage) {
+      await editMessage(
+        "Hiện không có lịch học nào trong tuần này 🎉✨"
       );
     }
   } catch (error) {

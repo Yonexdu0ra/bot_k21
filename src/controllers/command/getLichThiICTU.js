@@ -22,7 +22,9 @@ async function getLichThiICTU(msg, match) {
       });
       return;
     }
-    const { editMessage } = await typingMessage(this, { chat_id });
+    const { editMessage, deleteMessage } = await typingMessage(this, {
+      chat_id,
+    });
     await this.sendChatAction(chat_id, "typing");
     const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
@@ -108,7 +110,6 @@ async function getLichThiICTU(msg, match) {
     });
     await browser.close();
     if (tableData.length < 1) {
-      await deleteMessage();
       await editMessage("Hiện bạn không có lịch thi của bạn")
       return;
     }
@@ -117,9 +118,15 @@ async function getLichThiICTU(msg, match) {
       text += `Môn: *${data.hocPhan}*\nHình thức thi: *${data.hinhThucThi}*\nNgày thi: *${data.ngayThi}*\nCa thi: *${data.caThi}*\nSố báo danh: *${data.soBaoDanh}*\nĐịa điểm: *${data.diaDiem}*\n\n\n`;
     }
     text += "*Chúc bạn may mắn !* 🍀";
+    const MAX_LENGTH = 4096;
+    if(text.length < MAX_LENGTH) {
+      await editMessage(text);
+      return
+    }
     await this.sendMessage(chat_id, text, {
       parse_mode: "Markdown",
     });
+    await deleteMessage();
   } catch (error) {
     console.error(error);
     await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {
