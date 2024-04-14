@@ -4,7 +4,7 @@ import loginDKTC from "../../util/loginDKTC.js";
 import checkSetAccount from "../../util/checkSetAccount.js";
 import typingMessage from "../../util/tyingMessage.js";
 import browerConfig from "../../config/browser.js";
-import { text } from "express";
+import e, { text } from "express";
 
 async function getDiemThiICTU(msg, match) {
   const chat_id = msg.chat.id;
@@ -27,7 +27,6 @@ async function getDiemThiICTU(msg, match) {
     const { deleteMessage, editMessage } = await typingMessage(this, {
       chat_id,
     });
-    await this.sendChatAction(chat_id, "typing");
     const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
     page.on("dialog", async (dialog) => {
@@ -45,6 +44,7 @@ async function getDiemThiICTU(msg, match) {
       await deleteMessage();
       return;
     }
+    await editMessage(`Đang tiến hành lấy dữ liệu...`)
     await page.goto(
       "http://220.231.119.171/kcntt/(S(2o2qniiccej3u3x2pewpijla))/StudentMark.aspx"
     );
