@@ -157,7 +157,7 @@ async function getDiemThiICTU({ data, message }) {
     await browser.close();
     let text = "";
     for (const data of listDiemThiData) {
-      text += `Môn: *${data.module}*\nLần học thứ: *${data.number_of_times_retaken}*\nĐánh giá: *${data.evaluation}*\nChuyên cần: ${data.cc}\nĐiểm thi: ${data.score}\nĐiểm tổng kết: *${data.overall_subject_grade}*\nĐiểm chữ: *${data.letter_grades}*\nSố tín chỉ: *${data.credit}*\n\n`;
+      text += `Môn: *${data.module}*\nLần học thứ: *${data.number_of_times_retaken}*\nLà điểm tổng kết: *${data.overall_subject_grade}*\nĐánh giá: *${data.evaluation}*\nChuyên cần: ${data.cc}\nĐiểm thi: ${data.score}\nĐiểm tổng kết học phần: ${data.total}\nĐiểm chữ: *${data.letter_grades}*\nSố tín chỉ: *${data.credit}*\n\n`;
     }
     await editMessage(`Đây là thông tin điểm thi của bạn:\n\n${text}`);
   } catch (error) {
