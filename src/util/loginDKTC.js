@@ -7,16 +7,16 @@ const loginDKTC = async (page, { username, password }) => {
     await page.click("input#btnSubmit");
     await page.waitForSelector("table");
     const cookies = await page.cookies();
-    if(!cookies[0] || !cookies[0].name === 'SignIn') {
+    if (cookies[0] && cookies[0].name === "SignIn") {
       return {
-        status: false,
-        message: "Tài khoản hoặc mật khẩu không đúng !",
+        status: true,
+        message: "Đăng nhập thành công",
       };
     }
     return {
-      status: true,
-      message: "Đăng nhập thành công",
-      data: cookies
+      status: false,
+      message: "Tài khoản hoặc mật khẩu không đúng !",
+      data: cookies,
     };
   } catch (error) {
     console.log(error);

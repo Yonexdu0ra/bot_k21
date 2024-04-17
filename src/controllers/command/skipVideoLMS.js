@@ -6,7 +6,9 @@ import getDataByQueryLMS from "../../util/getDataByQueryLMS.js";
 import Account from "../../model/Account.js";
 import Key from "../../model/Key.js";
 import Course from "../../model/Course.js";
-import dataConfig from '../../config/data.js'
+import dataConfig from "../../config/data.js";
+import getUrlByUsername from "../../util/getUrlByUsername.js";
+
 async function skipVideoLMS(msg, match) {
   const chat_id = msg.chat.id;
   const message_id = msg.message_id;
@@ -69,15 +71,17 @@ async function skipVideoLMS(msg, match) {
       await editMessage(`\`\`\`JSON\n${JSON.stringify(data, null, 2)}\`\`\``);
       return;
     }
+    const { url } = await getUrlByUsername(accountData.username);
     const token = data.access_token;
-    const profile = await getDataByQueryLMS(process.env.URL_PROFILE_LMS, {
-      token,
-    });
-    await editMessage(
-      `Hello *${profile.data.display_name}* !`
+    const profile = await getDataByQueryLMS(
+      `${url}/${process.env.PROFILE_LMS}`,
+      {
+        token,
+      }
     );
+    await editMessage(`Hello *${profile.data.display_name}* !`);
     const userProfile = await getDataByQueryLMS(
-      process.env.URL_USER_PROFILE_LMS,
+      `${url}/${process.env.USER_PROFILE_LMS}`,
       {
         query: {
           "condition[0][key]": "user_id",
@@ -88,7 +92,7 @@ async function skipVideoLMS(msg, match) {
       }
     );
     const listYear = await getDataByQueryLMS(
-      process.env.URL_CLASS_STUDENT_LMS,
+      `${url}/${process.env.CLASS_STUDENT_LMS}`,
       {
         query: {
           limit: 1000,
@@ -102,7 +106,7 @@ async function skipVideoLMS(msg, match) {
       }
     );
     const listClassIdCourse = await getDataByQueryLMS(
-      process.env.URL_CLASS_STUDENT_LMS,
+      `${url}/${process.env.CLASS_STUDENT_LMS}`,
       {
         query: {
           limit: 1000,
@@ -123,11 +127,11 @@ async function skipVideoLMS(msg, match) {
         token,
       }
     );
-    await editMessage('Hãy lựa chọn môn học bạn muốn hoàn thành video cấp tốc')
+    await editMessage("Hãy lựa chọn môn học bạn muốn hoàn thành video cấp tốc");
     if (listClassIdCourse.data) {
       for (const course of listClassIdCourse.data) {
         const classData = await getDataByQueryLMS(
-          `${process.env.URL_CLASS_LMS}/${course.class_id}`,
+          `${url}/${process.env.CLASS_LMS}/${course.class_id}`,
           {
             token,
             query: {
@@ -136,7 +140,7 @@ async function skipVideoLMS(msg, match) {
           }
         );
         const completedData = await await getDataByQueryLMS(
-          `${process.env.URL_CLASS_STUDENT_STRACKING_LMS}`,
+          `${url}/${process.env.CLASS_STUDENT_STRACKING_LMS}`,
           {
             token,
             query: {
@@ -155,20 +159,12 @@ async function skipVideoLMS(msg, match) {
             },
           }
         );
-        let totalLessonCompleted = 0;
-        for (const { completed } of completedData.data) {
-          if (completed) {
-            totalLessonCompleted++;
-          }
-        }
+
         await this.sendMessage(
           chat_id,
           `\`\`\`JSON\n${JSON.stringify(
             {
               ...classData.data,
-              complete: `${Math.floor(
-                (totalLessonCompleted / completedData.data.length) * 100
-              )}%`,
             },
             null,
             2
@@ -179,7 +175,7 @@ async function skipVideoLMS(msg, match) {
               inline_keyboard: [
                 [
                   {
-                    text: `Tua ${classData.data.name.slice(
+                    text: `${classData.data.name.slice(
                       0,
                       classData.data.name.indexOf("(") ||
                         classData.data.name.length
@@ -187,7 +183,7 @@ async function skipVideoLMS(msg, match) {
                     callback_data: `SKIP-${JSON.stringify({
                       class_id: course.class_id,
                       course_id: classData.data.course_id,
-                      class_studentId: course.id,
+                      class_stId: course.id,
                       // key: accountData.key,
                     })}`,
                   },

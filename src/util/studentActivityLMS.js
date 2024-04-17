@@ -1,8 +1,8 @@
 import { config } from 'dotenv'
-
+import getAppIdAndOriginByUrl from "./getAppIdAndOriginByUrl.js";
 config()
 async function studentActivity(
-  url = process.env.URL_ACTIVITY_LMS,
+  url = ``,
   option = {
     action: "lession-open",
     browser: {
@@ -25,13 +25,14 @@ async function studentActivity(
   }
 ) {
   try {
+    const { appId, origin } = getAppIdAndOriginByUrl(url);
     const res = await fetch(url, {
       method: option.method || "GET",
       headers: {
         "content-type": "application/json",
-        "X-App-Id": process.env.APP_ID_LMS,
+        "X-App-Id": appId,
         authorization: `Bearer ${option.token}`,
-        origin: process.env.URL_LMS,
+        origin,
       },
       body: JSON.stringify({
         action: option.action,

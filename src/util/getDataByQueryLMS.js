@@ -1,5 +1,6 @@
 import { config } from "dotenv";
 import queryParams from "./queryParams.js";
+import getAppIdAndOriginByUrl from "./getAppIdAndOriginByUrl.js";
 config();
 async function getDataByQueryLMS(url, options = {
   query: '',
@@ -7,11 +8,12 @@ async function getDataByQueryLMS(url, options = {
 }) {
   try {
     const query = queryParams(options.query);
+    const { appId, origin } = getAppIdAndOriginByUrl(url);
     const res = await fetch(`${url}?${query}`, {
       headers: {
         "content-type": "application/json",
-        "X-App-Id": process.env.APP_ID_LMS,
-        origin: process.env.URL_LMS,
+        "X-App-Id": appId,
+        origin,
         authorization: `Bearer ${options.token}`,
       },
     });

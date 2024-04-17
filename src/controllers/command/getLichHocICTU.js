@@ -5,6 +5,7 @@ import checkSetAccount from "../../util/checkSetAccount.js";
 import selectSemester from "../../util/selectSemester.js";
 import typingMessage from "../../util/tyingMessage.js";
 import browerConfig from "../../config/browser.js";
+import { parse } from "dotenv";
 // import convertDateUTC from "../../util/convertDateUTC.js";
 async function getLichHocICTU(msg, match) {
   const chat_id = msg.chat.id;
@@ -27,7 +28,7 @@ async function getLichHocICTU(msg, match) {
     }
     const { editMessage } = await typingMessage(this, {
       chat_id,
-      message: `Gợi ý: Bạn có thể thêm *detail* ở sau command để xem chi tiết các môn có học ẩn không có lịch học nhé\nVí dụ: \`${command} detail\``,
+      message: `Gợi ý: Bạn có thể thêm *detail* ở sau command để xem chi tiết các môn có học ẩn (không có lịch học) nhé\nVí dụ: \`${command} detail\``,
     });
 
     const browser = await puppeteer.launch(browerConfig);
@@ -50,10 +51,13 @@ async function getLichHocICTU(msg, match) {
       return;
     }
     await editMessage(
-      "Xác thức tài khoản thành công ^^ \nLưu ý: *sau 18 giờ hàng ngày lịch học sẽ là lịch học của ngày hôm sau*"
+      "Xác thức tài khoản thành công ^^"
     );
     await page.goto(
       "http://220.231.119.171/kcntt/(S(33uxr0lc44m242fbvo0zubml))/Reports/Form/StudentTimeTable.aspx"
+    );
+    await editMessage(
+      "*Lưu ý*: __sau 18 giờ hàng ngày lịch học sẽ là lịch học của ngày hôm sau__"
     );
     const isLich = await page.evaluate(() => {
       return [...document.querySelectorAll(".cssListItem")][0] ? true : false;
@@ -169,11 +173,30 @@ async function getLichHocICTU(msg, match) {
       ) {
         continue;
       }
+      // await this.sendMessage(
+      //   chat_id,
+      //   `\`\`\`json\n${JSON.stringify(iterator, null, 2)}\`\`\``,
+      //   {
+      //     parse_mode: "Markdown",
+      //   }
+      // );
+
       await this.sendMessage(
         chat_id,
-        `\`\`\`json\n${JSON.stringify(iterator, null, 2)}\`\`\``,
+        `*Môn*: __${iterator.class_name}__\n\n*Mã lớp*: _${
+          iterator.class_code
+        }_\n\n*Thời gian*: __${iterator.time}__\n\n*Địa điểm*: __${
+          iterator.address
+        }__\n\n*Giảng Viên*: __${iterator.lecturers}__\n\n*Sĩ số*: __${
+          iterator.number_of_student
+        }__\n\n*Số sinh viên đăng ký*: __${
+          iterator.number_of_student_register
+        }__\n\n*Số tín chỉ*: __${iterator.credits}__\n\n*Học phí*: __${
+          iterator.tuition || "Không tìm thấy"
+        }__\n\n*Ghi chú*: __${iterator.note || "Không có ghi chú"}__`,
         {
           parse_mode: "Markdown",
+          disable_web_page_preview: true,
         }
       );
       isHasMessage = true;

@@ -1,16 +1,19 @@
 import { config } from "dotenv";
+import getAppIdAndOriginByUrl from "./getAppIdAndOriginByUrl.js";
 config();
 async function getFileLMS(
   url,
   token
 ) {
   try {
+    const { appId, origin } = getAppIdAndOriginByUrl(url);
+    
     const res = await fetch(url, {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "X-App-Id": process.env.APP_ID_LMS,
-        origin: process.env.URL_LMS,
+        "X-App-Id": appId,
+        origin,
         authorization: `Bearer ${token}`,
       }
     });

@@ -32,13 +32,12 @@ async function getWeather(msg, match) {
         chat_id,
         `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
         {
-          caption: `<strong>${data.name} (${
+          caption: `*${data.name} (${
             data.sys.country
-          })</strong>\n${Math.round(data.main.temp)}°C ${
+          })*\n${Math.round(data.main.temp)}°C ${
             data.weather[0].description
           }`,
-          parse_mode: "HTML",
-          reply_to_message_id: message_id,
+          parse_mode: "Markdown",
         }
       );
       await deleteMessage();

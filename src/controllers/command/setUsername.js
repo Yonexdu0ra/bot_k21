@@ -5,7 +5,6 @@ async function setUsername(msg, match) {
   try {
     const chat_id = msg.chat.id;
     const message_id = msg.message_id;
-    const a = await Account.find({});
     const isRedundantCommand = await checkRedundantCommand(this, match, {
       chat_id,
       message_id,

@@ -16,7 +16,7 @@ async function createQR(msg, match) {
     const { value, command } = isRedundantCommand;
     const { editMessage, deleteMessage } = await typingMessage(this, {
       chat_id,
-      message: value.trim() || "...",
+      message: "Đang tạo mã QR code...",
     });
     if (!value.trim() || value.length < 1) {
       await editMessage(
@@ -27,10 +27,10 @@ async function createQR(msg, match) {
     await deleteMessage();
     await this.sendPhoto(
       chat_id,
-      `https://chart.googleapis.com/chart?cht=qr&chl=${value.trim()}&chs=360x360&chld=L|0`,
+      `https://api.qrserver.com/v1/create-qr-code/?data=${value.trim()}&size=500x500`,
       {
-        caption: value.trim(),
-        reply_to_message_id: message_id,
+        caption: `\`${value.trim()}\``,
+        parse_mode: "Markdown",
       }
     );
   } catch (error) {

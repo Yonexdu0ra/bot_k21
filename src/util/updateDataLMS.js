@@ -1,4 +1,5 @@
 import { config } from "dotenv";
+import getAppIdAndOriginByUrl from "./getAppIdAndOriginByUrl.js";
 config();
 async function updateDataLMS(
   url,
@@ -9,12 +10,13 @@ async function updateDataLMS(
   }
 ) {
   try {
+    const { appId, origin } = getAppIdAndOriginByUrl(url);
     const res = await fetch(url, {
       method: option.method || "POST",
       headers: {
         "content-type": "application/json",
-        "X-App-Id": process.env.APP_ID_LMS,
-        origin: process.env.URL_LMS,
+        "X-App-Id": appId,
+        origin,
         authorization: `Bearer ${option.token}`,
       },
       body: JSON.stringify(option.body),

@@ -10,7 +10,7 @@ import Key from "../../model/Key.js";
 import puppeteer from "puppeteer";
 import configBrowser from "../../config/browser.js";
 import dataConfig from "../../config/data.js";
-
+import getUrlByUsername from "../../util/getUrlByUsername.js";
 // import Course from "../../model/Course.js";
 async function skipVideoLMS({ data, message }) {
   // const timeStartSkip = new Date();
@@ -74,12 +74,17 @@ async function skipVideoLMS({ data, message }) {
       });
       return;
     }
+    const { url, university } = getUrlByUsername(accountData.username);
     const browser = await puppeteer.launch(configBrowser);
     const page = await browser.newPage();
     const token = data.access_token;
-    const profile = await getDataByQueryLMS(process.env.URL_PROFILE_LMS, {
+    const profile = await getDataByQueryLMS(`${url}/${process.env.PROFILE_LMS}`, {
       token,
     });
+    if (university === "TUEBA") {
+      await editMessage(`Hiện chưa hỗ trợ đối với bên *TUEBA*`);
+      return;
+    }
     if (message.chat.id !== 5460411588) {
       if (message.chat.type === "group" || message.chat.type === "supergroup") {
         await this.sendMessage(
@@ -168,7 +173,7 @@ async function skipVideoLMS({ data, message }) {
       }
     }
     const userProfile = await getDataByQueryLMS(
-      process.env.URL_USER_PROFILE_LMS,
+      `${url}/${process.env.USER_PROFILE_LMS}`,
       {
         query: {
           "condition[0][key]": "user_id",
@@ -181,7 +186,7 @@ async function skipVideoLMS({ data, message }) {
     await editMessage(`Hello ${userProfile.data[0].full_name}`);
 
     const listTrackingLMS = await getDataByQueryLMS(
-      process.env.URL_CLASS_STUDENT_STRACKING_LMS,
+      `${url}/${process.env.CLASS_STUDENT_STRACKING_LMS}`,
       {
         query: {
           order: "ASC",
@@ -189,7 +194,7 @@ async function skipVideoLMS({ data, message }) {
           limit: 1000,
           paged: 1,
           "condition[0][key]": "class_student_id",
-          "condition[0][value]": json.class_studentId,
+          "condition[0][value]": json.class_stId,
           "condition[0][compare]": "=",
           "condition[1][key]": "class_id",
           "condition[1][value]": json.class_id,
@@ -202,7 +207,7 @@ async function skipVideoLMS({ data, message }) {
     await editMessage(`Đang lấy danh sách video`);
 
     const listVideoAndLessonData = await getDataByQueryLMS(
-      process.env.URL_LESSON_LMS,
+      `${url}/${process.env.LESSON_LMS}`,
       {
         query: {
           paged: 1,
@@ -235,12 +240,12 @@ async function skipVideoLMS({ data, message }) {
         if (!listSeekVideo) {
           // tạo mới video hoặc xác nhận hoàn thành
           const newDataTrackingVideo = await updateDataLMS(
-            process.env.URL_CLASS_STUDENT_STRACKING_LMS,
+            `${url}/${process.env.CLASS_STUDENT_STRACKING_LMS}`,
             {
               method: "POST",
               body: {
                 class_id: json.class_id,
-                class_student_id: json.class_studentId,
+                class_student_id: json.class_stId,
                 lesson_id: lessonOrTest.id,
                 completed: 0,
                 lesson_name: lessonOrTest.title,
@@ -251,7 +256,7 @@ async function skipVideoLMS({ data, message }) {
           // case lesson video
           if (newDataTrackingVideo.data && lessonOrTest.video !== null) {
             const videoData = await getFileLMS(
-              `${process.env.URL_AWS_FILE_LMS}/${lessonOrTest.video.id}`,
+              `${url}/${process.env.AWS_FILE_LMS}/${lessonOrTest.video.id}`,
               token
             );
             await editMessage(`bắt đầu xem video ${lessonOrTest.title}`);
@@ -267,7 +272,7 @@ async function skipVideoLMS({ data, message }) {
                   } phút`
                 );
                 const isCompleteLessonVideo = await updateDataLMS(
-                  `${process.env.URL_CLASS_STUDENT_STRACKING_LMS}/${newDataTrackingVideo.data}`,
+                  `${url}/${process.env.CLASS_STUDENT_STRACKING_LMS}/${newDataTrackingVideo.data}`,
                   {
                     body: {
                       video_duration: durationVideo,
@@ -292,7 +297,7 @@ async function skipVideoLMS({ data, message }) {
           } else if (newDataTrackingVideo.data && lessonOrTest.video === null) {
             // case xác nhận hoàn thành
             await updateDataLMS(
-              `${process.env.URL_CLASS_STUDENT_STRACKING_LMS}/${newDataTrackingVideo.data}`,
+              `${url}/${process.env.CLASS_STUDENT_STRACKING_LMS}/${newDataTrackingVideo.data}`,
               {
                 method: "PUT",
                 body: {
@@ -314,7 +319,7 @@ async function skipVideoLMS({ data, message }) {
           await editMessage(`Lấy thông tin video ${lessonOrTest.title}`);
 
           const videoData = await getFileLMS(
-            `${process.env.URL_AWS_FILE_LMS}/${lessonOrTest.video.id}`,
+            `${url}/${process.env.AWS_FILE_LMS}/${lessonOrTest.video.id}`,
             token
           );
           if (videoData.data) {
@@ -323,7 +328,7 @@ async function skipVideoLMS({ data, message }) {
 
             if (!isNaN(durationVideo)) {
               const isCompleteLessonVideo = await updateDataLMS(
-                `${process.env.URL_CLASS_STUDENT_STRACKING_LMS}/${listSeekVideo.id}`,
+                `${url}/${process.env.CLASS_STUDENT_STRACKING_LMS}/${listSeekVideo.id}`,
                 {
                   body: {
                     video_duration: durationVideo,
@@ -348,12 +353,8 @@ async function skipVideoLMS({ data, message }) {
     }
     // await deleteMessage();
     await browser.close();
-    await this.sendMessage(
-      chat_id,
-      `*Đã tua xong* có lỗi gì thì báo [${dataConfig.admin_name}](${dataConfig.contact_url}) hỗ trợ nhé `,
-      {
-        parse_mode: "Markdown",
-      }
+    await editMessage(
+      `*Đã tua xong* có lỗi gì thì báo [${dataConfig.admin_name}](${dataConfig.contact_url}) hỗ trợ nhé`
     );
   } catch (error) {
     console.error(error);

@@ -2,12 +2,22 @@ import { config } from "dotenv";
 config();
 const loginLMS = async ({ username, password }) => {
   try {
-    const res = await fetch(process.env.URL_LOGIN_LMS, {
+    console.log(username);
+    let url = process.env.URL_LMS_SERVER_ICTU,
+      appId = process.env.APP_ID_LMS_ICTU,
+      origin = process.env.URL_LMS_ICTU;
+    if (username?.toUpperCase()?.includes("DTE")) {
+      url = process.env.URL_LMS_SERVER_TUEBA;
+      appId = process.env.APP_ID_LMS_TUEBA;
+      origin = process.env.URL_LMS_TUEBA;
+    }
+    console.log(url);
+    const res = await fetch(`${url}/${process.env.LOGIN_LMS}`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "X-App-Id": process.env.APP_ID_LMS,
-        origin: process.env.URL_LMS,
+        "X-App-Id": appId,
+        origin,
       },
       body: JSON.stringify({
         username,
