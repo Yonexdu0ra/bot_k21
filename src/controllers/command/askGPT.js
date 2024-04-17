@@ -3,7 +3,7 @@ import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import typingMessage from "../../util/tyingMessage.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-import { config, parse } from "dotenv";
+import { config } from "dotenv";
 config();
 async function askGPT(msg, match) {
   const chat_id = msg.chat.id;
@@ -29,25 +29,26 @@ async function askGPT(msg, match) {
     }
     const genAI = new GoogleGenerativeAI(process.env.API_TOKEN_GEMINIAI);
     const generationConfig = {
-      maxOutputTokens: 4000,
+      maxOutputTokens: 3000,
     };
-    const model = genAI.getGenerativeModel({ model: "gemini-pro", generationConfig });
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.0-pro-latest",
+      generationConfig,
+      system_instruction: "Add backslash to Markdown characters that don't want to be displayed as Markdown for answers",
+    });
     const result = await model.generateContentStream(value);
     const delay = (time) => new Promise((resolve) => setTimeout(resolve, time));
     const date = new Date()
     let text = "";
     for await (const chunk of result.stream) {
       const chunkText = chunk.text();
-      console.log(chunkText);
+      // console.log(chunkText);
       text += chunkText;
-      delay(500)
-      editMessage(text, {
+      await delay(500)
+      await editMessage(text, {
         parse_mode: undefined,
       })
     }
-
-    await delay(500);
-    await editMessage(`${text}\n${Math.floor((new Date() - date) / 1000)}s`);
   } catch (error) {
     console.log(error);
     await this.sendMessage(chat_id, `Thử lại sau nhé`, {
