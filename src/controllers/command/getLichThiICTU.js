@@ -24,8 +24,8 @@ async function getLichThiICTU(msg, match) {
     }
     const { editMessage, deleteMessage } = await typingMessage(this, {
       chat_id,
+      message: 'Vui lòng đợi trong giây lát...'
     });
-    await this.sendChatAction(chat_id, "typing");
     const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
     page.on("dialog", async (dialog) => {
@@ -129,9 +129,8 @@ async function getLichThiICTU(msg, match) {
     await deleteMessage();
   } catch (error) {
     console.error(error);
-    await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {
-      reply_to_message_id: message_id,
-    });
+    await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`);
+    return
   }
 }
 export default getLichThiICTU;

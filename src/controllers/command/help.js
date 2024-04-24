@@ -18,6 +18,7 @@ async function help(msg, match) {
     await this.sendMessage(chat_id, text, { parse_mode: "Markdown" });
   } catch (error) {
     console.log(error);
+    return
   }
 }
 

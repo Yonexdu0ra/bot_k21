@@ -15,7 +15,7 @@ async function setPassword(msg, match) {
     const { value, command } = isRedundantCommand;
     const { editMessage } = await tyingMessage(this, {
       chat_id,
-      message: `...`,
+      message: `Đang cập nhật *Password*...`,
     });
     await this.deleteMessage(chat_id, message_id)
     if (!value.trim()) {
@@ -43,6 +43,7 @@ async function setPassword(msg, match) {
     await editMessage(`set ~Password thất bại~`);
   } catch (error) {
     console.log(error);
+    return
   }
 }
 

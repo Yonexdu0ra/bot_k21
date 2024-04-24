@@ -53,6 +53,7 @@ async function getTimeTable(msg, match) {
     });
   } catch (error) {
     console.log("error getTimeTable: " + JSON.stringify(error));
+    return
   }
 }
 

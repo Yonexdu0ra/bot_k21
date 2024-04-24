@@ -5,8 +5,6 @@ import checkSetAccount from "../../util/checkSetAccount.js";
 import selectSemester from "../../util/selectSemester.js";
 import typingMessage from "../../util/tyingMessage.js";
 import browerConfig from "../../config/browser.js";
-import { parse } from "dotenv";
-// import convertDateUTC from "../../util/convertDateUTC.js";
 async function getLichHocICTU(msg, match) {
   const chat_id = msg.chat.id;
   const message_id = msg.message_id;
@@ -19,17 +17,16 @@ async function getLichHocICTU(msg, match) {
       return;
     }
     const { value, command } = isRedundantCommand;
-    const isSetAccount = await checkSetAccount(chat_id);
-    if (!isSetAccount.status) {
-      await this.sendMessage(chat_id, isSetAccount.message, {
-        reply_to_message_id: message_id,
-      });
-      return;
-    }
     const { editMessage } = await typingMessage(this, {
       chat_id,
       message: `Gợi ý: Bạn có thể thêm *detail* ở sau command để xem chi tiết các môn có học ẩn (không có lịch học) nhé\nVí dụ: \`${command} detail\``,
     });
+    const isSetAccount = await checkSetAccount(chat_id);
+    if (!isSetAccount.status) {
+      await editMessage(chat_id, isSetAccount.message);
+      return;
+    }
+    
 
     const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
@@ -41,9 +38,7 @@ async function getLichHocICTU(msg, match) {
       password: isSetAccount.password,
     });
     if (!isLoginDKTC.status) {
-      await this.sendMessage(chat_id, isLoginDKTC.message, {
-        reply_to_message_id: message_id,
-      });
+      await editMessage(chat_id, isLoginDKTC.message);
       await browser.close();
       await editMessage(
         "Hmm... Có vẻ như *Tài khoản* hoặc *Mật khẩu* không chính xác"
@@ -173,14 +168,6 @@ async function getLichHocICTU(msg, match) {
       ) {
         continue;
       }
-      // await this.sendMessage(
-      //   chat_id,
-      //   `\`\`\`json\n${JSON.stringify(iterator, null, 2)}\`\`\``,
-      //   {
-      //     parse_mode: "Markdown",
-      //   }
-      // );
-
       await this.sendMessage(
         chat_id,
         `*Môn*: __${iterator.class_name}__\n\n*Mã lớp*: _${
@@ -208,9 +195,7 @@ async function getLichHocICTU(msg, match) {
     }
   } catch (error) {
     console.error(error);
-    await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {
-      reply_to_message_id: message_id,
-    });
+    await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`);
     return;
   }
 }

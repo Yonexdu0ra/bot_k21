@@ -49,7 +49,7 @@ async function getWeather(msg, match) {
     }
   } catch (error) {
     console.log(error);
-    await this.sendMessage(chat_id, "Huhu lỗi rồi thử được sau iit phút nhé");
+    await this.sendMessage(chat_id, "Huhu lỗi rồi thử được sau ít phút nhé");
     return;
   }
 }

@@ -17,16 +17,14 @@ async function getDiemThiICTU(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
-    const isSetAccount = await checkSetAccount(chat_id);
-    if (!isSetAccount.status) {
-      await this.sendMessage(chat_id, isSetAccount.message, {
-        reply_message_id: message_id,
-      });
-      return;
-    }
     const { deleteMessage, editMessage } = await typingMessage(this, {
       chat_id,
     });
+    const isSetAccount = await checkSetAccount(chat_id);
+    if (!isSetAccount.status) {
+      await editMessage(chat_id, isSetAccount.message);
+      return;
+    }
     const browser = await puppeteer.launch(browerConfig);
     const page = await browser.newPage();
     page.on("dialog", async (dialog) => {
@@ -37,9 +35,7 @@ async function getDiemThiICTU(msg, match) {
       password: isSetAccount.password,
     });
     if (!isLoginDKTC.status) {
-      await this.sendMessage(chat_id, isLoginDKTC.message, {
-        reply_message_id: message_id,
-      });
+      await editMessage(chat_id, isLoginDKTC.message);
       await browser.close();
       await deleteMessage();
       return;
@@ -92,21 +88,6 @@ async function getDiemThiICTU(msg, match) {
         callback_data: "CLOSE",
       },
     ]);
-    // for (const hocky of listHocKy) {
-    //   inline_keyboard.push([
-    //     {
-    //       text: hocky.value,
-    //       callback_data: `GET_DIEM_THI-${JSON.stringify({
-    //         value: hocky.value,
-    //         index: hocky.index,
-    //       })}`,
-    //     },
-    //   ]);
-    // }
-    // inline_keyboard.push({
-    //   text: "Close",
-    //   callback_data: "CLOSE",
-    // })
     await editMessage(`Chọn học kỳ bạn muốn xem điểm: `, {
       reply_markup: {
         inline_keyboard: inline_keyboard,
@@ -114,9 +95,8 @@ async function getDiemThiICTU(msg, match) {
     });
   } catch (error) {
     console.error(error);
-    await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`, {
-      reply_message_id: message_id,
-    });
+    await this.sendMessage(chat_id, `Huhu lỗi rồi thử lại sau ít phút nhé`);
+    return
   }
 }
 export default getDiemThiICTU;

@@ -55,6 +55,7 @@ async function addKey(msg, match) {
     await deleteMessage;
   } catch (error) {
     console.log(error);
+    return
   }
 }
 

@@ -15,7 +15,7 @@ async function setUsername(msg, match) {
     const { value, command } = isRedundantCommand;
     const { editMessage } = await tyingMessage(this, {
       chat_id,
-      message: "...",
+      message: "Đang cập nhật *Username*...",
     });
     await this.deleteMessage(chat_id, message_id);
     if (!value.trim()) {
@@ -42,6 +42,7 @@ async function setUsername(msg, match) {
     await editMessage(`set ~Username thất bại~`);
   } catch (error) {
     console.log(error);
+    return
   }
 }
 

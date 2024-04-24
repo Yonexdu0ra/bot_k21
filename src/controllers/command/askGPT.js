@@ -33,28 +33,29 @@ async function askGPT(msg, match) {
     };
     const model = genAI.getGenerativeModel({
       model: "gemini-1.0-pro-latest",
+      markdown: true,
       generationConfig,
-      system_instruction: "Add backslash to Markdown characters that don't want to be displayed as Markdown for answers",
     });
     const result = await model.generateContentStream(value);
     const delay = (time) => new Promise((resolve) => setTimeout(resolve, time));
-    const date = new Date()
     let text = "";
     for await (const chunk of result.stream) {
       const chunkText = chunk.text();
-      // console.log(chunkText);
       text += chunkText;
       await delay(500)
       await editMessage(text, {
         parse_mode: undefined,
       })
-    }
+    }  
+    // await editMessage(text, {
+    //   parse_mode: 'Markdown'
+    // })
   } catch (error) {
     console.log(error);
-    await this.sendMessage(chat_id, `Thử lại sau nhé`, {
-      reply_to_message_id: message_id,
-    });
+    await this.sendMessage(chat_id, `Thử lại sau nhé`);
+    return
   }
 }
 
 export default askGPT;
+

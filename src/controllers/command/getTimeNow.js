@@ -136,6 +136,7 @@ async function timeNow(msg, match) {
     }
   } catch (error) {
     console.log(error);
+    return
   }
 }
 

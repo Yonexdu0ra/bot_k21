@@ -161,6 +161,7 @@ async function getDiemThiICTU({ data, message }) {
     await editMessage(`Đây là thông tin điểm thi của bạn:\n\n${text}`);
   } catch (error) {
     console.log(error);
+    await this.sendMessage(chat_id, `Lỗi rồi thử lại sau ít phút nhé`)
     return
   }
 }
