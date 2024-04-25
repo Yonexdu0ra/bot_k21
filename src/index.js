@@ -4,7 +4,6 @@ import express from "express";
 import handleCommand from "./util/handleCommand.js";
 import listCommand from "./util/listCommand.js";
 import connectDB from "./model/index.js";
-import cron from "node-cron";
 import { config } from "dotenv";
 import callback_query from "./controllers/callback_query/index.js";
 config();

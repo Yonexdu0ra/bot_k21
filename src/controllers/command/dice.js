@@ -11,6 +11,14 @@ async function dice(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
+    const inline_keyboard = [
+      [
+        {
+          text: "Close",
+          callback_data: "CLOSE",
+        },
+      ],
+    ];
     await this.sendDice(chat_id)
   } catch (error) {
     console.log(error);

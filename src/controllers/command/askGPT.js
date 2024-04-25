@@ -39,23 +39,39 @@ async function askGPT(msg, match) {
     const result = await model.generateContentStream(value);
     const delay = (time) => new Promise((resolve) => setTimeout(resolve, time));
     let text = "";
+    const date = new Date();
     for await (const chunk of result.stream) {
       const chunkText = chunk.text();
       text += chunkText;
-      await delay(500)
+      await delay(500);
       await editMessage(text, {
         parse_mode: undefined,
-      })
-    }  
-    // await editMessage(text, {
-    //   parse_mode: 'Markdown'
-    // })
+      });
+    }
+    const inline_keyboard = [
+      [
+        {
+          text: "Close",
+          callback_data: "CLOSE",
+        },
+      ],
+    ];
+    await editMessage(
+      `${text}\n${Math.floor(
+        (new Date() - date) / 1000
+      )}s`,
+      {
+        parse_mode: "Markdown",
+        reply_markup: {
+          inline_keyboard,
+        },
+      }
+    );
   } catch (error) {
     console.log(error);
     await this.sendMessage(chat_id, `Thử lại sau nhé`);
-    return
+    return;
   }
 }
 
 export default askGPT;
-
