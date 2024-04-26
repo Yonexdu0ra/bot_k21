@@ -61,7 +61,6 @@ async function askGPT(msg, match) {
         (new Date() - date) / 1000
       )}s`,
       {
-        parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard,
         },

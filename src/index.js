@@ -29,6 +29,7 @@ connectDB(
   });
   bot.on("error", () => {
     console.log("Bot error ");
+    return
   });
   bot.on("callback_query", callback_query.bind(bot));
 });
