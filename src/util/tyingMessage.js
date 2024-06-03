@@ -1,9 +1,11 @@
-const typing_message = async (bot, { chat_id, message = "Đợi chút nhé" }) => {
+const typing_message = async (bot, { chat_id, message = "Đợi chút nhé" }, isTyping = true) => {
   try {
     const msg = await bot.sendMessage(chat_id, message, {
       parse_mode: "Markdown",
     });
-    await bot.sendChatAction(chat_id, "typing");
+    if(isTyping) {
+      await bot.sendChatAction(chat_id, "typing");
+    }
     return {
       deleteMessage: async () => {
         try {

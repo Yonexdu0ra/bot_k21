@@ -48,24 +48,7 @@ async function askGPT(msg, match) {
         parse_mode: undefined,
       });
     }
-    const inline_keyboard = [
-      [
-        {
-          text: "Close",
-          callback_data: "CLOSE",
-        },
-      ],
-    ];
-    await editMessage(
-      `${text}\n${Math.floor(
-        (new Date() - date) / 1000
-      )}s`,
-      {
-        reply_markup: {
-          inline_keyboard,
-        },
-      }
-    );
+    await editMessage(`${text}\n${Math.floor((new Date() - date) / 1000)}s`);
   } catch (error) {
     console.log(error);
     await this.sendMessage(chat_id, `Thử lại sau nhé`);

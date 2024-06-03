@@ -7,6 +7,7 @@ import addKey from "./addCountKey.js";
 import reduceKey from "./reduceCountKey.js";
 import responseMessage from "./responseMessage.js";
 import getDiemThi from "./getDiemThi.js";
+import dice from './dice.js'
 async function callback_query(query) {
   try {
     const payload = query.data.split("-");
@@ -66,6 +67,13 @@ async function callback_query(query) {
           data: payload.join("-"),
           message: query.message,
         });
+      }
+      case "DICE": {
+        await dice.call(this, {
+          data: payload.join("-"),
+          message: query.message,
+        });
+        break;
       }
       case "CLOSE": {
         await close.call(this, query);

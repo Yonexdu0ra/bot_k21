@@ -16,7 +16,7 @@ async function setPassword(msg, match) {
     const { editMessage } = await tyingMessage(this, {
       chat_id,
       message: `Đang cập nhật *Password*...`,
-    });
+    }, false);
     await this.deleteMessage(chat_id, message_id)
     if (!value.trim()) {
       await editMessage(

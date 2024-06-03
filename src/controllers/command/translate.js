@@ -50,21 +50,10 @@ async function translate(msg, match) {
         options.text
       )}`
     );
-    const inline_keyboard = [
-      [
-        {
-          text: "Close",
-          callback_data: "CLOSE",
-        },
-      ],
-    ];
+    
     const data = await res.json();
     const text = data[0].reduce((curr, nextData) => curr + nextData[0], "");
-    await editMessage(`\`${text}\``, {
-      reply_markup: {
-        inline_keyboard
-      }
-    });
+    await editMessage(`\`${text}\``);
   } catch (error) {
     console.log(error);
     await this.sendMessage(chat_id, "Huhu lỗi rồi thử lại sau ít phút nhé");

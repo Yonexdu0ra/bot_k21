@@ -27,7 +27,7 @@ async function newKey({ data, message }) {
       const randomString = Math.random().toString(36).substring(2, 15);
       // Kết hợp chuỗi miliseconds và chuỗi ngẫu nhiên
       // để tạo ra chuỗi có khả năng duy nhất cao
-      return `${sign}_${timestamp}${randomString}`;
+      return `${sign}_${timestamp}${randomString}`.toLocaleUpperCase();
     }
 
     const newKey = generateUniqueId(`${dataConfig.sign}_${json.type}`);

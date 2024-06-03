@@ -25,8 +25,7 @@ async function addKey(msg, match) {
       );
       return;
     }
-    await this.sendMessage(chat_id, "Hãy chọn loại key bạn muốn thêm mới.", {
-      parse_mode: "Markdown",
+    await editMessage("Hãy chọn loại key bạn muốn thêm mới.", {
       reply_markup: {
         inline_keyboard: [
           [
@@ -52,10 +51,9 @@ async function addKey(msg, match) {
         ],
       },
     });
-    await deleteMessage;
   } catch (error) {
     console.log(error);
-    return
+    return;
   }
 }
 

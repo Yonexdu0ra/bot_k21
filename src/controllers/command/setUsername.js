@@ -16,7 +16,7 @@ async function setUsername(msg, match) {
     const { editMessage } = await tyingMessage(this, {
       chat_id,
       message: "Đang cập nhật *Username*...",
-    });
+    }, false);
     await this.deleteMessage(chat_id, message_id);
     if (!value.trim()) {
       await editMessage(`Vui lòng diền theo cú pháp: \`${command} Username\``);

@@ -25,23 +25,13 @@ async function createQR(msg, match) {
       return;
     }
     await deleteMessage();
-    const inline_keyboard = [
-      [
-        {
-          text: "Close",
-          callback_data: "CLOSE",
-        },
-      ],
-    ];
     await this.sendPhoto(
       chat_id,
       `https://api.qrserver.com/v1/create-qr-code/?data=${value.trim()}&size=500x500`,
       {
         caption: `\`${value.trim()}\``,
         parse_mode: "Markdown",
-        reply_markup: {
-          inline_keyboard,
-        },
+        
       }
     );
   } catch (error) {
