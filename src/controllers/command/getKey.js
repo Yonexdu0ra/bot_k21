@@ -1,7 +1,7 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 import Key from "../../model/Key.js";
-import typing_message from "../../util/tyingMessage.js";
 import dataConfig from "../../config/data.js";
+import typing_message from "../../util/tyingMessage.js";
 
 async function getKey(msg, match) {
   try {
@@ -35,7 +35,7 @@ async function getKey(msg, match) {
       for (const keyData of listKey) {
         await this.sendMessage(
           chat_id,
-          `Key:  \`${keyData.key}\`\nLoại: *${keyData.type}*\nSố lượt còn lại: *${keyData.count}*`,
+          `*Key*:  \`${keyData.key}\`\n*Loại*: ${keyData.type}\n*Số lượt còn lại*: ${keyData.count}`,
           {
             parse_mode: "Markdown",
             message_id,

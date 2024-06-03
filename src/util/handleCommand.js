@@ -16,10 +16,15 @@ import newKey from '../controllers/command/newKey.js'
 import setKey from '../controllers/command/setKey.js'
 import getKey from '../controllers/command/getKey.js'
 import dice from '../controllers/command/dice.js'
+import thiA2 from '../controllers/command/thiA2.js'
 const handleCommand = [
   {
     regex: /\/ask/,
     handler: askGPT,
+  },
+  {
+    regex: /\/thia2/,
+    handler: thiA2,
   },
   {
     regex: /\/time_table/,

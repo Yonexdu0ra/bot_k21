@@ -44,6 +44,13 @@ async function addKey(msg, match) {
               })}`,
             },
             {
+              text: `THIA2`,
+              callback_data: `NEW_KEY-${JSON.stringify({
+                type: "THIA2",
+                count: isNaN(parseInt(value)) ? 1 : parseInt(value),
+              })}`,
+            },
+            {
               text: "Close",
               callback_data: "CLOSE",
             },

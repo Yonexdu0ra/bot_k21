@@ -39,7 +39,7 @@ async function newKey({ data, message }) {
     });
 
     await editMessage(
-      `Key:  \`${keyData.key}\`\n\nLoại:*${keyData.type}*\n\nSố lượt còn lại: *${keyData.count}*`
+      `*Key*:  \`${keyData.key}\`\n\n*Loại*: ${keyData.type}\n\n*Số lượt còn lại*: ${keyData.count}`
     );
   } catch (error) {
     console.error(error);

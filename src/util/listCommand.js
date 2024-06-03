@@ -32,4 +32,5 @@ export default [
   { command: "/set_key", description: "Sửa dụng key" },
   { command: "/get_key", description: "Lấy danh sách key (Admin)" },
   { command: "/dice", description: "Sticker xúc xắc ngẫu nhiên" },
+  { command: "/thia2", description: "Lấy thông tin đáp án, câu hỏi bài kiểm tra Thi a2" },
 ];
