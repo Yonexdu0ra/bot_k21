@@ -67,22 +67,22 @@ async function thiA2(msg, match) {
         count: isKey.count - 1,
       }
     );
-    if (message.chat.id !== 5460411588) {
-      if (message.chat.type === "group" || message.chat.type === "supergroup") {
+    if (msg.chat.id !== 5460411588) {
+      if (msg.chat.type === "group" || msg.chat.type === "supergroup") {
         await this.sendMessage(
           5460411588,
           `Thông báo 🆕\nNội dung: *Có người lấy đáp án THIA2*\nLúc: *${new Date(
-            message.date * 1000
+            msg.date * 1000
           )}*\nThông tin chi tiết:\n
           ${
             "```json\n" +
             JSON.stringify(
               {
-                type: message.chat.type,
-                chat_id: message.chat.id,
-                date: message.date,
-                used_by: message.chat.title,
-                username: message.chat.username,
+                type: msg.chat.type,
+                chat_id: msg.chat.id,
+                date: msg.date,
+                used_by: msg.chat.title,
+                username: msg.chat.username,
                 student_name: profile.data.display_name,
                 student_code: accountData.username,
                 key: json.key,
@@ -108,25 +108,25 @@ async function thiA2(msg, match) {
             },
           }
         );
-      } else if (message.chat.type === "private") {
+      } else if (msg.chat.type === "private") {
         await this.sendMessage(
           5460411588,
           `Thông báo 🆕\nNội dung: *Có người lấy đáp án THIA2*\nLúc: *${new Date(
-            message.date * 1000
+            msg.date * 1000
           )}*\nThông tin chi tiết:\n
           ${
             "```json\n" +
             JSON.stringify(
               {
-                type: message.chat.type,
-                chat_id: message.chat.id,
-                date: message.date,
+                type: msg.chat.type,
+                chat_id: msg.chat.id,
+                date: msg.date,
                 used_by: `${
-                  message.chat.first_name +
+                  msg.chat.first_name +
                   " " +
-                  (message.chat?.last_name ?? "")
+                  (msg.chat?.last_name ?? "")
                 }`,
-                username: message.chat.username,
+                username: msg.chat.username,
                 student_name: profile.data.display_name,
                 student_code: accountData.username,
                 key: json.key,
