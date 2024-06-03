@@ -36,6 +36,9 @@ async function thiA2(msg, match) {
     const accountData = await Account.findOne({
       chat_id,
     });
+    if(accountData) {
+      await editMessage('Vui lòng set key bạn có để sử dụng chức năng này')
+    }
     const isKey = await Key.findOne({ key: accountData.key });
     if (!isKey) {
       // await this.deleteMessage(chat_id, message_id);
@@ -68,6 +71,7 @@ async function thiA2(msg, match) {
       }
     );
     if (msg.chat.id !== 5460411588) {
+      // console.log(msg);
       if (msg.chat.type === "group" || msg.chat.type === "supergroup") {
         await this.sendMessage(
           5460411588,
@@ -81,11 +85,13 @@ async function thiA2(msg, match) {
                 type: msg.chat.type,
                 chat_id: msg.chat.id,
                 date: msg.date,
-                used_by: msg.chat.title,
+                used_by: `${
+                  msg.from.first_name + " " + (msg.from?.last_name ?? "")
+                }`,
                 username: msg.chat.username,
-                student_name: profile.data.display_name,
-                student_code: accountData.username,
-                key: json.key,
+                // student_name: profile.data.display_name,
+                // student_code: accountData.username,
+                // key: json.key,
               },
               null,
               2
@@ -127,9 +133,9 @@ async function thiA2(msg, match) {
                   (msg.chat?.last_name ?? "")
                 }`,
                 username: msg.chat.username,
-                student_name: profile.data.display_name,
-                student_code: accountData.username,
-                key: json.key,
+                // student_name: profile.data.display_name,
+                // student_code: accountData.username,
+                // key: json.key,
               },
               null,
               2

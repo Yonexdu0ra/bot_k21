@@ -67,6 +67,7 @@ async function callback_query(query) {
           data: payload.join("-"),
           message: query.message,
         });
+        break;
       }
       case "DICE": {
         await dice.call(this, {
