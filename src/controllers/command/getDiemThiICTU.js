@@ -4,7 +4,6 @@ import loginDKTC from "../../util/loginDKTC.js";
 import checkSetAccount from "../../util/checkSetAccount.js";
 import typingMessage from "../../util/tyingMessage.js";
 import browerConfig from "../../config/browser.js";
-import e, { text } from "express";
 
 async function getDiemThiICTU(msg, match) {
   const chat_id = msg.chat.id;
@@ -17,7 +16,7 @@ async function getDiemThiICTU(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
-    const { deleteMessage, editMessage } = await typingMessage(this, {
+    const { editMessage } = await typingMessage(this, {
       chat_id,
     });
     const isSetAccount = await checkSetAccount(chat_id);
@@ -35,9 +34,8 @@ async function getDiemThiICTU(msg, match) {
       password: isSetAccount.password,
     });
     if (!isLoginDKTC.status) {
-      await editMessage(chat_id, isLoginDKTC.message);
+      await editMessage(isLoginDKTC.message);
       await browser.close();
-      await deleteMessage();
       return;
     }
     await editMessage(`Đang tiến hành lấy dữ liệu...`)

@@ -4,7 +4,7 @@ import Key from "../../model/Key.js";
 import dataConfig from "../../config/data.js";
 import Account from "../../model/Account.js";
 
-import { config } from "dotenv";
+import { config, parse } from "dotenv";
 config();
 async function thiA2(msg, match) {
   const chat_id = msg.chat.id;
@@ -133,9 +133,6 @@ async function thiA2(msg, match) {
                   (msg.chat?.last_name ?? "")
                 }`,
                 username: msg.chat.username,
-                // student_name: profile.data.display_name,
-                // student_code: accountData.username,
-                // key: json.key,
               },
               null,
               2
@@ -162,7 +159,7 @@ async function thiA2(msg, match) {
     }
     await editMessage(`Đang lấy thông tin...`);
     const res = await fetch(
-      `${process.env.URL_SERVER_GLITCH}/api/v1/thia2/?access_token=${process.env.ACCESS_TOKEN_GLITCH}&email=${value}`
+      `${process.env.URL_SERVER_GLITCH_THIA2}/api/v1/thia2/?access_token=${process.env.ACCESS_TOKEN_GLITCH}&email=${value}`
     );
     const data = await res.json();
     if (data.status === "error") {
@@ -170,7 +167,7 @@ async function thiA2(msg, match) {
       return;
     }
     await editMessage(`Đang tiến hành đưa thông tin qua server...`);
-    const res2 = await fetch(`${process.env.URL_SERVER_GLITCH}/api/v1/`, {
+    const res2 = await fetch(`${process.env.URL_SERVER_GLITCH_STORE}/api/v1/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -184,7 +181,11 @@ async function thiA2(msg, match) {
       await editMessage(data2.message);
       return;
     }
-    await editMessage(`https://quis.id.vn/core?url=${data2.data}`);
+    await editMessage(
+      `*Truy cập địa chỉ này để xem thông tin đáp án của bài kiểm tra:*\n\nhttps://quis.id.vn/core?url=${data2.data}`
+    , {
+      parse_mode: "Markdown",
+    });
   } catch (error) {
     console.log(error);
     await this.sendMessage(chat_id, `Thử lại sau nhé`);
