@@ -182,7 +182,7 @@ async function thiA2(msg, match) {
       return;
     }
     await editMessage(
-      `*Truy cập địa chỉ này để xem thông tin đáp án của bài kiểm tra:*\n\nhttps://quis.id.vn/core?url=${data2.data}`
+      `Hiệu lực của liên kết này là *dùng 1 lần* và liên kết có hiệu lực *khoảng 5 phút* hãy nhanh chóng truy cập và lưu lại thông tin nhé\n\nhttps://quis.id.vn/core?url=${data2.data}`
     , {
       parse_mode: "Markdown",
     });
