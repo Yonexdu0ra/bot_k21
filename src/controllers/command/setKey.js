@@ -51,6 +51,7 @@ async function setKey(msg, match) {
         }
       );
     }
+    await this.deleteMessage(chat_id, message_id);
     await editMessage(
       `set key thành công key còn ${isHasKey.count} lần sử dụng nhé [${
         msg.from.first_name

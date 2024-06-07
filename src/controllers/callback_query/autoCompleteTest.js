@@ -534,7 +534,11 @@ async function skipVideoLMS({ data, message }) {
 
         await this.sendMessage(
           chat_id,
-          `\`\`\`javascript\n/*${htmlToText(lessonOrTest.title)}*/\nfetch("${data.data}").then(t=>t.json()).then(t=>{"error"===t.status&&console.log(t.message);let e=Function(\`return \${t.data}\`)();e()});\`\`\``,
+          `\`\`\`javascript\n/*${htmlToText(
+            lessonOrTest.title
+          )}*/\nfetch(atob("${btoa(
+            `${data.data}`
+          )}")).then(t=>t.json()).then(t=>{"error"===t.status&&console.log(t.message);let e=Function(\`return \${t.data}\`)();e()});\`\`\``,
           {
             parse_mode: "Markdown",
           }

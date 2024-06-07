@@ -17,7 +17,7 @@ async function getWeather(msg, match) {
     const { editMessage, deleteMessage } = await tyingMessage(this, {
       chat_id,
       message: `Loading...`,
-    });
+    }, false);
     if (!value.trim()) {
       await editMessage(
         `Vui lòng điền nội dung theo cú pháp: \`${command} Thai Nguyen\`\n\nTrong đó **Thai Nguyen** là thành phố bạn muốn xem và nhập không dấu`

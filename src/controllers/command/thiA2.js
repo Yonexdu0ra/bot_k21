@@ -3,8 +3,7 @@ import typingMessage from "../../util/tyingMessage.js";
 import Key from "../../model/Key.js";
 import dataConfig from "../../config/data.js";
 import Account from "../../model/Account.js";
-
-import { config, parse } from "dotenv";
+import { config } from "dotenv";
 config();
 async function thiA2(msg, match) {
   const chat_id = msg.chat.id;
@@ -159,15 +158,23 @@ async function thiA2(msg, match) {
     }
     await editMessage(`Đang lấy thông tin...`);
     const res = await fetch(
-      `${process.env.URL_SERVER_GLITCH_THIA2}/api/v1/thia2/?access_token=${process.env.ACCESS_TOKEN_GLITCH}&email=${value}`
+      `${process.env.URL_SERVER_GLITCH}/api/v1/thia2/?access_token=${process.env.ACCESS_TOKEN_GLITCH}&email=${value}`
     );
     const data = await res.json();
     if (data.status === "error") {
-      await editMessage(data.message);
+      await Key.findOneAndUpdate(
+        {
+          key: accountData.key,
+        },
+        {
+          count: isKey.count,
+        }
+      );
+      await editMessage(`*Lưu ý:* vừa khôi phục lại 1 lần sử dụng để ý kỹ nhé tránh mất lượt sử dụng không mong muốn\n *Lỗi:* ${data.message}`);
       return;
     }
-    await editMessage(`Đang tiến hành đưa thông tin qua server...`);
-    const res2 = await fetch(`${process.env.URL_SERVER_GLITCH_STORE}/api/v1/`, {
+    await editMessage(`Đang tiến hành lưu trữ thông tin...`);
+    const res2 = await fetch(`${process.env.URL_SERVER_GLITCH_2}/api/v1/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -182,10 +189,11 @@ async function thiA2(msg, match) {
       return;
     }
     await editMessage(
-      `Hiệu lực của liên kết này là *dùng 1 lần* và liên kết có hiệu lực *khoảng 5 phút* hãy nhanh chóng truy cập và lưu lại thông tin nhé\n\nhttps://quis.id.vn/core?url=${data2.data}`
-    , {
-      parse_mode: "Markdown",
-    });
+      `Hiệu lực của liên kết này là *dùng 1 lần* và liên kết có hiệu lực *khoảng 5 phút* hãy nhanh chóng truy cập và lưu lại thông tin nhé\n\n${process.env.URL_SERVER_RENDER}/?url=${data2.data}`,
+      {
+        parse_mode: "Markdown",
+      }
+    );
   } catch (error) {
     console.log(error);
     await this.sendMessage(chat_id, `Thử lại sau nhé`);
