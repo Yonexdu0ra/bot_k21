@@ -11,10 +11,15 @@ async function getTimeTable(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
-    const { editMessage } = await typing_message(this, {
-      chat_id,
-      message: "Đang tính toán...",
-    }, false);
+    const { editMessage } = await typing_message(
+      this,
+      {
+        chat_id,
+        message: "Đang tính toán...",
+      },
+      {},
+      false
+    );
     const date = new Date();
     date.setHours(6);
     date.setMinutes(45);

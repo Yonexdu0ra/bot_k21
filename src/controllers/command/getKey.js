@@ -17,7 +17,7 @@ async function getKey(msg, match) {
     const { value } = isRedundantCommand;
     const { editMessage } = await typing_message(this, {
       chat_id,
-    }, false);
+    }, {}, false);
     const listAllowId = [5460411588, 5998381242];
 
     if (!listAllowId.includes(msg.from.id)) {

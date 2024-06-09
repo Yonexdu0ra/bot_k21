@@ -1,7 +1,7 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
 // import nodeFetch from "node-fetch";
 import tyingMessage from "../../util/tyingMessage.js";
-
+import getWeatherLocaltion from "../../util/getWeather.js";
 async function getWeather(msg, match) {
   const chat_id = msg.chat.id;
   const message_id = msg.message_id;
@@ -14,29 +14,30 @@ async function getWeather(msg, match) {
       return;
     }
     const { value, command } = isRedundantCommand;
-    const { editMessage, deleteMessage } = await tyingMessage(this, {
-      chat_id,
-      message: `Loading...`,
-    }, false);
+    const { editMessage, deleteMessage } = await tyingMessage(
+      this,
+      {
+        chat_id,
+        message: `Loading...`,
+      },
+      {},
+      false
+    );
     if (!value.trim()) {
       await editMessage(
         `Vui lòng điền nội dung theo cú pháp: \`${command} Thai Nguyen\`\n\nTrong đó **Thai Nguyen** là thành phố bạn muốn xem và nhập không dấu`
       );
       return;
     }
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${value.trim()}&appid=c666356ba51a2a95cb41a10e7743bd97&units=metric`;
-    const res = await fetch(url);
-    const data = await res.json();
+    const data = await getWeatherLocaltion(value.trim());
     if (data.cod == "200") {
       await this.sendPhoto(
         chat_id,
         `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
         {
-          caption: `*${data.name} (${
-            data.sys.country
-          })*\n${Math.round(data.main.temp)}°C ${
-            data.weather[0].description
-          }`,
+          caption: `*${data.name} (${data.sys.country})*\n${Math.round(
+            data.main.temp
+          )}°C ${data.weather[0].description}`,
           parse_mode: "Markdown",
         }
       );

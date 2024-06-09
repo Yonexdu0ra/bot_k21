@@ -11,29 +11,7 @@ async function dice(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
-    const { value } = isRedundantCommand;
-    const inline_keyboard = [
-      // [
-      //   {
-      //     text: `LESSON`,
-      //     callback_data: `NEW_KEY-${JSON.stringify({
-      //       type: "LESSON",
-      //       count: isNaN(parseInt(value)) ? 1 : parseInt(value),
-      //     })}`,
-      //   },
-      //   {
-      //     text: `TEST`,
-      //     callback_data: `NEW_KEY-${JSON.stringify({
-      //       type: "TEST",
-      //       count: isNaN(parseInt(value)) ? 1 : parseInt(value),
-      //     })}`,
-      //   },
-      //   {
-      //     text: "Close",
-      //     callback_data: "CLOSE",
-      //   },
-      // ],
-    ];
+    const inline_keyboard = [];
     let i = 1;
     while (i <= 6) {
       inline_keyboard.push([
@@ -52,11 +30,6 @@ async function dice(msg, match) {
         callback_data: "CLOSE",
       },
     ]);
-    // const results = await this.sendDice(chat_id);
-    // if(value.trim() == results.dice.value) {
-    //   return await this.sendMessage(chat_id, `${results.dice.value} Ping Pong chính xác !`);
-    // }
-    // return await this.sendMessage(chat_id, `${results.dice.value} Ôi không sai rồi !`);
     await this.sendMessage(chat_id, "Chọn số muốn đoán", {
       reply_markup: {
         inline_keyboard,

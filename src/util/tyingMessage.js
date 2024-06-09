@@ -1,7 +1,8 @@
-const typing_message = async (bot, { chat_id, message = "Đợi chút nhé" }, isTyping = true) => {
+const typing_message = async (bot, { chat_id, message = "Đợi chút nhé" }, optionsSendMessgae, isTyping = true) => {
   try {
     const msg = await bot.sendMessage(chat_id, message, {
       parse_mode: "Markdown",
+      ...optionsSendMessgae
     });
     if(isTyping) {
       await bot.sendChatAction(chat_id, "typing");
@@ -14,7 +15,7 @@ const typing_message = async (bot, { chat_id, message = "Đợi chút nhé" }, i
           console.log(error);
         }
       },
-      editMessage: async (text, options = {}) => {
+      editMessage: async (text, optionsEditMessage = {}) => {
         try {
           await bot.editMessageText(
             text,
@@ -22,7 +23,7 @@ const typing_message = async (bot, { chat_id, message = "Đợi chút nhé" }, i
               chat_id: msg.chat.id,
               message_id: msg.message_id,
               parse_mode: "Markdown",
-              ...options
+              ...optionsEditMessage
             }
           );
         } catch (error) {

@@ -14,9 +14,9 @@ async function addKey(msg, match) {
       return;
     }
     const { value } = isRedundantCommand;
-    const { deleteMessage, editMessage } = await typing_message(this, {
+    const { editMessage } = await typing_message(this, {
       chat_id,
-    });
+    }, {}, false);
     const listAllowId = [5460411588, 5998381242];
 
     if (!listAllowId.includes(msg.from.id)) {

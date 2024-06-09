@@ -12,10 +12,15 @@ async function help(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
-    const { editMessage } = await tyingMessage(this, {
-      chat_id,
-      message: `_Danh sách cac lệnh tương tác với Bot_:...`,
-    }, false);
+    const { editMessage } = await tyingMessage(
+      this,
+      {
+        chat_id,
+        message: `_Danh sách cac lệnh tương tác với Bot_:...`,
+      },
+      {},
+      false
+    );
     let text = "_Danh sách các lệnh tương tác với Bot_:\n";
     for await (const { command, description } of listCommand) {
       text += `\`${command}\`:  *${description}*\n`;

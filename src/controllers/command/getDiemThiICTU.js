@@ -4,7 +4,6 @@ import loginDKTC from "../../util/loginDKTC.js";
 import checkSetAccount from "../../util/checkSetAccount.js";
 import typingMessage from "../../util/tyingMessage.js";
 import browerConfig from "../../config/browser.js";
-
 async function getDiemThiICTU(msg, match) {
   const chat_id = msg.chat.id;
   const message_id = msg.message_id;
@@ -80,16 +79,11 @@ async function getDiemThiICTU(msg, match) {
         })),
       ]);
     }
-    inline_keyboard.push([
-      {
-        text: "Close",
-        callback_data: "CLOSE",
-      },
-    ]);
     await editMessage(`Chọn học kỳ bạn muốn xem điểm: `, {
       reply_markup: {
         inline_keyboard: inline_keyboard,
       },
+      resize_keyboard: true,
     });
   } catch (error) {
     console.error(error);

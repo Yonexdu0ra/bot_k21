@@ -13,10 +13,15 @@ async function timeNow(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
-    const { editMessage } = await typing_message(this, {
-      chat_id,
-      message: "Đang tính toán...",
-    }, false);
+    const { editMessage } = await typing_message(
+      this,
+      {
+        chat_id,
+        message: "Đang tính toán...",
+      },
+      {},
+      false
+    );
     const date = new Date();
     // tiết 1 bắt đầu từ 6:45
     date.setHours(6);

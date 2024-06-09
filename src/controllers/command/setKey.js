@@ -17,7 +17,7 @@ async function setKey(msg, match) {
     const { value, command } = isRedundantCommand;
     const { editMessage } = await typing_message(this, {
       chat_id,
-    });
+    }, {}, false);
     if (value.length < 1) {
       await editMessage(
         `Vui lòng nhập theo cúp pháp: \`${command}\`  *key bạn được cung cấp*`

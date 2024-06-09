@@ -13,15 +13,18 @@ async function setPassword(msg, match) {
       return;
     }
     const { value, command } = isRedundantCommand;
-    const { editMessage } = await tyingMessage(this, {
-      chat_id,
-      message: `Đang cập nhật *Password*...`,
-    }, false);
-    await this.deleteMessage(chat_id, message_id)
+    const { editMessage } = await tyingMessage(
+      this,
+      {
+        chat_id,
+        message: `Đang cập nhật *Password*...`,
+      },
+      {},
+      false
+    );
+    await this.deleteMessage(chat_id, message_id);
     if (!value.trim()) {
-      await editMessage(
-        `Vui lòng điền theo cú pháp: \`${command} Password\``
-      );
+      await editMessage(`Vui lòng điền theo cú pháp: \`${command} Password\``);
       return;
     }
     let acccount = await Account.findOne({ chat_id });
@@ -43,7 +46,7 @@ async function setPassword(msg, match) {
     await editMessage(`set ~Password thất bại~`);
   } catch (error) {
     console.log(error);
-    return
+    return;
   }
 }
 

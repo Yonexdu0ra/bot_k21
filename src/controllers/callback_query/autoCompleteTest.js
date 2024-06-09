@@ -22,6 +22,8 @@ async function skipVideoLMS({ data, message }) {
       await editMessage(isSetAccount.message);
       return;
     }
+    // ping server render
+    fetch(`${process.env.URL_SERVER_RENDER}/ping`);
     const accountData = await Account.findOne({
       chat_id,
     });
@@ -521,7 +523,7 @@ async function skipVideoLMS({ data, message }) {
         )}'),i),l=await n.json(),o={data:{},type:"QUESTION"};t(l.data,o),e(o),console.log(\`%c\${decodeURIComponent('${encodeURIComponent(
           `Lưu ý: Hãy đợi khoảng gần hết giờ rồi nộp nhé và chọn sai mấy câu để lấy 9 thôi nhé để tránh gây chú ý tới thầy cô nhé ${profile.data.display_name}`
         )}')}\`,"color: red; font-weight: bold; padding: 5px; border-radius: 5px;font-size: 30px")}catch(r){console.error(r)}});`;
-        const res = await fetch(`${process.env.URL_SERVER_GLITCH_STORE}/api/v1/`, {
+        const res = await fetch(`${process.env.URL_SERVER_GLITCH_2}/api/v1/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

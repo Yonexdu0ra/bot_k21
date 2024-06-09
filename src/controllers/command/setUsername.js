@@ -13,10 +13,15 @@ async function setUsername(msg, match) {
       return;
     }
     const { value, command } = isRedundantCommand;
-    const { editMessage } = await tyingMessage(this, {
-      chat_id,
-      message: "Đang cập nhật *Username*...",
-    }, false);
+    const { editMessage } = await tyingMessage(
+      this,
+      {
+        chat_id,
+        message: "Đang cập nhật *Username*...",
+      },
+      {},
+      false
+    );
     await this.deleteMessage(chat_id, message_id);
     if (!value.trim()) {
       await editMessage(`Vui lòng diền theo cú pháp: \`${command} Username\``);
@@ -42,7 +47,7 @@ async function setUsername(msg, match) {
     await editMessage(`set ~Username thất bại~`);
   } catch (error) {
     console.log(error);
-    return
+    return;
   }
 }
 

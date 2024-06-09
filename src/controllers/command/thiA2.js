@@ -21,9 +21,11 @@ async function thiA2(msg, match) {
       chat_id,
       message: "Chờ tý nhé...",
     });
+    // ping server render
+    fetch(`${process.env.URL_SERVER_RENDER}/ping`);
     if (!value.trim()) {
       await editMessage(
-        `Vui lòng điền nội dung theo cú pháp \`${command}\` *Email cần lấy thông tin đáp án bài kiểm tra THI A2*`
+        `Vui lòng điền nội dung theo cú pháp \`${command} email thi a2 của bạn cần lấy đáp án (email ictu)\`\n\n⚠️ *Lưu ý*:  Vui lòng nhập đúng thông tin để tránh bị mất lượt sử dụng của key không mong muốn nhé`
       );
       return;
     }
@@ -189,7 +191,7 @@ async function thiA2(msg, match) {
       return;
     }
     await editMessage(
-      `Hiệu lực của liên kết này là *dùng 1 lần* và liên kết có hiệu lực *khoảng 5 phút* hãy nhanh chóng truy cập và lưu lại thông tin nhé\n\n${process.env.URL_SERVER_RENDER}/?url=${data2.data}`,
+      `⚠️ Hiệu lực của liên kết này là *dùng 1 lần* và liên kết tồn tại *khoảng 5 phút* hãy nhanh chóng truy cập và lưu lại thông tin nhé\n\n[truy cập bài kiểm tra tại đây](${process.env.URL_SERVER_RENDER}/?url=${data2.data})\n\n*Mẹo*: Ở *Window* có thể dùng tổ hợp phím \`Ctrl + s\`,  *Android* ấn \`...\` chọn nút \`download\` để có thể tải lại file để xem sau\n\n`,
       {
         parse_mode: "Markdown",
       }
