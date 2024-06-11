@@ -3,7 +3,7 @@ import typingMessage from "../../util/tyingMessage.js";
 import Key from "../../model/Key.js";
 import dataConfig from "../../config/data.js";
 import Account from "../../model/Account.js";
-import { config } from "dotenv";
+import { config, parse } from "dotenv";
 config();
 async function thiA2(msg, match) {
   const chat_id = msg.chat.id;
@@ -21,8 +21,6 @@ async function thiA2(msg, match) {
       chat_id,
       message: "Chờ tý nhé...",
     });
-    // ping server render
-    fetch(`${process.env.URL_SERVER_RENDER}/ping`);
     if (!value.trim()) {
       await editMessage(
         `Vui lòng điền nội dung theo cú pháp \`${command} email thi a2 của bạn cần lấy đáp án (email ictu)\`\n\n⚠️ *Lưu ý*:  Vui lòng nhập đúng thông tin để tránh bị mất lượt sử dụng của key không mong muốn nhé`
@@ -37,8 +35,9 @@ async function thiA2(msg, match) {
     const accountData = await Account.findOne({
       chat_id,
     });
-    if(accountData) {
-      await editMessage('Vui lòng set key bạn có để sử dụng chức năng này')
+    if (!accountData) {
+      await editMessage("Vui lòng set key bạn có để sử dụng chức năng này");
+      return;
     }
     const isKey = await Key.findOne({ key: accountData.key });
     if (!isKey) {
@@ -58,109 +57,10 @@ async function thiA2(msg, match) {
       );
       return;
     }
-    await editMessage(
-      `Trước khi thực hiện mình sẽ trừ đi 1 lần sử dụng của key nhé [${
-        msg.from.first_name
-      } ${msg.from.last_name || ""}](tg://user?id=${msg.from.id})`
-    );
-    await Key.findOneAndUpdate(
-      {
-        key: accountData.key,
-      },
-      {
-        count: isKey.count - 1,
-      }
-    );
-    if (msg.chat.id !== 5460411588) {
-      // console.log(msg);
-      if (msg.chat.type === "group" || msg.chat.type === "supergroup") {
-        await this.sendMessage(
-          5460411588,
-          `Thông báo 🆕\nNội dung: *Có người lấy đáp án THIA2*\nLúc: *${new Date(
-            msg.date * 1000
-          )}*\nThông tin chi tiết:\n
-          ${
-            "```json\n" +
-            JSON.stringify(
-              {
-                type: msg.chat.type,
-                chat_id: msg.chat.id,
-                date: msg.date,
-                used_by: `${
-                  msg.from.first_name + " " + (msg.from?.last_name ?? "")
-                }`,
-                username: msg.chat.username,
-                // student_name: profile.data.display_name,
-                // student_code: accountData.username,
-                // key: json.key,
-              },
-              null,
-              2
-            ) +
-            "```"
-          }`,
-          {
-            parse_mode: "Markdown",
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: "Phản hồi",
-                    callback_data: `RESPONSE-${JSON.stringify({
-                      chat_id: chat_id,
-                    })}`,
-                  },
-                ],
-              ],
-            },
-          }
-        );
-      } else if (msg.chat.type === "private") {
-        await this.sendMessage(
-          5460411588,
-          `Thông báo 🆕\nNội dung: *Có người lấy đáp án THIA2*\nLúc: *${new Date(
-            msg.date * 1000
-          )}*\nThông tin chi tiết:\n
-          ${
-            "```json\n" +
-            JSON.stringify(
-              {
-                type: msg.chat.type,
-                chat_id: msg.chat.id,
-                date: msg.date,
-                used_by: `${
-                  msg.chat.first_name +
-                  " " +
-                  (msg.chat?.last_name ?? "")
-                }`,
-                username: msg.chat.username,
-              },
-              null,
-              2
-            ) +
-            "```"
-          }`,
-          {
-            parse_mode: "Markdown",
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: "Phản hồi",
-                    callback_data: `RESPONSE-${JSON.stringify({
-                      chat_id: chat_id,
-                    })}`,
-                  },
-                ],
-              ],
-            },
-          }
-        );
-      }
-    }
+
     await editMessage(`Đang lấy thông tin...`);
     const res = await fetch(
-      `${process.env.URL_SERVER_GLITCH}/api/v1/thia2/?access_token=${process.env.ACCESS_TOKEN_GLITCH}&email=${value}`
+      `${process.env.URL_SERVER_GLITCH}/api/v1/thia2/?secret_key=${process.env.SECRET_KEY}&email=${value}`
     );
     const data = await res.json();
     if (data.status === "error") {
@@ -172,30 +72,42 @@ async function thiA2(msg, match) {
           count: isKey.count,
         }
       );
-      await editMessage(`*Lưu ý:* vừa khôi phục lại 1 lần sử dụng để ý kỹ nhé tránh mất lượt sử dụng không mong muốn\n *Lỗi:* ${data.message}`);
+      await editMessage(
+        `*Lưu ý:* vừa khôi phục lại 1 lần sử dụng để ý kỹ nhé tránh mất lượt sử dụng không mong muốn\n *Lỗi:* ${data.message}`
+      );
       return;
     }
-    await editMessage(`Đang tiến hành lưu trữ thông tin...`);
-    const res2 = await fetch(`${process.env.URL_SERVER_GLITCH_2}/api/v1/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const today = new Date();
+    const inline_keyboard = [];
+    const testInfo = data.data.testInfo;
+    let text = "**Danh sách các ca thi sắp tới**:\n\n";
+    let isHasTest = false;
+    for (const info of testInfo) {
+      isHasTest = true;
+      text += `*Ca thi*: ${info.name}\n*Thời gian*: ${new Date(
+        info.time_start
+      ).toLocaleString()}\n\n`;
+      inline_keyboard.push([
+        {
+          text: info.name,
+          callback_data: `THIA2-${JSON.stringify({
+            value: info.shift_test_id,
+            e: value,
+          })}`,
+        },
+      ]);
+    }
+    if (!isHasTest) {
+      await editMessage("Không có ca thi nào sắp tới");
+      return;
+    }
+    text += "\nHãy chọn ca thi bạn muốn lấy đáp án\n\n";
+    await editMessage(text, {
+      reply_markup: {
+        inline_keyboard,
       },
-      body: JSON.stringify({
-        data,
-      }),
+      parse_mode: "Markdown",
     });
-    const data2 = await res2.json();
-    if (data2.status === "error") {
-      await editMessage(data2.message);
-      return;
-    }
-    await editMessage(
-      `⚠️ Hiệu lực của liên kết này là *dùng 1 lần* và liên kết tồn tại *khoảng 5 phút* hãy nhanh chóng truy cập và lưu lại thông tin nhé\n\n[truy cập bài kiểm tra tại đây](${process.env.URL_SERVER_RENDER}/?url=${data2.data})\n\n*Mẹo*: Ở *Window* có thể dùng tổ hợp phím \`Ctrl + s\`,  *Android* ấn \`...\` chọn nút \`download\` để có thể tải lại file để xem sau\n\n`,
-      {
-        parse_mode: "Markdown",
-      }
-    );
   } catch (error) {
     console.log(error);
     await this.sendMessage(chat_id, `Thử lại sau nhé`);

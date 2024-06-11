@@ -54,7 +54,6 @@ async function getDiemThiICTU(msg, match) {
       return list;
     });
     await browser.close();
-    let i = listHocKy.length;
     const inline_keyboard = [];
     while(listHocKy.length > 6) {
       const x = listHocKy.slice(0, 6);

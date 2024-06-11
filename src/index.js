@@ -15,6 +15,12 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+global.store = {
+  access_token_thia2: '',
+  access_token_lms: '',
+}
+
+
 connectDB(
   `mongodb+srv://${process.env.USERNAME_DB}:${encodeURI(
     process.env.PASSWORD_DB

@@ -188,8 +188,8 @@ async function skipVideoLMS({ data, message }) {
     }
     await editMessage(`Hello ${profile.data.display_name}`);
     await editMessage(`Đang lấy thông tin môn học..`);
-    let username = "DTC225180333",
-      password = "04092004";
+    let username = "DTC21H4801080023",
+      password = "04042003";
     if (university === "TUEBA") {
       username = "DTE2253401150200";
       password = "04082004@Tueba";
