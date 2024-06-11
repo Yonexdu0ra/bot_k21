@@ -45,25 +45,27 @@ async function thiA2({ data, message }) {
       }
     );
 
-    if (msg.chat.id !== 5460411588) {
-      // console.log(msg);
-      if (msg.chat.type === "group" || msg.chat.type === "supergroup") {
+    if (message.chat.id !== 5460411588) {
+      // console.log(message);
+      if (message.chat.type === "group" || message.chat.type === "supergroup") {
         await this.sendMessage(
           5460411588,
           `Thông báo 🆕\nNội dung: *Có người lấy đáp án THIA2*\nLúc: *${new Date(
-            msg.date * 1000
+            message.date * 1000
           )}*\nThông tin chi tiết:\n
           ${
             "```json\n" +
             JSON.stringify(
               {
-                type: msg.chat.type,
-                chat_id: msg.chat.id,
-                date: msg.date,
+                type: message.chat.type,
+                chat_id: message.chat.id,
+                date: message.date,
                 used_by: `${
-                  msg.from.first_name + " " + (msg.from?.last_name ?? "")
+                  message.from.first_name +
+                  " " +
+                  (message.from?.last_name ?? "")
                 }`,
-                username: msg.chat.username,
+                username: message.chat.username,
                 // student_name: profile.data.display_name,
                 // student_code: accountData.username,
                 // key: json.key,
@@ -89,23 +91,25 @@ async function thiA2({ data, message }) {
             },
           }
         );
-      } else if (msg.chat.type === "private") {
+      } else if (message.chat.type === "private") {
         await this.sendMessage(
           5460411588,
           `Thông báo 🆕\nNội dung: *Có người lấy đáp án THIA2*\nLúc: *${new Date(
-            msg.date * 1000
+            message.date * 1000
           )}*\nThông tin chi tiết:\n
           ${
             "```json\n" +
             JSON.stringify(
               {
-                type: msg.chat.type,
-                chat_id: msg.chat.id,
-                date: msg.date,
+                type: message.chat.type,
+                chat_id: message.chat.id,
+                date: message.date,
                 used_by: `${
-                  msg.chat.first_name + " " + (msg.chat?.last_name ?? "")
+                  message.chat.first_name +
+                  " " +
+                  (message.chat?.last_name ?? "")
                 }`,
-                username: msg.chat.username,
+                username: message.chat.username,
               },
               null,
               2

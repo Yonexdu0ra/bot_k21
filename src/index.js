@@ -40,6 +40,9 @@ connectDB(
     console.log("Bot error ");
     return;
   });
+  bot.on("polling_error", (error) => {
+    console.log(error)
+  })
   bot.on("callback_query", callback_query.bind(bot));
   bot.on('inline_query', async (query) => {
     const queryId = query.id;
