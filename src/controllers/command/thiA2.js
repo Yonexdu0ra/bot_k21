@@ -73,11 +73,11 @@ async function thiA2(msg, match) {
         }
       );
       await editMessage(
-        `*Lưu ý:* vừa khôi phục lại 1 lần sử dụng để ý kỹ nhé tránh mất lượt sử dụng không mong muốn\n *Lỗi:* ${data.message}`
+        `*Lỗi:* ${data.message}`
       );
       return;
     }
-    const today = new Date();
+    
     const inline_keyboard = [];
     const testInfo = data.data.testInfo;
     let text = "**Danh sách các ca thi sắp tới**:\n\n";

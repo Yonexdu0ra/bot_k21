@@ -11,7 +11,6 @@ async function thiA2({ data, message }) {
       chat_id,
       message: "Đợi chút nhé",
     });
-
     const accountData = await Account.findOne({
       chat_id,
     });
@@ -46,7 +45,6 @@ async function thiA2({ data, message }) {
     );
 
     if (message.chat.id !== 5460411588) {
-      // console.log(message);
       if (message.chat.type === "group" || message.chat.type === "supergroup") {
         await this.sendMessage(
           5460411588,
@@ -168,9 +166,9 @@ async function thiA2({ data, message }) {
       await editMessage(data2.message);
       return;
     }
-
+    const encodeURL = btoa(data2.data);
     await editMessage(
-      `⚠️ Hiệu lực của liên kết này là *dùng 1 lần* và liên kết tồn tại *khoảng 5 phút* hãy nhanh chóng truy cập và lưu lại thông tin nhé\n\n*Đây là liên kết của bạn*: [truy cập bài kiểm tra tại đây](${process.env.URL_SERVER_RENDER}/?url=${data2.data})\n\n💡 *Mẹo*: Ở *Window* có thể dùng tổ hợp phím \`Ctrl + s\`,  *Android* ấn \`...\` chọn nút \`download\` để có thể tải lại file để xem sau\n\nNếu gặp sự cố vui lòng liên hệ [Admin](${dataConfig.contact_url})`,
+      `⚠️ Hiệu lực của liên kết này là *dùng 1 lần* và liên kết tồn tại *khoảng 5 phút* hãy nhanh chóng truy cập và lưu lại thông tin nhé\n\n*Đây là liên kết của bạn*: [truy cập bài kiểm tra tại đây](${process.env.URL_SERVER_RENDER}/?u=${encodeURL})\n\n💡 *Mẹo*: Ở *Window* có thể dùng tổ hợp phím \`Ctrl + s\`,  *Android* ấn \`...\` chọn nút \`download\` để có thể tải lại file để xem sau\n\nNếu gặp sự cố vui lòng liên hệ [Admin](${dataConfig.contact_url})`,
       {
         parse_mode: "Markdown",
       }

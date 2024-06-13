@@ -30,9 +30,8 @@ connectDB(
   const bot = new telegramBot(process.env.ACCESS_TOKEN_TELEGRAM, {
     polling: true,
   });
-
+  
   bot.setMyCommands(listCommand);
-
   handleCommand.forEach((obj) => {
     bot.onText(obj.regex, obj.handler.bind(bot));
   });

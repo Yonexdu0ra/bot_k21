@@ -1,6 +1,7 @@
 import checkSetAccount from "../../util/checkSetAccount.js";
 import typingMessage from "../../util/tyingMessage.js";
 import Key from "../../model/Key.js";
+import checkPermisson from "../../util/checkPermisson.js";
 async function reduceCountKey({ data, message }) {
   // const timeStartSkip = new Date();
   const json = JSON.parse(data);
@@ -14,12 +15,16 @@ async function reduceCountKey({ data, message }) {
       });
       return;
     }
-    const { deleteMessage } = await typingMessage(this, {
+    const { deleteMessage, editMessage } = await typingMessage(this, {
       chat_id,
       message: `Đợi chút nhé vui lòng đừng spam nhé [${
         message.from.first_name
       } ${message.from?.last_name || ""}](tg://user?id=${message.from.id}) !`,
     });
+    if (!checkPermisson(chat_id)) {
+      await editMessage("Bạn không có quyền sử dụng chức năng này");
+      return;
+    }
     const isKeyData = await Key.findOne({ key: json.key });
     const newKeyData = await Key.findOneAndUpdate(
       { key: json.key },

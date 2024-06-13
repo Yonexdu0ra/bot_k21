@@ -17,70 +17,100 @@ async function callback_query(query) {
       case "SKIP": {
         await skipVideoLMS.call(this, {
           data: payload.join("-"),
-          message: query.message,
+          message: {
+            callback_query_id: query.id,
+            ...query.message
+          },
         });
         break;
       }
       case "GET_DIEM_THI": {
         await getDiemThi.call(this, {
           data: payload.join("-"),
-          message: query.message,
+          message: {
+            callback_query_id: query.id,
+            ...query.message
+          },
         });
         break;
       }
       case "NEW_KEY": {
         await newKey.call(this, {
           data: payload.join("-"),
-          message: query.message,
+          message: {
+            callback_query_id: query.id,
+            ...query.message
+          },
         });
         break;
       }
       case "ADD_KEY": {
         await addKey.call(this, {
           data: payload.join("-"),
-          message: query.message,
+          message: {
+            callback_query_id: query.id,
+            ...query.message
+          },
         });
         break;
       }
       case "REDUCE_KEY": {
         await reduceKey.call(this, {
           data: payload.join("-"),
-          message: query.message,
+          message: {
+            callback_query_id: query.id,
+            ...query.message
+          },
         });
         break;
       }
       case "REMOVE_KEY": {
         await removeKey.call(this, {
           data: payload.join("-"),
-          message: query.message,
+          message: {
+            callback_query_id: query.id,
+            ...query.message
+          },
         });
         break;
       }
       case "LESSON": {
         await autoCompleteTest.call(this, {
           data: payload.join("-"),
-          message: query.message,
+          message: {
+            callback_query_id: query.id,
+            ...query.message
+          },
         });
         break;
       }
       case "RESPONSE": {
         await responseMessage.call(this, {
           data: payload.join("-"),
-          message: query.message,
+          message: {
+            callback_query_id: query.id,
+            ...query.message
+          },
         });
         break;
       }
       case "DICE": {
         await dice.call(this, {
           data: payload.join("-"),
-          message: query.message,
+          message: {
+            callback_query_id: query.id,
+            ...query.message
+          },
         });
         break;
       }
       case "THIA2": {
         await thiA2.call(this, {
           data: payload.join("-"),
-          message: query.message,
+          message: {
+            callback_query_id: query.id,
+            ...query.message
+          },
         });
         break;
       }

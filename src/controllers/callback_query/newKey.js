@@ -1,6 +1,7 @@
 import checkSetAccount from "../../util/checkSetAccount.js";
 import typingMessage from "../../util/tyingMessage.js";
 import Key from "../../model/Key.js";
+import checkPermisson from "../../util/checkPermisson.js";
 import dataConfig from "../../config/data.js";
 async function newKey({ data, message }) {
   // const timeStartSkip = new Date();
@@ -19,7 +20,10 @@ async function newKey({ data, message }) {
       chat_id,
       message: "Đang tạo mới key",
     });
-
+    if (!checkPermisson(chat_id)) {
+      await editMessage("Bạn không có quyền sử dụng chức năng này");
+      return;
+    }
     function generateUniqueId(sign) {
       // Lấy số miliseconds tính từ 1/1/1970
       const timestamp = Date.now().toString(36);
