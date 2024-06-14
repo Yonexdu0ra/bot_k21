@@ -135,7 +135,11 @@ async function thiA2({ data, message }) {
 
     await editMessage(`Đang tiến lấy dữ liệu...`);
     const res = await fetch(
-      `${process.env.URL_SERVER_GLITCH}/api/v1/thia2/?secret_key=${process.env.SECRET_KEY}&email=${json.e}&shift_test_id=${json.value}`
+      `${process.env.URL_SERVER_GLITCH}/api/v1/thia2/?secret_key=${
+        process.env.SECRET_KEY
+      }&email=${global.temp_email}&shift_test_id=${json.value}&token=${
+        global.access_token_thia2 || ""
+      }`
     );
     const data = await res.json();
     if (data.status === "error") {
@@ -147,7 +151,7 @@ async function thiA2({ data, message }) {
           count: isKey.count,
         }
       );
-      await editMessage(`Lấy dữ liệu không thành công x_o`);
+      await editMessage(`Lấy dữ liệu không thành công`);
       return;
     }
 

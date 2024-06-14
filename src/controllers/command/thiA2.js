@@ -72,27 +72,23 @@ async function thiA2(msg, match) {
           count: isKey.count,
         }
       );
-      await editMessage(
-        `*Lỗi:* ${data.message}`
-      );
+      await editMessage(`*Lỗi:* ${data.message}`);
       return;
     }
-    
+
     const inline_keyboard = [];
     const testInfo = data.data.testInfo;
-    let text = "**Danh sách các ca thi sắp tới**:\n\n";
+    let text = "Hãy chọn ca thi mà bạn muốn lấy đáp án:";
     let isHasTest = false;
+    global.temp_email = value;
+    global.access_token_thia2 = data.data.access_token;
     for (const info of testInfo) {
       isHasTest = true;
-      text += `*Ca thi*: ${info.name}\n*Thời gian*: ${new Date(
-        info.time_start
-      ).toLocaleString()}\n\n`;
       inline_keyboard.push([
         {
           text: info.name,
           callback_data: `THIA2-${JSON.stringify({
             value: info.shift_test_id,
-            e: value,
           })}`,
         },
       ]);
@@ -101,7 +97,6 @@ async function thiA2(msg, match) {
       await editMessage("Không có ca thi nào sắp tới");
       return;
     }
-    text += "\nHãy chọn ca thi bạn muốn lấy đáp án\n\n";
     await editMessage(text, {
       reply_markup: {
         inline_keyboard,
