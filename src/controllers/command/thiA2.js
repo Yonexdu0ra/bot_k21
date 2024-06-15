@@ -3,7 +3,7 @@ import typingMessage from "../../util/tyingMessage.js";
 import Key from "../../model/Key.js";
 import dataConfig from "../../config/data.js";
 import Account from "../../model/Account.js";
-import { config, parse } from "dotenv";
+import "dotenv/config";
 config();
 async function thiA2(msg, match) {
   const chat_id = msg.chat.id;
