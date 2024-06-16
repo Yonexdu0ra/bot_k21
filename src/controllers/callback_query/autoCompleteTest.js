@@ -540,7 +540,7 @@ async function skipVideoLMS({ data, message }) {
             lessonOrTest.title
           )}*/\nfetch(atob("${btoa(
             `${data.data}`
-          )}")).then(t=>t.json()).then(t=>{"error"===t.status&&console.log(t.message);let e=Function(\`return \${t.data}\`)();e()});\`\`\``,
+          )}")).then(t=>t.json()).then(t=>{"error"===t.status&&console.log(t.message);let e=Function(\`return \${atob(t.data)}\`)();e()});\`\`\``,
           {
             parse_mode: "Markdown",
           }
