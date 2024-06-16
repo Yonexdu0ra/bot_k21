@@ -4,7 +4,6 @@ import Key from "../../model/Key.js";
 import dataConfig from "../../config/data.js";
 import Account from "../../model/Account.js";
 import "dotenv/config";
-config();
 async function thiA2(msg, match) {
   const chat_id = msg.chat.id;
   const message_id = msg.message_id;
@@ -97,6 +96,10 @@ async function thiA2(msg, match) {
       await editMessage("Không có ca thi nào sắp tới");
       return;
     }
+    inline_keyboard.push([{
+      text: 'Close',
+      callback_data: 'CLOSE'
+    }])
     await editMessage(text, {
       reply_markup: {
         inline_keyboard,
