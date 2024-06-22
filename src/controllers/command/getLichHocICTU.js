@@ -20,7 +20,7 @@ async function getLichHocICTU(msg, match) {
     });
     const isSetAccount = await checkSetAccount(chat_id);
     if (!isSetAccount.status) {
-      await editMessage(chat_id, isSetAccount.message);
+      await editMessage(isSetAccount.message);
       return;
     }
     const isData = getLichHoc(isSetAccount.username, isSetAccount.password);

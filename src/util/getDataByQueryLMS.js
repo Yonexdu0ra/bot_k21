@@ -2,10 +2,14 @@ import { config } from "dotenv";
 import queryParams from "./queryParams.js";
 import getAppIdAndOriginByUrl from "./getAppIdAndOriginByUrl.js";
 config();
-async function getDataByQueryLMS(url, options = {
-  query: '',
-  token: ''
-}) {
+async function getDataByQueryLMS(
+  url,
+  options = {
+    query: "",
+    token: "",
+    headers: {}
+  }
+) {
   try {
     const query = queryParams(options.query);
     const { appId, origin } = getAppIdAndOriginByUrl(url);

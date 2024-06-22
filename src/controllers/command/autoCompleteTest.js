@@ -5,8 +5,9 @@ import typingMessage from "../../util/tyingMessage.js";
 import getDataByQueryLMS from "../../util/getDataByQueryLMS.js";
 import Account from "../../model/Account.js";
 import Key from "../../model/Key.js";
-import dataConfig from '../../config/data.js'
+import dataConfig from "../../config/data.js";
 import getUrlByUsername from "../../util/getUrlByUsername.js";
+import 'dotenv/config'
 async function autoCompleteTest(msg, match) {
   const chat_id = msg.chat.id;
   const message_id = msg.message_id;
@@ -68,7 +69,7 @@ async function autoCompleteTest(msg, match) {
       return;
     }
     await editMessage("Đăng nhập thành công");
-    const { url } = await getUrlByUsername(accountData.username);
+    const { url, university } = await getUrlByUsername(accountData.username);
     const token = data.access_token;
     const profile = await getDataByQueryLMS(
       `${url}/${process.env.PROFILE_LMS}`,
@@ -76,7 +77,7 @@ async function autoCompleteTest(msg, match) {
         token,
       }
     );
-    
+
     const userProfile = await getDataByQueryLMS(
       `${url}/${process.env.USER_PROFILE_LMS}`,
       {
@@ -126,6 +127,7 @@ async function autoCompleteTest(msg, match) {
       }
     );
     if (listClassIdCourse.data) {
+      const inline_keyboard = [];
       await editMessage(
         `*${userProfile.data[0].full_name}* ơi đây là những môn học kì này cùa bạn hãy chọn môn bạn muốn lấy đáp án ở dưới đây: `
       );
@@ -139,34 +141,32 @@ async function autoCompleteTest(msg, match) {
             },
           }
         );
-        let response =
-          "```json\n" + JSON.stringify(classData.data, null, 2) + "```";
-        await this.sendMessage(chat_id, response, {
-          parse_mode: "Markdown",
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: `Đáp án ${classData.data.name.slice(
-                    0,
-                    classData.data.name.indexOf("(") ||
-                      classData.data.name.length
-                  )}`,
-                  callback_data: `LESSON-${JSON.stringify({
-                    class_id: classData.data.id,
-                    course_id: classData.data.course_id,
-                    class_stId: course.id
-                  })}`,
-                },
-                {
-                  text: "Close",
-                  callback_data: "CLOSE",
-                },
-              ],
-            ],
+        inline_keyboard.push([
+          {
+            text: `${classData.data.name.slice(
+              0,
+              classData.data.name.indexOf("(") || classData.data.name.length
+            )}`,
+            callback_data: `LESSON-${JSON.stringify({
+              class_id: classData.data.id,
+              course_id: classData.data.course_id,
+              class_stId: course.id,
+            })}`,
           },
-        });
+        ]);
       }
+      inline_keyboard.push([
+        {
+          text: `CLOSE`,
+          callback_data: `CLOSE`,
+        },
+      ]);
+      global[`access_token_${accountData.username}`] = token;
+      await editMessage(`Chọn môn học bạn muốn lấy đáp án (${university}): `, {
+        reply_markup: {
+          inline_keyboard,
+        },
+      });
     }
   } catch (error) {
     console.error(error);

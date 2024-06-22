@@ -1,9 +1,7 @@
-import puppeteer from "puppeteer";
+
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
-import loginDKTC from "../../util/loginDKTC.js";
 import checkSetAccount from "../../util/checkSetAccount.js";
 import typingMessage from "../../util/tyingMessage.js";
-import browerConfig from "../../config/browser.js";
 import getLichThi from "../../util/getLichThi.js";
 async function getLichThiICTU(msg, match) {
   const chat_id = msg.chat.id;

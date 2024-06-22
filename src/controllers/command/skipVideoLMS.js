@@ -5,7 +5,6 @@ import typingMessage from "../../util/tyingMessage.js";
 import getDataByQueryLMS from "../../util/getDataByQueryLMS.js";
 import Account from "../../model/Account.js";
 import Key from "../../model/Key.js";
-import Course from "../../model/Course.js";
 import dataConfig from "../../config/data.js";
 import getUrlByUsername from "../../util/getUrlByUsername.js";
 
@@ -71,7 +70,7 @@ async function skipVideoLMS(msg, match) {
       await editMessage(`\`\`\`JSON\n${JSON.stringify(data, null, 2)}\`\`\``);
       return;
     }
-    const { url } = await getUrlByUsername(accountData.username);
+    const { url, university } = await getUrlByUsername(accountData.username);
     const token = data.access_token;
     const profile = await getDataByQueryLMS(
       `${url}/${process.env.PROFILE_LMS}`,
@@ -79,7 +78,7 @@ async function skipVideoLMS(msg, match) {
         token,
       }
     );
-    await editMessage(`Hello *${profile.data.display_name}* !`);
+    await editMessage(`Hello *${profile.data.display_name}* (${university}) !`);
     const userProfile = await getDataByQueryLMS(
       `${url}/${process.env.USER_PROFILE_LMS}`,
       {
@@ -127,8 +126,9 @@ async function skipVideoLMS(msg, match) {
         token,
       }
     );
-    await editMessage("Hãy lựa chọn môn học bạn muốn hoàn thành video cấp tốc");
+    // await editMessage("Hãy lựa chọn môn học bạn muốn hoàn thành video cấp tốc");
     if (listClassIdCourse.data) {
+      const inline_keyboard = [];
       for (const course of listClassIdCourse.data) {
         const classData = await getDataByQueryLMS(
           `${url}/${process.env.CLASS_LMS}/${course.class_id}`,
@@ -139,64 +139,36 @@ async function skipVideoLMS(msg, match) {
             },
           }
         );
-        const completedData = await await getDataByQueryLMS(
-          `${url}/${process.env.CLASS_STUDENT_STRACKING_LMS}`,
+        inline_keyboard.push([
           {
-            token,
-            query: {
-              order: "ASC",
-              orderby: "id",
-              limit: 1000,
-              paged: 1,
-              select: "completed,lesson_id,updated_at,test_results",
-              "condition[0][key]": "class_student_id",
-              "condition[0][value]": course.id,
-              "condition[0][compare]": "=",
-              "condition[1][key]": "class_id",
-              "condition[1][value]": course.class_id,
-              "condition[1][compare]": "=",
-              "condition[1][type]": "and",
-            },
-          }
-        );
-
-        await this.sendMessage(
-          chat_id,
-          `\`\`\`JSON\n${JSON.stringify(
-            {
-              ...classData.data,
-            },
-            null,
-            2
-          )}\`\`\``,
-          {
-            parse_mode: "Markdown",
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: `${classData.data.name.slice(
-                      0,
-                      classData.data.name.indexOf("(") ||
-                        classData.data.name.length
-                    )}`,
-                    callback_data: `SKIP-${JSON.stringify({
-                      class_id: course.class_id,
-                      course_id: classData.data.course_id,
-                      class_stId: course.id,
-                      // key: accountData.key,
-                    })}`,
-                  },
-                  {
-                    text: `Close`,
-                    callback_data: `CLOSE`,
-                  },
-                ],
-              ],
-            },
-          }
-        );
+            text: `${classData.data.name.slice(
+              0,
+              classData.data.name.indexOf("(") || classData.data.name.length
+            )}`,
+            callback_data: `SKIP-${JSON.stringify({
+              class_id: course.class_id,
+              course_id: classData.data.course_id,
+              class_stId: course.id,
+            })}`,
+          },
+        ]);
       }
+      inline_keyboard.push([
+        {
+          text: `CLOSE`,
+          callback_data: `CLOSE`,
+        },
+      ]);
+      await editMessage(
+        `Chọn môn học bạn cần tua nhanh tiến trình (**${university}**)`,
+        {
+          reply_markup: {
+            inline_keyboard,
+          },
+        }
+      );
+    } else {
+      await editMessage('Không có môn học nào cần hoàn thành video cấp tốc')
     }
   } catch (error) {
     console.error(error);

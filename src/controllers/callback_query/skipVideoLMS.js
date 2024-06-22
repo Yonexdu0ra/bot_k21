@@ -11,33 +11,36 @@ import puppeteer from "puppeteer";
 import configBrowser from "../../config/browser.js";
 import dataConfig from "../../config/data.js";
 import getUrlByUsername from "../../util/getUrlByUsername.js";
+import tracking from "../../util/tracking.js";
 // import Course from "../../model/Course.js";
 async function skipVideoLMS({ data, message }) {
-  // const timeStartSkip = new Date();
-
+  const timeStartSkip = new Date();
   const json = JSON.parse(data);
   const chat_id = message.chat.id;
   const message_id = message.message_id;
   try {
-    const isSetAccount = await checkSetAccount(chat_id);
-    if (!isSetAccount.status) {
-      await this.sendMessage(chat_id, isSetAccount.message, {
-        reply_to_message_id: message_id,
-      });
-      return;
-    }
+    
     const { editMessage } = await typingMessage(this, {
       chat_id,
       message:
         "Đợi chút nhé quá trình sẽ mất ~ 5 phút - Vui lòng không spam để tránh bị lỗi không mong muốn",
     });
+    const isSetAccount = await checkSetAccount(chat_id);
+    if (!isSetAccount.status) {
+      await editMessage(isSetAccount.message, {
+        reply_to_message_id: message_id,
+      });
+      return;
+    }
     const accountData = await Account.findOne({
       chat_id,
     });
     const isKey = await Key.findOne({ key: accountData.key });
     if (!isKey) {
       await this.deleteMessage(chat_id, message_id);
-      await editMessage("Hmm... bạn nên sử dụng key mới");
+      await editMessage(
+        `Hmm... key bạn hết lượt sử dụng rồi liên hệ [${dataConfig.admin_name}](${dataConfig.contact_url}) để lấy key nhé`
+      );
       return;
     }
     if (isKey.type !== "LESSON") {
@@ -61,17 +64,20 @@ async function skipVideoLMS({ data, message }) {
         count: isKey.count - 1,
       }
     );
-    await editMessage("Bắt đầu thực hiện nào...");
+    await editMessage(`Bắt đầu kiểm tra thông tin đăng nhập ...`);
     const data = await loginLMS({
       username: accountData.username,
       password: accountData.password,
     });
     if (data.code != "success") {
-      let x = "```json\n" + JSON.stringify(data, null, 2) + "```";
-      await this.sendMessage(chat_id, x, {
+      // let x = "```json\n" + JSON.stringify(data, null, 2) + "```";
+      // await this.sendMessage(chat_id, x, {
+      //   reply_to_message_id: message_id,
+      //   parse_mode: "Markdown",
+      // });
+      await editMessage(data.message, {
         reply_to_message_id: message_id,
-        parse_mode: "Markdown",
-      });
+      })
       return;
     }
     const { url, university } = getUrlByUsername(accountData.username);
@@ -81,97 +87,8 @@ async function skipVideoLMS({ data, message }) {
     const profile = await getDataByQueryLMS(`${url}/${process.env.PROFILE_LMS}`, {
       token,
     });
-    if (university === "TUEBA") {
-      await editMessage(`Hiện chưa hỗ trợ đối với bên *TUEBA*`);
-      return;
-    }
-    if (message.chat.id !== 5460411588) {
-      if (message.chat.type === "group" || message.chat.type === "supergroup") {
-        await this.sendMessage(
-          5460411588,
-          `Thông báo 🆕\nNội dung: *Có người tua video*\nLúc: *${new Date(
-            message.date * 1000
-          )}*\nThông tin chi tiết:\n
-          ${
-            "```json\n" +
-            JSON.stringify(
-              {
-                type: message.chat.type,
-                chat_id: message.chat.id,
-                date: message.date,
-                used_by: message.chat.title,
-                username: message.chat.username,
-                student_name: profile.data.display_name,
-                student_code: accountData.username,
-                key: json.key,
-              },
-              null,
-              2
-            ) +
-            "```"
-          }`,
-          {
-            parse_mode: "Markdown",
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: "Phản hồi",
-                    callback_data: `RESPONSE-${JSON.stringify({
-                      chat_id: chat_id,
-                    })}`,
-                  },
-                ],
-              ],
-            },
-          }
-        );
-      } else if (message.chat.type === "private") {
-        await this.sendMessage(
-          5460411588,
-          `Thông báo 🆕\nNội dung: *Có người tua video*\nLúc: *${new Date(
-            message.date * 1000
-          )}*\nThông tin chi tiết:\n
-          ${
-            "```json\n" +
-            JSON.stringify(
-              {
-                type: message.chat.type,
-                chat_id: message.chat.id,
-                date: message.date,
-                used_by: `${
-                  message.chat.first_name +
-                  " " +
-                  (message.chat?.last_name ?? "")
-                }`,
-                username: message.chat.username,
-                student_name: profile.data.display_name,
-                student_code: accountData.username,
-                key: json.key,
-              },
-              null,
-              2
-            ) +
-            "```"
-          }`,
-          {
-            parse_mode: "Markdown",
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: "Phản hồi",
-                    callback_data: `RESPONSE-${JSON.stringify({
-                      chat_id: chat_id,
-                    })}`,
-                  },
-                ],
-              ],
-            },
-          }
-        );
-      }
-    }
+   
+    await tracking(this, message, [5460411588]);
     const userProfile = await getDataByQueryLMS(
       `${url}/${process.env.USER_PROFILE_LMS}`,
       {
@@ -214,6 +131,7 @@ async function skipVideoLMS({ data, message }) {
           limit: 1000,
           orderby: "ordering",
           order: "ASC",
+          select: 'audio,video,other_video,slide,documents,id,course_id,parent_id,title,slug,type,ordering',
           "condition[0][key]": "course_id",
           "condition[0][value]": json.course_id,
           "condition[0][compare]": "=",
@@ -225,7 +143,6 @@ async function skipVideoLMS({ data, message }) {
         token,
       }
     );
-
     for (const lessonOrTest of listVideoAndLessonData.data) {
       if (lessonOrTest.type === "LESSON") {
         // tìm kiếm video ở danh sách các bài đã làm và video đã xem
@@ -355,6 +272,13 @@ async function skipVideoLMS({ data, message }) {
     await browser.close();
     await editMessage(
       `*Đã tua xong* có lỗi gì thì báo [${dataConfig.admin_name}](${dataConfig.contact_url}) hỗ trợ nhé`
+    );
+    await editMessage(
+      `Đã tua xong bạn hãy kiểm tra lại xem đã hoàn thành chưa nhé !\n\nTiến trình mất ${
+        (new Date() - timeStartSkip) / 1000
+      }s để hoàn thành\n\nNếu có sự cố hãy liên hệ [${dataConfig.admin_name}](${
+        dataConfig.contact_url
+      }) để nhận được sự hỗ trợ nhé`
     );
   } catch (error) {
     console.error(error);

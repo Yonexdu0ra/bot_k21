@@ -22,7 +22,7 @@ async function thiA2(msg, match) {
     });
     if (!value.trim()) {
       await editMessage(
-        `Vui lòng điền nội dung theo cú pháp \`${command} email thi a2 của bạn cần lấy đáp án (email ictu)\`\n\n⚠️ *Lưu ý*:  Vui lòng nhập đúng thông tin để tránh bị mất lượt sử dụng của key không mong muốn nhé`
+        `Vui lòng điền nội dung theo cú pháp \`${command} kèm theo email bạn cần lấy đáp án\`\n\n⚠️ *Lưu ý*:  Nhập đầy đủ @ictu.edu.vn`
       );
       return;
     }

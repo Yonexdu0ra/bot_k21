@@ -27,7 +27,7 @@ const handleCommand = [
     handler: thiA2,
   },
   {
-    regex: /\/time_table/,
+    regex: /\/timetables/,
     handler: getTimeTable,
   },
   {
@@ -76,11 +76,11 @@ const handleCommand = [
     handler: help,
   },
   {
-    regex: /\/skip_video_lms/,
+    regex: /\/lms_video/,
     handler: skipVideoLMS,
   },
   {
-    regex: /\/get_answer_lesson_lms/,
+    regex: /\/lms_exercise/,
     handler: autoCompleteTestLMS,
   },
   {

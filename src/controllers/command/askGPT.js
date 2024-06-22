@@ -31,7 +31,7 @@ async function askGPT(msg, match) {
       maxOutputTokens: 3000,
     };
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.0-pro-latest",
+      model: "gemini-1.5-pro-latest",
       markdown: true,
       generationConfig,
     });

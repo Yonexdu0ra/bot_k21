@@ -1,5 +1,4 @@
 import checkRedundantCommand from "../../util/checkRedundantCommand.js";
-import typing_message from "../../util/tyingMessage.js";
 import convertDateUTC from "../../util/convertDateUTC.js";
 
 async function timeNow(msg, match) {
@@ -13,15 +12,7 @@ async function timeNow(msg, match) {
     if (!isRedundantCommand) {
       return;
     }
-    const { editMessage } = await typing_message(
-      this,
-      {
-        chat_id,
-        message: "Đang tính toán...",
-      },
-      {},
-      false
-    );
+
     const date = new Date();
     // tiết 1 bắt đầu từ 6:45
     date.setHours(6);
@@ -68,47 +59,70 @@ async function timeNow(msg, match) {
       dateEnd.setHours(+hourEnd);
       dateEnd.setMinutes(+minutesEnd);
       if (key == 1 && currentTime < dateStart) {
-        await editMessage(
+        await this.sendMessage(
+          chat_id,
           `Còn *${
             dateStart.getHours() * 60 +
             dateStart.getMinutes() -
             (currentTime.getMinutes() + currentTime.getHours() * 60)
-          }* phút nữa là vào tiết *${key}*`
+          }* phút nữa là vào tiết *${key}*`,
+          {
+            parse_mode: "Markdown",
+            reply_to_message_id: message_id,
+          }
         );
         break;
       } else if (dateStart <= currentTime && dateEnd > currentTime) {
-        await editMessage(
+        await this.sendMessage(
+          chat_id,
           `Đang trong tiết *${key}* - còn *${
             dateEnd.getHours() * 60 +
             dateEnd.getMinutes() -
             (currentTime.getMinutes() + currentTime.getHours() * 60)
-          }* phút nữa là hết tiết`
+          }* phút nữa là hết tiết`,
+          {
+            parse_mode: "Markdown",
+            reply_to_message_id: message_id,
+          }
         );
         break;
       }
       dateEnd.setMinutes(dateEnd.getMinutes() + objTime[key].break_time);
       if (currentTime < dateStart && key == 6) {
-        await editMessage(
+        await this.sendMessage(
+          chat_id,
           `Đang trong giờ nghỉ trưa còn  *${
             dateStart.getHours() * 60 +
             dateStart.getMinutes() -
             (currentTime.getHours() * 60 + currentTime.getMinutes())
-          } phút nữa là vào tiết *${key}*`
+          } phút nữa là vào tiết *${key}*`,
+          {
+            parse_mode: "Markdown",
+            reply_to_message_id: message_id,
+          }
         );
         return;
       }
       if (currentTime < dateEnd && key < 10) {
-        await editMessage(
+        await this.sendMessage(
+          chat_id,
           `Đang ra chơi tiết *${key}* - còn *${
             dateEnd.getHours() * 60 +
             dateEnd.getMinutes() -
             (currentTime.getMinutes() + currentTime.getHours() * 60)
-          } phút nữa sẽ bắt đầu tiết tiếp theo`
+          } phút nữa sẽ bắt đầu tiết tiếp theo`,
+          {
+            parse_mode: "Markdown",
+            reply_to_message_id: message_id,
+          }
         );
         break;
       }
       if (key == 10) {
-        await editMessage(`Đã hết giờ học rùi ^^!`);
+        await this.sendMessage(chat_id, `Đã hết giờ học rùi ^^!`, {
+          parse_mode: "Markdown",
+          reply_to_message_id: message_id,
+        });
         break;
       }
     }

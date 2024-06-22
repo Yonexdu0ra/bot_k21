@@ -2,6 +2,7 @@ import typingMessage from "../../util/tyingMessage.js";
 import Account from "../../model/Account.js";
 import Key from "../../model/Key.js";
 import dataConfig from "../../config/data.js";
+import tracking from "../../util/tracking.js";
 async function thiA2({ data, message }) {
   const json = JSON.parse(data);
   const chat_id = message.chat.id;
@@ -44,94 +45,7 @@ async function thiA2({ data, message }) {
       }
     );
 
-    if (message.chat.id !== 5460411588) {
-      if (message.chat.type === "group" || message.chat.type === "supergroup") {
-        await this.sendMessage(
-          5460411588,
-          `Thông báo 🆕\nNội dung: *Có người lấy đáp án THIA2*\nLúc: *${new Date(
-            message.date * 1000
-          )}*\nThông tin chi tiết:\n
-          ${
-            "```json\n" +
-            JSON.stringify(
-              {
-                type: message.chat.type,
-                chat_id: message.chat.id,
-                date: message.date,
-                used_by: `${
-                  message.from.first_name +
-                  " " +
-                  (message.from?.last_name ?? "")
-                }`,
-                username: message.chat.username,
-                // student_name: profile.data.display_name,
-                // student_code: accountData.username,
-                // key: json.key,
-              },
-              null,
-              2
-            ) +
-            "```"
-          }`,
-          {
-            parse_mode: "Markdown",
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: "Phản hồi",
-                    callback_data: `RESPONSE-${JSON.stringify({
-                      chat_id: chat_id,
-                    })}`,
-                  },
-                ],
-              ],
-            },
-          }
-        );
-      } else if (message.chat.type === "private") {
-        await this.sendMessage(
-          5460411588,
-          `Thông báo 🆕\nNội dung: *Có người lấy đáp án THIA2*\nLúc: *${new Date(
-            message.date * 1000
-          )}*\nThông tin chi tiết:\n
-          ${
-            "```json\n" +
-            JSON.stringify(
-              {
-                type: message.chat.type,
-                chat_id: message.chat.id,
-                date: message.date,
-                used_by: `${
-                  message.chat.first_name +
-                  " " +
-                  (message.chat?.last_name ?? "")
-                }`,
-                username: message.chat.username,
-              },
-              null,
-              2
-            ) +
-            "```"
-          }`,
-          {
-            parse_mode: "Markdown",
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: "Phản hồi",
-                    callback_data: `RESPONSE-${JSON.stringify({
-                      chat_id: chat_id,
-                    })}`,
-                  },
-                ],
-              ],
-            },
-          }
-        );
-      }
-    }
+    await tracking(this, message, [5460411588]);
 
     await editMessage(`Đang tiến lấy dữ liệu...`);
     const res = await fetch(

@@ -21,7 +21,7 @@ async function addKey(msg, match) {
 
     if (!listAllowId.includes(msg.from.id)) {
       await editMessage(
-        `Rất tiếc bạn không có quyền sử dụng chức năng nay liên hệ [${dataConfig.admin_name}](${dataConfig.contact_url}) để lấy key nhé`
+        `Rất tiếc bạn không có quyền sử dụng chức năng này liên hệ [${dataConfig.admin_name}](${dataConfig.contact_url}) để lấy key nhé`
       );
       return;
     }
